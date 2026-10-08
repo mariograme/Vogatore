@@ -157,6 +157,7 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
     <summary>Diagnostica Bluetooth</summary>
     <div class="sec">
       <dl class="diag">
+        <dt>Versione app</dt><dd id="gVer">–</dd>
         <dt>Dispositivo</dt><dd id="gName">–</dd>
         <dt>Servizi visti</dt><dd id="gSvc">–</dd>
         <dt>Pacchetti ricevuti</dt><dd id="gCount">0</dd>
@@ -251,9 +252,12 @@ const store = {
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const hex = (dv) => { let s = ''; for(let i = 0; i < dv.byteLength; i++) s += dv.getUint8(i).toString(16).padStart(2, '0') + ' '; return s.trim(); };
 
-const FTMS = 0x1826, ROWER = 0x2ad1, HRS = 0x180d, HRM = 0x2a37;
+const APP_VERSION = 2;
+// UUID sempre per esteso: alcuni browser (Bluefy) non accettano gli alias numerici a 16 bit.
+const u16 = (n) => '0000' + n.toString(16).padStart(4, '0') + '-0000-1000-8000-00805f9b34fb';
+const FTMS = u16(0x1826), ROWER = u16(0x2ad1), HRS = u16(0x180d), HRM = u16(0x2a37);
 const DOMYOS_OLD = '49535343-fe7d-4ae5-8fa9-9fafd205e455';
-const OPTIONAL = [FTMS, HRS, 0x180a, 0x180f, DOMYOS_OLD];
+const OPTIONAL = [FTMS, HRS, u16(0x180a), u16(0x180f), DOMYOS_OLD];
 
 let framed = true; try{ framed = window.self !== window.top; }catch(e){ framed = true; }
 let policyOk = true; try{ if(document.featurePolicy && document.featurePolicy.allowsFeature) policyOk = document.featurePolicy.allowsFeature('bluetooth'); }catch(e){}
@@ -389,31 +393,42 @@ function withTimeout(p, ms, dev){
   let t; const to = new Promise((_, rej) => { t = setTimeout(() => { try{ dev && dev.gatt.disconnect(); }catch(e){} rej(new Error('Nessuna risposta dal dispositivo entro ' + Math.round(ms / 1000) + ' s')); }, ms); });
   return Promise.race([p, to]).finally(() => clearTimeout(t));
 }
-function btError(e){
-  const n = e && e.name;
-  if(n === 'NotFoundError') return 'Nessun dispositivo selezionato.';
-  if(n === 'SecurityError' || n === 'NotAllowedError') return 'Il Bluetooth è bloccato in questa finestra. Apri la pagina direttamente in Bluefy.';
-  return (e && e.message) || 'Errore Bluetooth sconosciuto.';
+function isCancel(e){
+  if(typeof e === 'string') return /cancel/i.test(e);
+  return !!e && (e.name === 'NotFoundError' || /cancel/i.test(e.message || ''));
 }
+function btError(e){
+  if(e == null) return 'Errore Bluetooth senza dettagli.';
+  if(isCancel(e)) return 'Nessun dispositivo selezionato.';
+  if(typeof e === 'string') return e;
+  const n = e.name || '', m = e.message || '';
+  if(n === 'SecurityError' || n === 'NotAllowedError') return 'Il Bluetooth è bloccato in questa finestra. Apri la pagina direttamente in Bluefy.';
+  if(m) return m;
+  let j = ''; try{ j = JSON.stringify(e); }catch(x){}
+  return (n || 'Errore Bluetooth') + ' ' + (j && j !== '{}' ? j : '(' + String(e) + ')');
+}
+function errKind(e){ return e == null ? 'vuoto' : (typeof e === 'string' ? 'testo' : (e.name || (e.constructor && e.constructor.name) || typeof e)); }
 async function openGatt(dev, quiet){
   S.opening = true;
   try{
     if(!quiet) setConn('connecting', 'Collegamento a ' + (dev.name || 'vogatore') + '…');
     const server = await withTimeout(dev.gatt.connect(), 15000, dev);
-    G.name = dev.name || '(senza nome)'; log('Collegato a ' + G.name);
+    G.name = dev.name || '(senza nome)'; log('Collegato a ' + G.name + ', cerco il servizio FTMS');
     let svc = null;
-    try{ svc = await server.getPrimaryService(FTMS); }catch(e){ svc = null; }
+    try{ svc = await server.getPrimaryService(FTMS); }catch(e){ svc = null; log('Servizio FTMS non ottenuto: ' + btError(e) + ' [' + errKind(e) + ']'); }
     if(!svc){ await rawMode(server); return; }
     G.services = ['FTMS (standard)'];
     let ch = null;
-    try{ ch = await svc.getCharacteristic(ROWER); }catch(e){ ch = null; }
+    try{ ch = await svc.getCharacteristic(ROWER); }catch(e){ ch = null; log('Rower Data non ottenuta: ' + btError(e) + ' [' + errKind(e) + ']'); }
     if(!ch){
       let list = []; try{ list = (await svc.getCharacteristics()).map(c => c.uuid.slice(4, 8)); }catch(e){}
       log('FTMS presente ma senza Rower Data (2ad1). Caratteristiche: ' + (list.join(', ') || 'nessuna leggibile'));
       setConn('raw', 'Collegato, ma il vogatore non invia dati da vogatore standard'); return;
     }
     ch.addEventListener('characteristicvaluechanged', (ev) => onRowerData(ev.target.value));
+    log('Attivo le notifiche dei dati');
     await ch.startNotifications();
+    log('Notifiche attive, in attesa dei dati');
     setConn('connected', G.name);
   } finally { S.opening = false; }
 }
@@ -460,15 +475,28 @@ function adopt(dev){
 async function connectFlow(all){
   if(!btUsable){ showNotice(); toast('Qui il Bluetooth non è disponibile.'); return; }
   stopDemo();
+  let stage = 'scelta del dispositivo';
+  const optsAll = { acceptAllDevices: true, optionalServices: OPTIONAL };
+  const optsFlt = { filters: [{ services: [FTMS] }, { namePrefix: 'Domyos' }, { namePrefix: 'DOMYOS' }, { namePrefix: 'domyos' }], optionalServices: OPTIONAL };
   try{
     setConn('connecting', 'Scegli il vogatore dall\'elenco…');
-    const opts = all ? { acceptAllDevices: true, optionalServices: OPTIONAL }
-      : { filters: [{ services: [FTMS] }, { namePrefix: 'Domyos' }, { namePrefix: 'DOMYOS' }, { namePrefix: 'domyos' }], optionalServices: OPTIONAL };
-    const dev = await navigator.bluetooth.requestDevice(opts);
+    let dev;
+    if(all) dev = await navigator.bluetooth.requestDevice(optsAll);
+    else {
+      try{ dev = await navigator.bluetooth.requestDevice(optsFlt); }
+      catch(e1){
+        if(isCancel(e1)) throw e1;
+        log('Ricerca filtrata non riuscita: ' + btError(e1) + ' [' + errKind(e1) + ']. Riprovo mostrando tutti i dispositivi.');
+        dev = await navigator.bluetooth.requestDevice(optsAll);
+      }
+    }
+    stage = 'collegamento al vogatore';
+    log('Dispositivo scelto: ' + (dev.name || '(senza nome)'));
     adopt(dev);
     await openGatt(dev, false);
   }catch(e){
-    const m = btError(e); log('Collegamento non riuscito: ' + m); toast(m, 5000);
+    const m = btError(e); log('Errore nella fase "' + stage + '": ' + m + ' [' + errKind(e) + ']');
+    toast(isCancel(e) ? m : m + ' (fase: ' + stage + ')', 7000);
     if(S.conn !== 'connected' && S.conn !== 'raw') setConn('idle');
   }
 }
@@ -686,6 +714,8 @@ $('inAuto').addEventListener('change', () => { cfg.autoStart = $('inAuto').check
 window.addEventListener('resize', queueRender);
 
 renderHistory();
+$('gVer').textContent = String(APP_VERSION);
+log('Versione app ' + APP_VERSION);
 log('Bluetooth web: ' + (navigator.bluetooth ? (policyOk ? 'disponibile' : 'presente ma bloccato in questa finestra') : 'assente in questo browser'));
 if(btUsable) autoConnect(); else { showNotice(); startDemo(); }
 setInterval(tick, 1000); tick();
