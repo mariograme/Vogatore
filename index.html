@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>:root{padding-top:env(safe-area-inset-top,0px)}[hidden]{display:none!important}</style>
+<title>Vogatore Domyos</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<style>
+/* Layout: strumento da leggere a distanza. Potenza in testa, griglia 2xN di valori, traccia della potenza, comandi fissi in basso. */
+:root{
+  --bg:#eef3f2; --surface:#ffffff; --ink:#0e2a30; --muted:#557177; --line:#d3dedc;
+  --water:#1b7f8c; --water-soft:rgba(27,127,140,.16); --wood:#a8651c; --on-wood:#ffffff;
+  --ok:#1f8a4c; --warn:#a86a10; --bad:#c0392b;
+  --num:"Barlow Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif;
+  --txt:"Barlow","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0a1f25; --surface:#11303a; --ink:#eaf4f2; --muted:#8fb0b3; --line:#1f4350;
+    --water:#4fc3cf; --water-soft:rgba(79,195,207,.18); --wood:#f0b469; --on-wood:#1c1206;
+    --ok:#5fd08a; --warn:#f0c160; --bad:#ff8a7a; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0a1f25; --surface:#11303a; --ink:#eaf4f2; --muted:#8fb0b3; --line:#1f4350;
+  --water:#4fc3cf; --water-soft:rgba(79,195,207,.18); --wood:#f0b469; --on-wood:#1c1206;
+  --ok:#5fd08a; --warn:#f0c160; --bad:#ff8a7a; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--txt);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
+.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:14px 132px;display:flex;flex-direction:column;gap:14px}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--water);outline-offset:2px}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.status{display:flex;align-items:center;gap:8px;min-width:0;font-weight:500}
+.status span:last-child{min-width:0;overflow-wrap:anywhere}
+.dot{flex:none;width:11px;height:11px;border-radius:50%;background:var(--muted)}
+.dot[data-s="connected"]{background:var(--ok)}
+.dot[data-s="connecting"],.dot[data-s="reconnecting"]{background:var(--warn);animation:pulse 1s infinite}
+.dot[data-s="demo"],.dot[data-s="raw"]{background:var(--warn)}
+@keyframes pulse{50%{opacity:.3}}
+@media (prefers-reduced-motion:reduce){.dot{animation:none!important}}
+.btn{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 14px;font-weight:600;min-height:44px}
+.btn.primary{background:var(--wood);border-color:var(--wood);color:var(--on-wood)}
+.btn.small{min-height:36px;padding:6px 10px;font-size:14px;font-weight:500}
+.btn.danger{color:var(--bad)}
+
+.notice{border:1.5px solid var(--warn);border-radius:10px;padding:10px 12px;font-size:15px;background:var(--surface)}
+.notice strong{color:var(--warn)}
+
+.hero{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px 14px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.lab{font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.hero .big{font-family:var(--num);font-weight:700;font-size:clamp(88px,30vw,150px);line-height:.86;font-variant-numeric:tabular-nums;color:var(--wood)}
+.hero .unit{font-family:var(--num);font-size:34px;font-weight:600;color:var(--muted);margin-left:6px}
+.hero .side{margin-left:auto;display:flex;flex-direction:column;gap:2px;text-align:right;font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums}
+.hero .side b{color:var(--ink);font-weight:600}
+.tag{display:inline-block;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;border:1px solid var(--warn);color:var(--warn);border-radius:5px;padding:0 5px;vertical-align:middle}
+
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:600px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.tile{border-top:2px solid var(--line);padding:8px 2px 2px;min-width:0}
+.tile .v{font-family:var(--num);font-weight:600;font-size:clamp(46px,14vw,60px);line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tile .v small{font-size:.42em;font-weight:500;color:var(--muted);margin-left:4px}
+.tile .s{font-size:13.5px;color:var(--muted);min-height:19px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.chartbox canvas{display:block;width:100%;height:150px}
+
+details{border-top:1px solid var(--line);padding-top:10px}
+summary{font-weight:600;font-size:17px;cursor:pointer;padding:4px 0}
+.sec{display:flex;flex-direction:column;gap:10px;padding-top:10px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.row label{font-weight:500}
+input[type=number]{font:inherit;width:92px;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+input[type=checkbox]{width:22px;height:22px;accent-color:var(--water)}
+.hint{font-size:14px;color:var(--muted);margin:0}
+.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.hist li{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface);display:flex;flex-direction:column;gap:6px}
+.hist .h1{font-weight:600}
+.hist .h2{font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums}
+.hist .acts{display:flex;gap:8px;flex-wrap:wrap}
+dl.diag{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0;font-size:14px}
+dl.diag dt{color:var(--muted)}
+dl.diag dd{margin:0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+pre.log{margin:0;max-height:220px;overflow:auto;font-size:12px;line-height:1.35;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px;white-space:pre-wrap;overflow-wrap:anywhere}
+textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));z-index:5}
+.bar .in{max-width:720px;margin:0 auto;display:flex;gap:10px}
+.bar .btn{flex:1;min-height:56px;font-size:19px;font-family:var(--num);letter-spacing:.04em;text-transform:uppercase}
+.toast{position:fixed;left:16px;right:16px;bottom:calc(92px + env(safe-area-inset-bottom,0px));margin:0 auto;max-width:520px;background:var(--ink);color:var(--bg);border-radius:10px;padding:10px 14px;font-size:15px;z-index:6;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="top">
+    <div class="status"><span class="dot" id="dot" data-s="idle"></span><span id="statusText">Non collegato</span></div>
+    <button class="btn" id="btnConnect" type="button">Collega vogatore</button>
+  </div>
+
+  <div class="notice" id="notice" hidden></div>
+
+  <section class="hero" aria-label="Potenza">
+    <div>
+      <div class="lab">Potenza <span class="tag" id="powerTag" hidden>stima dal passo</span></div>
+      <div><span class="big" id="vPower">–</span><span class="unit">W</span></div>
+    </div>
+    <div class="side">
+      <span>media <b id="vAvgP">–</b> W</span>
+      <span>max <b id="vMaxP">–</b> W</span>
+      <span id="vState">in attesa</span>
+    </div>
+  </section>
+
+  <section class="grid" aria-label="Dati in tempo reale">
+    <div class="tile"><div class="lab">Passo /500 m</div><div class="v" id="vPace">–:––</div><div class="s" id="sPace"></div></div>
+    <div class="tile"><div class="lab">Colpi/min</div><div class="v" id="vSpm">–</div><div class="s" id="sSpm"></div></div>
+    <div class="tile"><div class="lab">Tempo</div><div class="v" id="vTime">0:00</div><div class="s" id="sTime"></div></div>
+    <div class="tile"><div class="lab">Distanza</div><div class="v"><span id="vDist">0</span><small>m</small></div><div class="s" id="sDist"></div></div>
+    <div class="tile"><div class="lab">Calorie</div><div class="v"><span id="vKcal">0</span><small>kcal</small></div><div class="s" id="sKcal"></div></div>
+    <div class="tile"><div class="lab">Consumo kcal/h</div><div class="v" id="vKcalH">–</div><div class="s" id="sKcalH"></div></div>
+    <div class="tile"><div class="lab">Frequenza cardiaca</div><div class="v"><span id="vHr">–</span><small>bpm</small></div><div class="s" id="sHr"></div></div>
+    <div class="tile"><div class="lab">Colpi totali</div><div class="v" id="vStrokes">0</div><div class="s" id="sStrokes"></div></div>
+  </section>
+
+  <section class="chartbox" aria-label="Potenza negli ultimi 5 minuti">
+    <div class="lab">Potenza, ultimi 5 minuti</div>
+    <canvas id="chart" role="img" aria-label="Grafico della potenza negli ultimi 5 minuti"></canvas>
+  </section>
+
+  <details id="dHist" open>
+    <summary>Storico allenamenti</summary>
+    <div class="sec">
+      <p class="hint" id="histEmpty">Qui compaiono gli allenamenti conclusi, salvati su questo telefono.</p>
+      <ul class="hist" id="hist"></ul>
+      <textarea class="csv" id="csvOut" readonly hidden aria-label="CSV dell'allenamento"></textarea>
+    </div>
+  </details>
+
+  <details id="dSet">
+    <summary>Impostazioni</summary>
+    <div class="sec">
+      <div class="row"><label for="inWeight">Peso corporeo (kg)</label><input id="inWeight" type="number" inputmode="decimal" min="35" max="200" step="0.5"></div>
+      <p class="hint">Serve solo se il vogatore non invia le calorie: in quel caso le stimo dalla potenza con la formula Concept2 corretta per il peso.</p>
+      <div class="row"><label for="inAuto">Avvia da solo al primo colpo</label><input id="inAuto" type="checkbox"></div>
+      <div class="row"><span>Cardiofrequenzimetro Bluetooth (fascia, o Garmin con "Trasmetti FC")</span><button class="btn small" id="btnHr" type="button">Collega cardio</button></div>
+      <div class="row"><span>Il vogatore non compare in elenco?</span><button class="btn small" id="btnAll" type="button">Mostra tutti i dispositivi</button></div>
+      <div class="row"><span>Prova senza vogatore</span><button class="btn small" id="btnDemo" type="button">Avvia demo</button></div>
+    </div>
+  </details>
+
+  <details id="dDiag">
+    <summary>Diagnostica Bluetooth</summary>
+    <div class="sec">
+      <dl class="diag">
+        <dt>Dispositivo</dt><dd id="gName">–</dd>
+        <dt>Servizi visti</dt><dd id="gSvc">–</dd>
+        <dt>Pacchetti ricevuti</dt><dd id="gCount">0</dd>
+        <dt>Ultimo pacchetto</dt><dd id="gHex">–</dd>
+        <dt>Campi inviati</dt><dd id="gFields">–</dd>
+      </dl>
+      <div class="row"><span class="hint">Se qualcosa non torna, copia e incollami questo registro.</span><button class="btn small" id="btnCopyLog" type="button">Copia registro</button></div>
+      <pre class="log" id="log" tabindex="0"></pre>
+    </div>
+  </details>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<div class="bar"><div class="in">
+  <button class="btn primary" id="btnMain" type="button">Inizia</button>
+  <button class="btn danger" id="btnStop" type="button" hidden>Termina</button>
+</div></div>
+
+<script>
+(() => {
+'use strict';
+
+/*PARSER-START*/
+// FTMS Rower Data (0x2AD1). I campi arrivano anche spezzati su più notifiche: si restituiscono solo quelli presenti.
+function parseRower(dv){
+  if(!dv || dv.byteLength < 2) return null;
+  const f = dv.getUint16(0, true);
+  const len = (resBytes) => {
+    let n = 2;
+    if(!(f & 0x0001)) n += 3;
+    if(f & 0x0002) n += 1;
+    if(f & 0x0004) n += 3;
+    if(f & 0x0008) n += 2;
+    if(f & 0x0010) n += 2;
+    if(f & 0x0020) n += 2;
+    if(f & 0x0040) n += 2;
+    if(f & 0x0080) n += resBytes;
+    if(f & 0x0100) n += 5;
+    if(f & 0x0200) n += 1;
+    if(f & 0x0400) n += 1;
+    if(f & 0x0800) n += 2;
+    if(f & 0x1000) n += 2;
+    return n;
+  };
+  // Il livello di resistenza è a 2 byte nella specifica FTMS ma alcuni firmware ne mandano 1: decide la lunghezza reale.
+  const resBytes = ((f & 0x0080) && dv.byteLength === len(1)) ? 1 : 2;
+  const o = { flags: f, fields: [], truncated: false };
+  let i = 2;
+  const has = (n) => { if(i + n <= dv.byteLength) return true; o.truncated = true; return false; };
+  if(!(f & 0x0001)){ if(!has(3)) return o; o.spm = dv.getUint8(i) / 2; o.strokes = dv.getUint16(i + 1, true); i += 3; o.fields.push('colpi/min', 'colpi totali'); }
+  if(f & 0x0002){ if(!has(1)) return o; o.avgSpm = dv.getUint8(i) / 2; i += 1; o.fields.push('colpi/min medi'); }
+  if(f & 0x0004){ if(!has(3)) return o; o.dist = dv.getUint16(i, true) | (dv.getUint8(i + 2) << 16); i += 3; o.fields.push('distanza'); }
+  if(f & 0x0008){ if(!has(2)) return o; o.pace = dv.getUint16(i, true); i += 2; o.fields.push('passo'); }
+  if(f & 0x0010){ if(!has(2)) return o; o.avgPace = dv.getUint16(i, true); i += 2; o.fields.push('passo medio'); }
+  if(f & 0x0020){ if(!has(2)) return o; o.power = dv.getInt16(i, true); i += 2; o.fields.push('potenza'); }
+  if(f & 0x0040){ if(!has(2)) return o; o.avgPower = dv.getInt16(i, true); i += 2; o.fields.push('potenza media'); }
+  if(f & 0x0080){ if(!has(resBytes)) return o; o.resistance = resBytes === 1 ? dv.getUint8(i) : dv.getInt16(i, true); i += resBytes; o.fields.push('resistenza'); }
+  if(f & 0x0100){ if(!has(5)) return o;
+    const t = dv.getUint16(i, true), h = dv.getUint16(i + 2, true), m = dv.getUint8(i + 4); i += 5;
+    if(t !== 0xFFFF) o.kcal = t;
+    if(h !== 0xFFFF) o.kcalH = h;
+    if(m !== 0xFF) o.kcalMin = m;
+    o.fields.push('calorie');
+  }
+  if(f & 0x0200){ if(!has(1)) return o; o.hr = dv.getUint8(i); i += 1; o.fields.push('frequenza cardiaca'); }
+  if(f & 0x0400){ if(!has(1)) return o; o.met = dv.getUint8(i) / 10; i += 1; o.fields.push('MET'); }
+  if(f & 0x0800){ if(!has(2)) return o; o.elapsed = dv.getUint16(i, true); i += 2; o.fields.push('tempo'); }
+  if(f & 0x1000){ if(!has(2)) return o; o.remaining = dv.getUint16(i, true); i += 2; o.fields.push('tempo residuo'); }
+  return o;
+}
+function demoPacket(d){
+  const b = new DataView(new ArrayBuffer(20));
+  b.setUint16(0, 0x0004 | 0x0008 | 0x0020 | 0x0100 | 0x0200 | 0x0800, true);
+  let i = 2;
+  b.setUint8(i, Math.round(d.spm * 2)); b.setUint16(i + 1, Math.round(d.strokes) & 0xFFFF, true); i += 3;
+  const dist = Math.round(d.dist); b.setUint16(i, dist & 0xFFFF, true); b.setUint8(i + 2, (dist >> 16) & 0xFF); i += 3;
+  b.setUint16(i, Math.round(d.pace), true); i += 2;
+  b.setInt16(i, Math.round(d.power), true); i += 2;
+  b.setUint16(i, Math.round(d.kcal), true); b.setUint16(i + 2, Math.round(d.kcalH), true); b.setUint8(i + 4, Math.min(254, Math.round(d.kcalH / 60))); i += 5;
+  b.setUint8(i, Math.round(d.hr)); i += 1;
+  b.setUint16(i, Math.round(d.t) & 0xFFFF, true);
+  return b;
+}
+/*PARSER-END*/
+
+const $ = (id) => document.getElementById(id);
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch(e){ return false; } }
+};
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+const hex = (dv) => { let s = ''; for(let i = 0; i < dv.byteLength; i++) s += dv.getUint8(i).toString(16).padStart(2, '0') + ' '; return s.trim(); };
+
+const FTMS = 0x1826, ROWER = 0x2ad1, HRS = 0x180d, HRM = 0x2a37;
+const DOMYOS_OLD = '49535343-fe7d-4ae5-8fa9-9fafd205e455';
+const OPTIONAL = [FTMS, HRS, 0x180a, 0x180f, DOMYOS_OLD];
+
+let framed = true; try{ framed = window.self !== window.top; }catch(e){ framed = true; }
+let policyOk = true; try{ if(document.featurePolicy && document.featurePolicy.allowsFeature) policyOk = document.featurePolicy.allowsFeature('bluetooth'); }catch(e){}
+const btUsable = !!navigator.bluetooth && policyOk;
+
+const cfg = Object.assign({ weight: 80, autoStart: true }, store.get('vg.cfg', {}));
+let history = store.get('vg.hist', []); if(!Array.isArray(history)) history = [];
+
+const L = { power: null, spm: null, pace: null, dist: null, kcal: null, kcalH: null, hr: null, strokes: null };
+const S = { conn: 'idle', msg: '', device: null, userOff: false, rcToken: 0, opening: false, lastPacket: 0, session: null, hrExt: null, hrExtAt: 0, hrDev: null };
+const G = { name: '–', services: [], count: 0, lastHex: '–', fields: new Set() };
+const trace = [];
+const logLines = [];
+let lastTick = performance.now(), renderQueued = false, wake = null, demoTimer = null, stopArmed = 0, toastTimer = 0;
+
+function log(msg){
+  const t = new Date().toTimeString().slice(0, 8);
+  logLines.push(t + '  ' + msg); if(logLines.length > 250) logLines.shift();
+  $('log').textContent = logLines.join('\n');
+}
+function toast(msg, ms){
+  const el = $('toast'); el.textContent = msg; el.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, ms || 3500);
+}
+function setConn(state, msg){ S.conn = state; S.msg = msg || ''; queueRender(); }
+
+/* ---------- formati ---------- */
+function fmtTime(s){ s = Math.max(0, Math.floor(s)); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(x).padStart(2, '0'); }
+function fmtPace(s){ if(s == null || !isFinite(s) || s <= 0 || s > 900) return '–:––'; s = Math.round(s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+const int = (v) => (v == null || !isFinite(v)) ? '–' : String(Math.round(v));
+const kcalRate = (p) => 3.4416 * Math.max(0, p || 0) + 3.779 * cfg.weight; // Concept2: 4·W·0,8604 + 300, con 300 riscalato sul peso
+
+/* ---------- dati ---------- */
+function onRowerData(dv){
+  let o; try{ o = parseRower(dv); }catch(e){ log('Pacchetto illeggibile: ' + e.message); return; }
+  if(!o) return;
+  G.count++; G.lastHex = hex(dv); o.fields.forEach(x => G.fields.add(x));
+  if(G.count <= 3 || o.truncated) log('Pacchetto ' + G.count + (o.truncated ? ' TRONCATO' : '') + ': ' + G.lastHex);
+  for(const k of ['power', 'spm', 'pace', 'dist', 'kcal', 'kcalH', 'strokes']) if(o[k] !== undefined) L[k] = o[k];
+  if(o.hr !== undefined) L.hr = o.hr > 0 ? o.hr : null;
+  S.lastPacket = performance.now();
+  queueRender();
+}
+function derive(){
+  const now = performance.now();
+  const stale = S.lastPacket === 0 || now - S.lastPacket > 4000;
+  let power = stale ? null : L.power, pace = stale ? null : L.pace, spm = stale ? null : L.spm, powerEst = false, paceEst = false;
+  if(pace != null && (pace <= 0 || pace > 900)) pace = null;
+  if(power != null && power < 0) power = 0;
+  if(power == null && pace != null){ power = 2.8 / Math.pow(pace / 500, 3); powerEst = true; }
+  if(pace == null && power > 0){ pace = 500 * Math.cbrt(2.8 / power); paceEst = true; }
+  const active = !stale && (spm != null ? spm > 0 : (power || 0) > 0);
+  let hr = (S.hrExt && now - S.hrExtAt < 6000) ? S.hrExt : (stale ? null : L.hr);
+  return { power, pace, spm, powerEst, paceEst, active, stale, hr, hrSrc: (S.hrExt && now - S.hrExtAt < 6000) ? 'cardio' : 'vogatore' };
+}
+function newSession(){
+  return { startedAt: Date.now(), state: 'running', demo: S.conn === 'demo', moving: 0,
+    base: { dist: null, kcal: null, strokes: null }, mach: { dist: 0, kcal: 0, strokes: 0 }, seen: { dist: false, kcal: false, strokes: false },
+    est: { dist: 0, kcal: 0, strokes: 0 }, sumP: 0, nP: 0, maxP: 0, sumSpm: 0, nSpm: 0, sumHr: 0, nHr: 0, samples: [] };
+}
+function counter(s, key, val, maxJump){
+  if(val == null) return;
+  s.seen[key] = true;
+  const prev = s.base[key]; s.base[key] = val;
+  if(prev == null) return;
+  const d = val - prev;
+  if(d > 0 && d <= maxJump) s.mach[key] += d; // un azzeramento o un salto anomalo del contatore non viene accreditato
+}
+function total(s, key, minEst){ return (s.seen[key] && (s.mach[key] > 0 || s.est[key] < minEst)) ? s.mach[key] : s.est[key]; }
+function fromMachine(s, key, minEst){ return s.seen[key] && (s.mach[key] > 0 || s.est[key] < minEst); }
+
+function tick(){
+  const now = performance.now(); let dt = (now - lastTick) / 1000; lastTick = now;
+  if(!(dt > 0)) dt = 0; if(dt > 5) dt = 5;
+  const d = derive();
+  const live = S.conn === 'connected' || S.conn === 'demo';
+  if(live && !d.stale){ trace.push(d.active ? Math.round(d.power || 0) : 0); if(trace.length > 300) trace.shift(); }
+  if(!S.session && cfg.autoStart && live && d.active) startSession(true);
+  const s = S.session;
+  if(s && s.state === 'running' && !d.stale){
+    counter(s, 'dist', L.dist, 200); counter(s, 'kcal', L.kcal, 30); counter(s, 'strokes', L.strokes, 30);
+    if(d.active){
+      s.moving += dt;
+      if(d.pace) s.est.dist += 500 / d.pace * dt;
+      if(d.power != null) s.est.kcal += kcalRate(d.power) / 3600 * dt;
+      if(d.spm) s.est.strokes += d.spm / 60 * dt;
+      if(d.power != null){ s.sumP += d.power; s.nP++; if(d.power > s.maxP) s.maxP = d.power; }
+      if(d.spm){ s.sumSpm += d.spm; s.nSpm++; }
+      if(d.hr){ s.sumHr += d.hr; s.nHr++; }
+      s.samples.push([Math.round(s.moving), Math.round(d.power || 0), Math.round((d.spm || 0) * 10) / 10, d.pace ? Math.round(d.pace * 10) / 10 : 0,
+        Math.round(total(s, 'dist', 30)), Math.round(total(s, 'kcal', 5) * 10) / 10, d.hr ? Math.round(d.hr) : 0]);
+    }
+  }
+  if(stopArmed && Date.now() > stopArmed) stopArmed = 0;
+  render(d);
+}
+
+/* ---------- sessione ---------- */
+function startSession(auto){
+  S.session = newSession(); stopArmed = 0; requestWake();
+  log('Allenamento avviato' + (auto ? ' (automatico)' : ''));
+  queueRender();
+}
+function togglePause(){
+  const s = S.session; if(!s) return;
+  if(s.state === 'running'){ s.state = 'paused'; }
+  else { s.state = 'running'; s.base = { dist: null, kcal: null, strokes: null }; requestWake(); }
+  queueRender();
+}
+function stopSession(){
+  const s = S.session; if(!s) return;
+  S.session = null; stopArmed = 0; releaseWake();
+  if(s.demo){ toast('Allenamento demo terminato: non viene salvato.'); queueRender(); return; }
+  if(s.moving < 10){ toast('Meno di 10 secondi di voga: non salvato.'); queueRender(); return; }
+  const dist = total(s, 'dist', 30), kcal = total(s, 'kcal', 5);
+  const step = Math.max(1, Math.ceil(s.samples.length / 720));
+  const rec = { id: s.startedAt, dur: Math.round(s.moving), dist: Math.round(dist), kcal: Math.round(kcal), kcalSrc: fromMachine(s, 'kcal', 5) ? 'vogatore' : 'stima',
+    avgP: s.nP ? Math.round(s.sumP / s.nP) : null, maxP: Math.round(s.maxP) || null, avgSpm: s.nSpm ? Math.round(s.sumSpm / s.nSpm * 10) / 10 : null,
+    avgPace: dist > 0 ? Math.round(500 * s.moving / dist) : null, avgHr: s.nHr ? Math.round(s.sumHr / s.nHr) : null,
+    strokes: Math.round(total(s, 'strokes', 10)), samples: s.samples.filter((_, i) => i % step === 0) };
+  history.unshift(rec); if(history.length > 50) history.length = 50;
+  if(!store.set('vg.hist', history)) toast('Allenamento concluso, ma il telefono non ha permesso di salvarlo nello storico.', 6000);
+  else toast('Allenamento salvato nello storico.');
+  log('Allenamento concluso: ' + fmtTime(rec.dur) + ', ' + rec.dist + ' m, ' + rec.kcal + ' kcal');
+  renderHistory(); queueRender();
+}
+async function requestWake(){ try{ if('wakeLock' in navigator && !wake){ wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => { wake = null; }); } }catch(e){ wake = null; } }
+function releaseWake(){ try{ if(wake) wake.release(); }catch(e){} wake = null; }
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && S.session && S.session.state === 'running') requestWake(); });
+
+/* ---------- Bluetooth ---------- */
+function withTimeout(p, ms, dev){
+  let t; const to = new Promise((_, rej) => { t = setTimeout(() => { try{ dev && dev.gatt.disconnect(); }catch(e){} rej(new Error('Nessuna risposta dal dispositivo entro ' + Math.round(ms / 1000) + ' s')); }, ms); });
+  return Promise.race([p, to]).finally(() => clearTimeout(t));
+}
+function btError(e){
+  const n = e && e.name;
+  if(n === 'NotFoundError') return 'Nessun dispositivo selezionato.';
+  if(n === 'SecurityError' || n === 'NotAllowedError') return 'Il Bluetooth è bloccato in questa finestra. Apri la pagina direttamente in Bluefy.';
+  return (e && e.message) || 'Errore Bluetooth sconosciuto.';
+}
+async function openGatt(dev, quiet){
+  S.opening = true;
+  try{
+    if(!quiet) setConn('connecting', 'Collegamento a ' + (dev.name || 'vogatore') + '…');
+    const server = await withTimeout(dev.gatt.connect(), 15000, dev);
+    G.name = dev.name || '(senza nome)'; log('Collegato a ' + G.name);
+    let svc = null;
+    try{ svc = await server.getPrimaryService(FTMS); }catch(e){ svc = null; }
+    if(!svc){ await rawMode(server); return; }
+    G.services = ['FTMS (standard)'];
+    let ch = null;
+    try{ ch = await svc.getCharacteristic(ROWER); }catch(e){ ch = null; }
+    if(!ch){
+      let list = []; try{ list = (await svc.getCharacteristics()).map(c => c.uuid.slice(4, 8)); }catch(e){}
+      log('FTMS presente ma senza Rower Data (2ad1). Caratteristiche: ' + (list.join(', ') || 'nessuna leggibile'));
+      setConn('raw', 'Collegato, ma il vogatore non invia dati da vogatore standard'); return;
+    }
+    ch.addEventListener('characteristicvaluechanged', (ev) => onRowerData(ev.target.value));
+    await ch.startNotifications();
+    setConn('connected', G.name);
+  } finally { S.opening = false; }
+}
+// Senza FTMS: si registra cosa espone il dispositivo, così il protocollo proprietario si può decodificare in un secondo passaggio.
+async function rawMode(server){
+  let svcs = []; try{ svcs = await server.getPrimaryServices(); }catch(e){}
+  G.services = svcs.map(s => s.uuid);
+  log('Servizio FTMS assente. Servizi visibili: ' + (G.services.join(', ') || 'nessuno'));
+  for(const s of svcs){
+    if(s.uuid !== DOMYOS_OLD) continue;
+    let chars = []; try{ chars = await s.getCharacteristics(); }catch(e){}
+    for(const c of chars){
+      log('Caratteristica ' + c.uuid + (c.properties.notify ? ' [notify]' : '') + (c.properties.write || c.properties.writeWithoutResponse ? ' [write]' : ''));
+      if(!c.properties.notify) continue;
+      let n = 0;
+      c.addEventListener('characteristicvaluechanged', (ev) => { G.count++; G.lastHex = hex(ev.target.value); if(n++ < 40) log('RAW ' + c.uuid.slice(4, 8) + ': ' + G.lastHex); queueRender(); });
+      try{ await c.startNotifications(); }catch(e){ log('Notifiche non attivabili su ' + c.uuid + ': ' + e.message); }
+    }
+  }
+  setConn('raw', 'Collegato, ma con protocollo non standard: vedi Diagnostica');
+  $('dDiag').open = true;
+}
+function onDisc(){
+  if(S.userOff || S.opening) return;
+  log('Connessione persa');
+  reconnectLoop();
+}
+async function reconnectLoop(){
+  const token = ++S.rcToken; let n = 0;
+  while(token === S.rcToken && !S.userOff && n < 40){
+    n++; setConn('reconnecting', 'Riconnessione, tentativo ' + n + '…');
+    try{ await openGatt(S.device, true); if(token === S.rcToken) return; }catch(e){ log('Tentativo ' + n + ' fallito: ' + btError(e)); }
+    if(token !== S.rcToken) return;
+    await sleep(Math.min(10000, 1000 * Math.pow(2, Math.min(n, 4))));
+  }
+  if(token === S.rcToken && !S.userOff) setConn('idle', 'Vogatore non raggiungibile');
+}
+function adopt(dev){
+  if(S.device && S.device !== dev){ try{ S.device.removeEventListener('gattserverdisconnected', onDisc); S.device.gatt.disconnect(); }catch(e){} }
+  S.device = dev; S.userOff = false; S.rcToken++;
+  dev.removeEventListener('gattserverdisconnected', onDisc); dev.addEventListener('gattserverdisconnected', onDisc);
+  store.set('vg.dev', { id: dev.id, name: dev.name || '' });
+}
+async function connectFlow(all){
+  if(!btUsable){ showNotice(); toast('Qui il Bluetooth non è disponibile.'); return; }
+  stopDemo();
+  try{
+    setConn('connecting', 'Scegli il vogatore dall\'elenco…');
+    const opts = all ? { acceptAllDevices: true, optionalServices: OPTIONAL }
+      : { filters: [{ services: [FTMS] }, { namePrefix: 'Domyos' }, { namePrefix: 'DOMYOS' }, { namePrefix: 'domyos' }], optionalServices: OPTIONAL };
+    const dev = await navigator.bluetooth.requestDevice(opts);
+    adopt(dev);
+    await openGatt(dev, false);
+  }catch(e){
+    const m = btError(e); log('Collegamento non riuscito: ' + m); toast(m, 5000);
+    if(S.conn !== 'connected' && S.conn !== 'raw') setConn('idle');
+  }
+}
+function disconnect(){
+  S.userOff = true; S.rcToken++;
+  try{ if(S.device && S.device.gatt.connected) S.device.gatt.disconnect(); }catch(e){}
+  S.lastPacket = 0; setConn('idle'); log('Scollegato');
+}
+async function autoConnect(){
+  if(!btUsable || !navigator.bluetooth.getDevices) return;
+  try{
+    const devs = await navigator.bluetooth.getDevices(); if(!devs.length) return;
+    const saved = store.get('vg.dev', null);
+    const dev = devs.find(x => saved && x.id === saved.id) || devs[0];
+    adopt(dev); const token = S.rcToken;
+    setConn('connecting', 'Cerco ' + (dev.name || 'il vogatore') + '…');
+    try{ await openGatt(dev, true); }
+    catch(e){ log('Collegamento automatico non riuscito: ' + btError(e)); if(token === S.rcToken) setConn('idle', 'Tocca Collega vogatore'); }
+  }catch(e){ log('Collegamento automatico non disponibile: ' + btError(e)); }
+}
+async function connectHr(){
+  if(!btUsable){ toast('Qui il Bluetooth non è disponibile.'); return; }
+  try{
+    const dev = await navigator.bluetooth.requestDevice({ filters: [{ services: [HRS] }] });
+    S.hrDev = dev;
+    const open = async () => {
+      const srv = await withTimeout(dev.gatt.connect(), 15000, dev);
+      const ch = await (await srv.getPrimaryService(HRS)).getCharacteristic(HRM);
+      ch.addEventListener('characteristicvaluechanged', (ev) => {
+        const v = ev.target.value; if(v.byteLength < 2) return;
+        const hr = (v.getUint8(0) & 1) ? (v.byteLength >= 3 ? v.getUint16(1, true) : 0) : v.getUint8(1);
+        if(hr > 0){ S.hrExt = hr; S.hrExtAt = performance.now(); queueRender(); }
+      });
+      await ch.startNotifications();
+      log('Cardio collegato: ' + (dev.name || 'senza nome'));
+    };
+    dev.addEventListener('gattserverdisconnected', async () => {
+      log('Cardio scollegato');
+      for(let n = 0; n < 10 && S.hrDev === dev; n++){ await sleep(3000); try{ await open(); return; }catch(e){} }
+    });
+    await open(); toast('Cardiofrequenzimetro collegato.');
+  }catch(e){ const m = btError(e); log('Cardio: ' + m); toast(m, 5000); }
+}
+
+/* ---------- demo ---------- */
+const D = { t: 0, power: 160, spm: 23, pace: 130, dist: 0, kcal: 0, kcalH: 850, strokes: 0, hr: 118 };
+function simStep(dt){
+  D.t += dt; const ph = D.t / 37;
+  D.power = 165 + 28 * Math.sin(ph) + 12 * Math.sin(D.t / 7.3) + (Math.random() - 0.5) * 10;
+  D.spm = 23 + 2.2 * Math.sin(ph + 0.6) + (Math.random() - 0.5) * 0.8;
+  D.pace = 500 * Math.cbrt(2.8 / D.power); D.dist += 500 / D.pace * dt;
+  D.kcalH = 3.4416 * D.power + 300; D.kcal += D.kcalH / 3600 * dt; D.strokes += D.spm / 60 * dt;
+  D.hr = Math.min(156, 118 + D.t / 25) + 2 * Math.sin(D.t / 11);
+}
+function startDemo(){
+  if(S.conn === 'connected' || S.conn === 'raw' || S.conn === 'connecting' || S.conn === 'reconnecting') disconnect();
+  if(demoTimer) return;
+  if(!trace.length){ for(let i = 0; i < 150; i++){ simStep(1); trace.push(Math.round(D.power)); } D.dist = 0; D.kcal = 0; D.strokes = 0; }
+  setConn('demo'); log('Demo avviata (dati simulati)');
+  demoTimer = setInterval(() => { simStep(0.5); onRowerData(demoPacket(D)); }, 500);
+}
+function stopDemo(){
+  if(!demoTimer) return;
+  clearInterval(demoTimer); demoTimer = null;
+  if(S.session && S.session.demo) S.session = null;
+  trace.length = 0; S.lastPacket = 0; G.count = 0; G.fields.clear();
+  if(S.conn === 'demo') setConn('idle');
+}
+
+/* ---------- interfaccia ---------- */
+function queueRender(){ if(renderQueued) return; renderQueued = true; requestAnimationFrame(() => { renderQueued = false; render(derive()); }); }
+function showNotice(){
+  const el = $('notice'); el.hidden = false; el.textContent = '';
+  const b = document.createElement('strong'); b.textContent = 'Dati simulati. ';
+  el.append(b, navigator.bluetooth
+    ? 'In questa finestra il Bluetooth è bloccato. Per collegare il vogatore apri la pagina direttamente in Bluefy.'
+    : 'Questo browser non dà il Bluetooth alle pagine web. Su iPhone apri la pagina in Bluefy; su Mac o Android in Chrome.');
+}
+const STATUS = { idle: 'Non collegato', connecting: 'Collegamento…', connected: 'Collegato', reconnecting: 'Riconnessione…', demo: 'Demo, dati simulati', raw: 'Collegato' };
+function render(d){
+  const s = S.session;
+  $('dot').dataset.s = S.conn;
+  $('statusText').textContent = S.conn === 'connected' ? 'Collegato a ' + (S.msg || 'vogatore') : (S.msg || STATUS[S.conn]);
+  $('btnConnect').textContent = (S.conn === 'connected' || S.conn === 'raw') ? 'Scollega' : (S.conn === 'connecting' || S.conn === 'reconnecting') ? 'Annulla' : 'Collega vogatore';
+  $('btnDemo').textContent = S.conn === 'demo' ? 'Ferma demo' : 'Avvia demo';
+
+  $('vPower').textContent = d.active ? int(d.power) : (d.stale ? '–' : '0');
+  $('powerTag').hidden = !(d.active && d.powerEst);
+  $('vAvgP').textContent = s && s.nP ? int(s.sumP / s.nP) : '–';
+  $('vMaxP').textContent = s && s.maxP ? int(s.maxP) : '–';
+  $('vState').textContent = !s ? (d.active ? 'stai vogando' : 'in attesa') : s.state === 'paused' ? 'in pausa' : d.active ? 'allenamento in corso' : 'fermo, tempo sospeso';
+
+  $('vPace').textContent = d.active ? fmtPace(d.pace) : '–:––';
+  const dist = s ? total(s, 'dist', 30) : 0;
+  $('sPace').textContent = (s && dist > 20 ? 'medio ' + fmtPace(500 * s.moving / dist) : '') + (d.active && d.paceEst ? ' · stimato dalla potenza' : '');
+  $('vSpm').textContent = d.spm != null && !d.stale ? int(d.spm) : '–';
+  $('sSpm').textContent = s && s.nSpm ? 'media ' + (s.sumSpm / s.nSpm).toFixed(1).replace('.', ',') : '';
+  $('vTime').textContent = fmtTime(s ? s.moving : 0);
+  $('sTime').textContent = s ? 'tempo di voga effettivo' : '';
+  $('vDist').textContent = int(dist);
+  $('sDist').textContent = s && dist > 0 ? (fromMachine(s, 'dist', 30) ? 'dal vogatore' : 'stimata dal passo') : '';
+  const kcal = s ? total(s, 'kcal', 5) : 0;
+  $('vKcal').textContent = int(kcal);
+  $('sKcal').textContent = s && kcal > 0 ? (fromMachine(s, 'kcal', 5) ? 'dal vogatore' : 'stima, ' + String(cfg.weight).replace('.', ',') + ' kg') : '';
+  const machH = !d.stale && L.kcalH != null && L.kcalH > 0;
+  $('vKcalH').textContent = d.active ? int(machH ? L.kcalH : (d.power != null ? kcalRate(d.power) : null)) : '–';
+  $('sKcalH').textContent = d.active ? (machH ? 'dal vogatore' : 'stima dalla potenza') : '';
+  $('vHr').textContent = d.hr ? int(d.hr) : '–';
+  $('sHr').textContent = d.hr ? ('da ' + d.hrSrc + (s && s.nHr ? ' · media ' + int(s.sumHr / s.nHr) : '')) : 'nessun sensore';
+  $('vStrokes').textContent = int(s ? total(s, 'strokes', 10) : 0);
+  $('sStrokes').textContent = s && s.moving > 0 && dist > 0 && total(s, 'strokes', 10) > 0 ? (dist / total(s, 'strokes', 10)).toFixed(1).replace('.', ',') + ' m per colpo' : '';
+
+  const main = $('btnMain'), stop = $('btnStop');
+  main.textContent = !s ? 'Inizia' : s.state === 'running' ? 'Pausa' : 'Riprendi';
+  stop.hidden = !s; stop.textContent = stopArmed ? 'Conferma fine' : 'Termina';
+
+  $('gName').textContent = G.name;
+  $('gSvc').textContent = G.services.length ? G.services.join(', ') : '–';
+  $('gCount').textContent = String(G.count);
+  $('gHex').textContent = G.lastHex;
+  $('gFields').textContent = G.fields.size ? Array.from(G.fields).join(', ') : '–';
+  drawChart(s);
+}
+function tok(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function drawChart(s){
+  const c = $('chart'), r = c.getBoundingClientRect(); if(!r.width || !r.height) return;
+  const dpr = window.devicePixelRatio || 1, W = Math.round(r.width * dpr), H = Math.round(r.height * dpr);
+  if(c.width !== W || c.height !== H){ c.width = W; c.height = H; }
+  const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const w = r.width, h = r.height; g.clearRect(0, 0, w, h);
+  const cMuted = tok('--muted'), cLine = tok('--line'), cWater = tok('--water'), cSoft = tok('--water-soft'), cWood = tok('--wood');
+  const pl = 36, pr = 10, pt = 10, pb = 20, pw = w - pl - pr, ph = h - pt - pb, N = 300;
+  let mx = 100; for(const v of trace) if(v > mx) mx = v;
+  const steps = [100, 150, 200, 300, 400, 500, 600, 800, 1000, 1500]; let top = steps[steps.length - 1]; for(const st of steps){ if(st >= mx){ top = st; break; } }
+  const X = (i) => pl + (i + N - trace.length) / (N - 1) * pw, Y = (v) => pt + ph - Math.min(v, top) / top * ph;
+  g.font = '12px ' + (tok('--txt') || 'sans-serif'); g.textBaseline = 'middle'; g.lineWidth = 1;
+  for(const v of [0, top / 2, top]){
+    g.strokeStyle = cLine; g.beginPath(); g.moveTo(pl, Y(v) + 0.5); g.lineTo(w - pr, Y(v) + 0.5); g.stroke();
+    g.fillStyle = cMuted; g.textAlign = 'right'; g.fillText(String(v), pl - 6, Y(v));
+  }
+  g.textBaseline = 'alphabetic'; g.fillStyle = cMuted;
+  g.textAlign = 'left'; g.fillText('5 min fa', pl, h - 4);
+  g.textAlign = 'center'; g.fillText('2:30 fa', pl + pw / 2, h - 4);
+  g.textAlign = 'right'; g.fillText('adesso', w - pr, h - 4);
+  if(trace.length < 2) return;
+  g.beginPath(); g.moveTo(X(0), Y(0)); for(let i = 0; i < trace.length; i++) g.lineTo(X(i), Y(trace[i])); g.lineTo(X(trace.length - 1), Y(0)); g.closePath(); g.fillStyle = cSoft; g.fill();
+  g.beginPath(); for(let i = 0; i < trace.length; i++){ if(i) g.lineTo(X(i), Y(trace[i])); else g.moveTo(X(i), Y(trace[i])); } g.strokeStyle = cWater; g.lineWidth = 2; g.lineJoin = 'round'; g.stroke();
+  if(s && s.nP){ const a = s.sumP / s.nP; g.setLineDash([5, 4]); g.strokeStyle = cWood; g.lineWidth = 1.5; g.beginPath(); g.moveTo(pl, Y(a)); g.lineTo(w - pr, Y(a)); g.stroke(); g.setLineDash([]); }
+  const li = trace.length - 1; g.beginPath(); g.arc(X(li), Y(trace[li]), 4, 0, Math.PI * 2); g.fillStyle = cWood; g.fill();
+}
+
+function csvOf(rec){
+  const n = (v) => String(v).replace('.', ',');
+  const rows = ['tempo_s;potenza_W;colpi_min;passo_s_500m;distanza_m;kcal;fc_bpm'];
+  for(const r of (rec.samples || [])) rows.push(r.map(n).join(';'));
+  return rows.join('\n');
+}
+function renderHistory(){
+  const ul = $('hist'); ul.textContent = ''; $('histEmpty').hidden = history.length > 0;
+  for(const rec of history){
+    const li = document.createElement('li');
+    const h1 = document.createElement('div'); h1.className = 'h1';
+    const dt = new Date(rec.id);
+    h1.textContent = dt.toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' }) + ', ' + dt.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+    const h2 = document.createElement('div'); h2.className = 'h2';
+    h2.textContent = [fmtTime(rec.dur), rec.dist + ' m', rec.kcal + ' kcal' + (rec.kcalSrc === 'stima' ? ' (stima)' : ''), rec.avgP != null ? rec.avgP + ' W medi' : null,
+      rec.avgPace ? fmtPace(rec.avgPace) + ' /500 m' : null, rec.avgSpm ? String(rec.avgSpm).replace('.', ',') + ' colpi/min' : null, rec.avgHr ? rec.avgHr + ' bpm' : null].filter(Boolean).join(' · ');
+    const acts = document.createElement('div'); acts.className = 'acts';
+    const bCopy = document.createElement('button'); bCopy.type = 'button'; bCopy.className = 'btn small'; bCopy.textContent = 'Copia CSV';
+    bCopy.addEventListener('click', async () => {
+      const csv = csvOf(rec);
+      try{ await navigator.clipboard.writeText(csv); toast('CSV copiato negli appunti.'); }
+      catch(e){ const ta = $('csvOut'); ta.hidden = false; ta.value = csv; ta.focus(); ta.select(); toast('Copia non permessa: il CSV è nel riquadro in fondo allo storico, selezionato.', 5000); }
+    });
+    acts.append(bCopy);
+    if(!framed){
+      const bDl = document.createElement('button'); bDl.type = 'button'; bDl.className = 'btn small'; bDl.textContent = 'Scarica CSV';
+      bDl.addEventListener('click', () => {
+        try{
+          const url = URL.createObjectURL(new Blob([csvOf(rec)], { type: 'text/csv;charset=utf-8' }));
+          const a = document.createElement('a'); a.href = url; a.download = 'vogata-' + dt.toISOString().slice(0, 16).replace(/[:T]/g, '-') + '.csv';
+          document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 5000);
+        }catch(e){ toast('Download non riuscito: usa Copia CSV.'); }
+      });
+      acts.append(bDl);
+    }
+    const bDel = document.createElement('button'); bDel.type = 'button'; bDel.className = 'btn small danger'; bDel.textContent = 'Elimina';
+    let armed = 0;
+    bDel.addEventListener('click', () => {
+      if(Date.now() < armed){ history = history.filter(x => x.id !== rec.id); store.set('vg.hist', history); renderHistory(); return; }
+      armed = Date.now() + 3000; bDel.textContent = 'Conferma'; setTimeout(() => { bDel.textContent = 'Elimina'; }, 3000);
+    });
+    acts.append(bDel);
+    li.append(h1, h2, acts); ul.append(li);
+  }
+}
+
+/* ---------- eventi ---------- */
+$('btnConnect').addEventListener('click', () => {
+  if(S.conn === 'connected' || S.conn === 'raw' || S.conn === 'connecting' || S.conn === 'reconnecting') disconnect(); else connectFlow(false);
+});
+$('btnAll').addEventListener('click', () => connectFlow(true));
+$('btnHr').addEventListener('click', connectHr);
+$('btnDemo').addEventListener('click', () => { if(S.conn === 'demo') stopDemo(); else startDemo(); });
+$('btnMain').addEventListener('click', () => { if(!S.session) startSession(false); else togglePause(); });
+$('btnStop').addEventListener('click', () => { if(stopArmed && Date.now() < stopArmed) stopSession(); else { stopArmed = Date.now() + 3000; queueRender(); } });
+$('btnCopyLog').addEventListener('click', async () => {
+  const txt = 'Dispositivo: ' + G.name + '\nServizi: ' + G.services.join(', ') + '\nPacchetti: ' + G.count + '\nUltimo: ' + G.lastHex + '\nCampi: ' + Array.from(G.fields).join(', ') + '\n\n' + logLines.join('\n');
+  try{ await navigator.clipboard.writeText(txt); toast('Registro copiato.'); }
+  catch(e){ const sel = window.getSelection(), rg = document.createRange(); rg.selectNodeContents($('log')); sel.removeAllRanges(); sel.addRange(rg); toast('Copia non permessa: il registro è selezionato, copialo a mano.', 5000); }
+});
+$('inWeight').value = cfg.weight; $('inAuto').checked = !!cfg.autoStart;
+$('inWeight').addEventListener('change', () => { const v = parseFloat(String($('inWeight').value).replace(',', '.')); if(v >= 35 && v <= 200){ cfg.weight = v; store.set('vg.cfg', cfg); } else { $('inWeight').value = cfg.weight; toast('Inserisci un peso tra 35 e 200 kg.'); } });
+$('inAuto').addEventListener('change', () => { cfg.autoStart = $('inAuto').checked; store.set('vg.cfg', cfg); });
+window.addEventListener('resize', queueRender);
+
+renderHistory();
+log('Bluetooth web: ' + (navigator.bluetooth ? (policyOk ? 'disponibile' : 'presente ma bloccato in questa finestra') : 'assente in questo browser'));
+if(btUsable) autoConnect(); else { showNotice(); startDemo(); }
+setInterval(tick, 1000); tick();
+})();
+</script>
+
+</body>
+</html>
