@@ -74,7 +74,9 @@ summary{font-weight:600;font-size:17px;cursor:pointer;padding:4px 0}
 .sec{display:flex;flex-direction:column;gap:10px;padding-top:10px}
 .row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .row label{font-weight:500}
-input[type=number]{font:inherit;width:92px;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+input[type=number],input[type=url]{font:inherit;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+input[type=number]{width:92px}
+input[type=url]{flex:1;min-width:0}
 input[type=checkbox]{width:22px;height:22px;accent-color:var(--water)}
 .hint{font-size:14px;color:var(--muted);margin:0}
 .hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
@@ -92,6 +94,32 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
 .bar .in{max-width:720px;margin:0 auto;display:flex;gap:10px}
 .bar .btn{flex:1;min-height:56px;font-size:19px;font-family:var(--num);letter-spacing:.04em;text-transform:uppercase}
 .toast{position:fixed;left:16px;right:16px;bottom:calc(92px + env(safe-area-inset-bottom,0px));margin:0 auto;max-width:520px;background:var(--ink);color:var(--bg);border-radius:10px;padding:10px 14px;font-size:15px;z-index:6;text-align:center}
+
+/* Modalità video: il video resta in alto, i dati si compattano sotto (o a fianco, col telefono in orizzontale). */
+.videobox{position:sticky;top:env(safe-area-inset-top,0px);z-index:4;background:#000;border-radius:10px;overflow:hidden;aspect-ratio:16/9;max-width:100%}
+.videobox iframe{display:block;width:100%;height:100%;border:0}
+.wrap.video{gap:8px}
+.wrap.video .hero{padding:6px 14px 8px}
+.wrap.video .hero .big{font-size:60px}
+.wrap.video .hero .unit{font-size:22px}
+.wrap.video .hero .side{font-size:13px}
+.wrap.video .grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.wrap.video .tile{padding-top:4px}
+.wrap.video .tile .lab{font-size:10.5px;letter-spacing:.05em;white-space:nowrap}
+.wrap.video .tile .v{font-size:28px}
+.wrap.video .tile .s,.wrap.video .chartbox{display:none}
+@media (orientation:landscape) and (max-height:520px){
+  .wrap.video{max-width:none;display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);column-gap:12px;align-items:start}
+  .wrap.video > *{grid-column:2}
+  .wrap.video > .videobox{grid-column:1;grid-row:1 / span 8;top:calc(env(safe-area-inset-top,0px) + 8px)}
+  .wrap.video .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .wrap.video{padding-block:8px 84px}
+  .wrap.video .hero .big{font-size:46px}
+  .wrap.video .tile .v{font-size:24px}
+  .wrap.video .top .btn{min-height:36px;padding:4px 10px;font-size:14px}
+  .bar{padding-top:6px}
+  .bar .btn{min-height:40px;font-size:16px}
+}
 </style>
 </head>
 <body>
@@ -103,6 +131,8 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
   </div>
 
   <div class="notice" id="notice" hidden></div>
+
+  <div class="videobox" id="videoBox" hidden><iframe id="ytFrame" title="Video YouTube" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
 
   <section class="hero" aria-label="Potenza">
     <div>
@@ -117,20 +147,28 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
   </section>
 
   <section class="grid" aria-label="Dati in tempo reale">
-    <div class="tile"><div class="lab">Passo /500 m</div><div class="v" id="vPace">–:––</div><div class="s" id="sPace"></div></div>
-    <div class="tile"><div class="lab">Colpi/min</div><div class="v" id="vSpm">–</div><div class="s" id="sSpm"></div></div>
-    <div class="tile"><div class="lab">Tempo</div><div class="v" id="vTime">0:00</div><div class="s" id="sTime"></div></div>
-    <div class="tile"><div class="lab">Distanza</div><div class="v"><span id="vDist">0</span><small>m</small></div><div class="s" id="sDist"></div></div>
-    <div class="tile"><div class="lab">Calorie</div><div class="v"><span id="vKcal">0</span><small>kcal</small></div><div class="s" id="sKcal"></div></div>
-    <div class="tile"><div class="lab">Consumo kcal/h</div><div class="v" id="vKcalH">–</div><div class="s" id="sKcalH"></div></div>
-    <div class="tile"><div class="lab">Frequenza cardiaca</div><div class="v"><span id="vHr">–</span><small>bpm</small></div><div class="s" id="sHr"></div></div>
-    <div class="tile"><div class="lab">Colpi totali</div><div class="v" id="vStrokes">0</div><div class="s" id="sStrokes"></div></div>
+    <div class="tile"><div class="lab" data-short="Passo">Passo /500 m</div><div class="v" id="vPace">–:––</div><div class="s" id="sPace"></div></div>
+    <div class="tile"><div class="lab" data-short="Colpi/min">Colpi/min</div><div class="v" id="vSpm">–</div><div class="s" id="sSpm"></div></div>
+    <div class="tile"><div class="lab" data-short="Tempo">Tempo</div><div class="v" id="vTime">0:00</div><div class="s" id="sTime"></div></div>
+    <div class="tile"><div class="lab" data-short="Metri">Distanza</div><div class="v"><span id="vDist">0</span><small>m</small></div><div class="s" id="sDist"></div></div>
+    <div class="tile"><div class="lab" data-short="Kcal">Calorie</div><div class="v"><span id="vKcal">0</span><small>kcal</small></div><div class="s" id="sKcal"></div></div>
+    <div class="tile"><div class="lab" data-short="Kcal/h">Consumo kcal/h</div><div class="v" id="vKcalH">–</div><div class="s" id="sKcalH"></div></div>
+    <div class="tile"><div class="lab" data-short="FC">Frequenza cardiaca</div><div class="v"><span id="vHr">–</span><small>bpm</small></div><div class="s" id="sHr"></div></div>
+    <div class="tile"><div class="lab" data-short="Colpi">Colpi totali</div><div class="v" id="vStrokes">0</div><div class="s" id="sStrokes"></div></div>
   </section>
 
   <section class="chartbox" aria-label="Potenza negli ultimi 5 minuti">
     <div class="lab">Potenza, ultimi 5 minuti</div>
     <canvas id="chart" role="img" aria-label="Grafico della potenza negli ultimi 5 minuti"></canvas>
   </section>
+
+  <details id="dVideo">
+    <summary>Video durante l'allenamento</summary>
+    <div class="sec">
+      <p class="hint">Su iPhone l'app registra solo finché resta in primo piano. Per guardare YouTube mentre remi, apri il video qui dentro: in YouTube tocca Condividi, poi Copia link, e incollalo qui sotto.</p>
+      <div class="row"><input id="inVideo" type="url" inputmode="url" autocomplete="off" placeholder="https://youtu.be/…" aria-label="Link del video YouTube"><button class="btn small" id="btnVideo" type="button">Apri video</button></div>
+    </div>
+  </details>
 
   <details id="dHist" open>
     <summary>Storico allenamenti</summary>
@@ -252,7 +290,7 @@ const store = {
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const hex = (dv) => { let s = ''; for(let i = 0; i < dv.byteLength; i++) s += dv.getUint8(i).toString(16).padStart(2, '0') + ' '; return s.trim(); };
 
-const APP_VERSION = 2;
+const APP_VERSION = 3;
 // UUID sempre per esteso: alcuni browser (Bluefy) non accettano gli alias numerici a 16 bit.
 const u16 = (n) => '0000' + n.toString(16).padStart(4, '0') + '-0000-1000-8000-00805f9b34fb';
 const FTMS = u16(0x1826), ROWER = u16(0x2ad1), HRS = u16(0x180d), HRM = u16(0x2a37);
@@ -316,7 +354,7 @@ function derive(){
 function newSession(){
   return { startedAt: Date.now(), state: 'running', demo: S.conn === 'demo', moving: 0,
     base: { dist: null, kcal: null, strokes: null }, mach: { dist: 0, kcal: 0, strokes: 0 }, seen: { dist: false, kcal: false, strokes: false },
-    est: { dist: 0, kcal: 0, strokes: 0 }, sumP: 0, nP: 0, maxP: 0, sumSpm: 0, nSpm: 0, sumHr: 0, nHr: 0, samples: [] };
+    est: { dist: 0, kcal: 0, strokes: 0 }, lastGood: 0, gap: 0, sumP: 0, nP: 0, maxP: 0, sumSpm: 0, nSpm: 0, sumHr: 0, nHr: 0, samples: [] };
 }
 function counter(s, key, val, maxJump){
   if(val == null) return;
@@ -338,7 +376,18 @@ function tick(){
   if(!S.session && cfg.autoStart && live && d.active) startSession(true);
   const s = S.session;
   if(s && s.state === 'running' && !d.stale){
-    counter(s, 'dist', L.dist, 200); counter(s, 'kcal', L.kcal, 30); counter(s, 'strokes', L.strokes, 30);
+    // Dopo un buco (app in background, connessione caduta) i totali si recuperano dai contatori del vogatore, che ha continuato a contare.
+    const nowMs = Date.now(), gap = s.lastGood ? (nowMs - s.lastGood) / 1000 : 0; s.lastGood = nowMs;
+    const big = gap > 8, b0 = { dist: s.mach.dist, kcal: s.mach.kcal, strokes: s.mach.strokes };
+    counter(s, 'dist', L.dist, big ? gap * 8 : 200); counter(s, 'kcal', L.kcal, big ? gap * 0.5 + 5 : 30); counter(s, 'strokes', L.strokes, big ? gap + 5 : 30);
+    if(big){
+      const dd = s.mach.dist - b0.dist, dk = s.mach.kcal - b0.kcal, ds = s.mach.strokes - b0.strokes;
+      if(dd > 0 || dk > 0 || ds > 0){
+        s.moving += gap; s.gap += gap;
+        const msg = 'Recuperati dal vogatore ' + Math.round(dd) + ' m e ' + Math.round(dk) + ' kcal per ' + fmtTime(gap) + ' senza app in primo piano.';
+        log(msg); toast(msg, 8000);
+      }
+    }
     if(d.active){
       s.moving += dt;
       if(d.pace) s.est.dist += 500 / d.pace * dt;
@@ -364,7 +413,7 @@ function startSession(auto){
 function togglePause(){
   const s = S.session; if(!s) return;
   if(s.state === 'running'){ s.state = 'paused'; }
-  else { s.state = 'running'; s.base = { dist: null, kcal: null, strokes: null }; requestWake(); }
+  else { s.state = 'running'; s.base = { dist: null, kcal: null, strokes: null }; s.lastGood = 0; requestWake(); }
   queueRender();
 }
 function stopSession(){
@@ -595,7 +644,7 @@ function render(d){
   $('vSpm').textContent = d.spm != null && !d.stale ? int(d.spm) : '–';
   $('sSpm').textContent = s && s.nSpm ? 'media ' + (s.sumSpm / s.nSpm).toFixed(1).replace('.', ',') : '';
   $('vTime').textContent = fmtTime(s ? s.moving : 0);
-  $('sTime').textContent = s ? 'tempo di voga effettivo' : '';
+  $('sTime').textContent = s ? (s.gap > 0 ? 'di cui ' + fmtTime(s.gap) + ' recuperati, senza grafico' : 'tempo di voga effettivo') : '';
   $('vDist').textContent = int(dist);
   $('sDist').textContent = s && dist > 0 ? (fromMachine(s, 'dist', 30) ? 'dal vogatore' : 'stimata dal passo') : '';
   const kcal = s ? total(s, 'kcal', 5) : 0;
@@ -694,7 +743,42 @@ function renderHistory(){
   }
 }
 
+/* ---------- video ---------- */
+/*YT-START*/
+function ytEmbed(url){
+  let u; try{ u = new URL(String(url).trim()); }catch(e){ return null; }
+  const host = u.hostname.replace(/^(www|m|music)\./, ''); let id = null;
+  if(host === 'youtu.be') id = u.pathname.slice(1).split('/')[0];
+  else if(host === 'youtube.com' || host === 'youtube-nocookie.com'){
+    if(u.pathname === '/watch') id = u.searchParams.get('v');
+    else { const m = u.pathname.match(/^\/(shorts|live|embed|v)\/([^/?]+)/); if(m) id = m[2]; }
+  } else return null;
+  if(id && !/^[\w-]{6,20}$/.test(id)) id = null;
+  let list = u.searchParams.get('list'); if(list && !/^[\w-]+$/.test(list)) list = null;
+  if(!id && !list) return null;
+  const t = u.searchParams.get('t') || u.searchParams.get('start');
+  return 'https://www.youtube-nocookie.com/embed/' + (id || 'videoseries') + '?playsinline=1&rel=0' + (list ? '&list=' + list : '') + (t && /^\d+s?$/.test(t) ? '&start=' + parseInt(t, 10) : '');
+}
+/*YT-END*/
+function setVideo(on, src){
+  const box = $('videoBox'), fr = $('ytFrame');
+  if(on){ fr.src = src; box.hidden = false; } else { box.hidden = true; fr.src = 'about:blank'; }
+  document.querySelector('.wrap').classList.toggle('video', on);
+  document.querySelectorAll('.tile .lab').forEach(l => { if(!l.dataset.full) l.dataset.full = l.textContent; l.textContent = on ? (l.dataset.short || l.dataset.full) : l.dataset.full; });
+  $('btnVideo').textContent = on ? 'Chiudi video' : 'Apri video'; S.video = on;
+  if(on){ $('dVideo').open = false; window.scrollTo(0, 0); }
+  queueRender();
+}
+
 /* ---------- eventi ---------- */
+$('btnVideo').addEventListener('click', () => {
+  if(S.video){ setVideo(false); return; }
+  const src = ytEmbed($('inVideo').value);
+  if(!src){ toast('Link non riconosciuto. Incolla un link di YouTube, tipo youtu.be/… oppure youtube.com/watch?v=…', 6000); return; }
+  store.set('vg.video', $('inVideo').value.trim()); setVideo(true, src);
+});
+$('inVideo').value = store.get('vg.video', '') || '';
+$('dVideo').hidden = framed;
 $('btnConnect').addEventListener('click', () => {
   if(S.conn === 'connected' || S.conn === 'raw' || S.conn === 'connecting' || S.conn === 'reconnecting') disconnect(); else connectFlow(false);
 });
