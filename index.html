@@ -95,6 +95,36 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
 .bar .btn{flex:1;min-height:56px;font-size:19px;font-family:var(--num);letter-spacing:.04em;text-transform:uppercase}
 .toast{position:fixed;left:16px;right:16px;bottom:calc(92px + env(safe-area-inset-bottom,0px));margin:0 auto;max-width:520px;background:var(--ink);color:var(--bg);border-radius:10px;padding:10px 14px;font-size:15px;z-index:6;text-align:center}
 
+.coach{background:var(--surface);border:1.5px solid var(--water);border-radius:14px;padding:10px 14px 12px;display:flex;flex-direction:column;gap:8px}
+.coach .chead{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.coach .chead .lab{min-width:0}
+.coach .cclock{font-family:var(--num);font-weight:700;font-size:44px;line-height:.9;font-variant-numeric:tabular-nums}
+.coach .ctarget{font-weight:600;font-size:17px}
+.gauge{position:relative;height:24px;border-radius:6px;background:var(--line);overflow:hidden}
+.gauge .band{position:absolute;top:0;bottom:0;background:var(--water-soft);border-inline:2px solid var(--water)}
+.gauge .mark{position:absolute;top:0;bottom:0;width:6px;margin-left:-3px;background:var(--wood);border-radius:2px;transition:left .6s linear}
+@media (prefers-reduced-motion:reduce){.gauge .mark{transition:none}}
+.ccue{font-weight:600;font-size:18px;min-height:25px}
+.ccue[data-k="ok"]{color:var(--ok)}
+.ccue[data-k="warn"]{color:var(--warn)}
+.ccue[data-k="bad"]{color:var(--bad)}
+.cprog{display:flex;gap:2px;height:8px}
+.cprog i{display:block;border-radius:2px;background:var(--line);min-width:2px}
+.cprog i.work,.cprog i.test{background:var(--muted)}
+.cprog i.done{opacity:.35}
+.cprog i.cur{background:var(--wood)}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.coachcard{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surface);display:flex;flex-direction:column;gap:8px}
+.coachcard h2{margin:0;font-size:19px;line-height:1.25;font-weight:600;text-wrap:balance}
+.coachcard .row{justify-content:flex-start}
+select{font:inherit;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);min-width:0;max-width:100%}
+.wrap.video .coachcard{display:none}
+.wrap.video .coach{padding:6px 12px 8px;gap:5px}
+.wrap.video .coach .cclock{font-size:28px}
+.wrap.video .coach .cprog,.wrap.video .coach .cfoot{display:none}
+.wrap.video .coach .ctarget,.wrap.video .ccue{font-size:15px;min-height:0}
+.wrap.video .gauge{height:14px}
+
 /* Modalità video: il video resta in alto, i dati si compattano sotto (o a fianco, col telefono in orizzontale). */
 .videobox{position:sticky;top:env(safe-area-inset-top,0px);z-index:4;background:#000;border-radius:10px;overflow:hidden;aspect-ratio:16/9;max-width:100%}
 .videobox iframe{display:block;width:100%;height:100%;border:0}
@@ -133,6 +163,39 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
   <div class="notice" id="notice" hidden></div>
 
   <div class="videobox" id="videoBox" hidden><iframe id="ytFrame" title="Video YouTube" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
+
+  <section class="coach" id="coachBox" aria-label="Coach" hidden>
+    <div class="chead"><div class="lab" id="cPhase">Coach</div><div class="cclock" id="cClock">0:00</div></div>
+    <div class="ctarget" id="cTarget"></div>
+    <div class="gauge" aria-hidden="true"><div class="band" id="cBand"></div><div class="mark" id="cMark"></div></div>
+    <div class="ccue" id="cCue" data-k="ok" role="status"></div>
+    <div class="cprog" id="cProg" aria-hidden="true"></div>
+    <div class="row cfoot"><span class="hint" id="cNext"></span><span class="acts"><button class="btn small" id="btnSkip" type="button">Salta fase</button><button class="btn small" id="btnCoachOff" type="button">Chiudi coach</button></span></div>
+  </section>
+
+  <section class="coachcard" id="coachCard" aria-label="Coach">
+    <div class="lab">Coach</div>
+    <h2 id="cRecTitle"></h2>
+    <p class="hint" id="cRecWhy"></p>
+    <p class="hint" id="cRecRef"></p>
+    <div class="row">
+      <select id="selWorkout" aria-label="Allenamento">
+        <option value="auto">Scelta del coach</option>
+        <option value="fondo">Fondo</option>
+        <option value="soglia">Soglia</option>
+        <option value="intervalli">Intervalli</option>
+        <option value="cadenza">Scala di frequenza</option>
+        <option value="test">Test di taratura</option>
+      </select>
+      <select id="selSize" aria-label="Durata">
+        <option value="auto">Durata consigliata</option>
+        <option value="0">Breve</option>
+        <option value="1">Media</option>
+        <option value="2">Lunga</option>
+      </select>
+    </div>
+    <button class="btn primary" id="btnCoachGo" type="button">Allenati con il coach</button>
+  </section>
 
   <section class="hero" aria-label="Potenza">
     <div>
@@ -185,6 +248,12 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
       <div class="row"><label for="inWeight">Peso corporeo (kg)</label><input id="inWeight" type="number" inputmode="decimal" min="35" max="200" step="0.5"></div>
       <p class="hint">Serve solo se il vogatore non invia le calorie: in quel caso le stimo dalla potenza con la formula Concept2 corretta per il peso.</p>
       <div class="row"><label for="inAuto">Avvia da solo al primo colpo</label><input id="inAuto" type="checkbox"></div>
+      <div class="row"><label for="inVoice">Voce e segnali acustici del coach</label><input id="inVoice" type="checkbox"></div>
+      <div class="row"><label for="inHrMax">Frequenza cardiaca massima (bpm)</label><input id="inHrMax" type="number" inputmode="numeric" min="120" max="230" step="1"></div>
+      <div class="row"><label for="inHrRest">Frequenza cardiaca a riposo (bpm)</label><input id="inHrRest" type="number" inputmode="numeric" min="30" max="110" step="1"></div>
+      <p class="hint">Le zone sono calcolate sulla riserva cardiaca (Karvonen). La massima preimpostata è una stima per età (208 − 0,7 × età): sostituiscila con il tuo valore reale se lo conosci.</p>
+      <div class="row"><label for="inRef">Potenza di soglia (W)</label><input id="inRef" type="number" inputmode="numeric" min="0" max="600" step="1" placeholder="auto"></div>
+      <p class="hint">La imposta il coach dopo il test di taratura e poi la aggiorna da solo. Lasciala vuota per farla stimare dallo storico.</p>
       <div class="row"><span>Cardiofrequenzimetro Bluetooth (fascia, o Garmin con "Trasmetti FC")</span><button class="btn small" id="btnHr" type="button">Collega cardio</button></div>
       <div class="row"><span>Il vogatore non compare in elenco?</span><button class="btn small" id="btnAll" type="button">Mostra tutti i dispositivi</button></div>
       <div class="row"><span>Prova senza vogatore</span><button class="btn small" id="btnDemo" type="button">Avvia demo</button></div>
@@ -290,7 +359,7 @@ const store = {
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const hex = (dv) => { let s = ''; for(let i = 0; i < dv.byteLength; i++) s += dv.getUint8(i).toString(16).padStart(2, '0') + ' '; return s.trim(); };
 
-const APP_VERSION = 3;
+const APP_VERSION = 4;
 // UUID sempre per esteso: alcuni browser (Bluefy) non accettano gli alias numerici a 16 bit.
 const u16 = (n) => '0000' + n.toString(16).padStart(4, '0') + '-0000-1000-8000-00805f9b34fb';
 const FTMS = u16(0x1826), ROWER = u16(0x2ad1), HRS = u16(0x180d), HRM = u16(0x2a37);
@@ -301,7 +370,7 @@ let framed = true; try{ framed = window.self !== window.top; }catch(e){ framed =
 let policyOk = true; try{ if(document.featurePolicy && document.featurePolicy.allowsFeature) policyOk = document.featurePolicy.allowsFeature('bluetooth'); }catch(e){}
 const btUsable = !!navigator.bluetooth && policyOk;
 
-const cfg = Object.assign({ weight: 80, autoStart: true }, store.get('vg.cfg', {}));
+const cfg = Object.assign({ weight: 80, autoStart: true, voice: true, hrMax: 182, hrRest: 60, ref: 0, refAt: 0 }, store.get('vg.cfg', {}));
 let history = store.get('vg.hist', []); if(!Array.isArray(history)) history = [];
 
 const L = { power: null, spm: null, pace: null, dist: null, kcal: null, kcalH: null, hr: null, strokes: null };
@@ -401,6 +470,7 @@ function tick(){
     }
   }
   if(stopArmed && Date.now() > stopArmed) stopArmed = 0;
+  coachTick(d);
   render(d);
 }
 
@@ -419,17 +489,25 @@ function togglePause(){
 function stopSession(){
   const s = S.session; if(!s) return;
   S.session = null; stopArmed = 0; releaseWake();
-  if(s.demo){ toast('Allenamento demo terminato: non viene salvato.'); queueRender(); return; }
+  const cres = coachFinish(s);
+  if(s.demo){ toast('Allenamento demo terminato: non viene salvato.' + (cres ? ' ' + cres.note : ''), cres ? 9000 : 3500); queueRender(); return; }
   if(s.moving < 10){ toast('Meno di 10 secondi di voga: non salvato.'); queueRender(); return; }
   const dist = total(s, 'dist', 30), kcal = total(s, 'kcal', 5);
   const step = Math.max(1, Math.ceil(s.samples.length / 720));
   const rec = { id: s.startedAt, dur: Math.round(s.moving), dist: Math.round(dist), kcal: Math.round(kcal), kcalSrc: fromMachine(s, 'kcal', 5) ? 'vogatore' : 'stima',
     avgP: s.nP ? Math.round(s.sumP / s.nP) : null, maxP: Math.round(s.maxP) || null, avgSpm: s.nSpm ? Math.round(s.sumSpm / s.nSpm * 10) / 10 : null,
     avgPace: dist > 0 ? Math.round(500 * s.moving / dist) : null, avgHr: s.nHr ? Math.round(s.sumHr / s.nHr) : null,
-    strokes: Math.round(total(s, 'strokes', 10)), samples: s.samples.filter((_, i) => i % step === 0) };
+    strokes: Math.round(total(s, 'strokes', 10)), coach: cres, samples: s.samples.filter((_, i) => i % step === 0) };
   history.unshift(rec); if(history.length > 50) history.length = 50;
   if(!store.set('vg.hist', history)) toast('Allenamento concluso, ma il telefono non ha permesso di salvarlo nello storico.', 6000);
-  else toast('Allenamento salvato nello storico.');
+  else {
+    let extra = cres ? ' ' + cres.note : '';
+    if(cres && cres.newRef) applyRef(cres.newRef);
+    C.refCache = undefined;
+    const est = estimateRef(history, Date.now());
+    if(est && cfg.ref > 0 && est > cfg.ref && !(cres && cres.newRef && cres.newRef < cres.ref)){ applyRef(est); extra += ' Dallo storico risulti più forte: soglia a ' + est + ' W.'; }
+    toast('Allenamento salvato.' + extra, cres ? 10000 : 3500);
+  }
   log('Allenamento concluso: ' + fmtTime(rec.dur) + ', ' + rec.dist + ' m, ' + rec.kcal + ' kcal');
   renderHistory(); queueRender();
 }
@@ -569,7 +647,13 @@ async function autoConnect(){
 async function connectHr(){
   if(!btUsable){ toast('Qui il Bluetooth non è disponibile.'); return; }
   try{
-    const dev = await navigator.bluetooth.requestDevice({ filters: [{ services: [HRS] }] });
+    let dev;
+    try{ dev = await navigator.bluetooth.requestDevice({ filters: [{ services: [HRS] }] }); }
+    catch(e1){
+      if(isCancel(e1)) throw e1;
+      log('Ricerca cardio filtrata non riuscita: ' + btError(e1) + ' [' + errKind(e1) + ']. Mostro tutti i dispositivi.');
+      dev = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: [HRS] });
+    }
     S.hrDev = dev;
     const open = async () => {
       const srv = await withTimeout(dev.gatt.connect(), 15000, dev);
@@ -577,7 +661,7 @@ async function connectHr(){
       ch.addEventListener('characteristicvaluechanged', (ev) => {
         const v = ev.target.value; if(v.byteLength < 2) return;
         const hr = (v.getUint8(0) & 1) ? (v.byteLength >= 3 ? v.getUint16(1, true) : 0) : v.getUint8(1);
-        if(hr > 0){ S.hrExt = hr; S.hrExtAt = performance.now(); queueRender(); }
+        if(hr > 0){ if(!S.hrExt) log('Prima frequenza ricevuta dal cardio: ' + hr + ' bpm'); S.hrExt = hr; S.hrExtAt = performance.now(); queueRender(); }
       });
       await ch.startNotifications();
       log('Cardio collegato: ' + (dev.name || 'senza nome'));
@@ -594,7 +678,9 @@ async function connectHr(){
 const D = { t: 0, power: 160, spm: 23, pace: 130, dist: 0, kcal: 0, kcalH: 850, strokes: 0, hr: 118 };
 function simStep(dt){
   D.t += dt; const ph = D.t / 37;
-  D.power = 165 + 28 * Math.sin(ph) + 12 * Math.sin(D.t / 7.3) + (Math.random() - 0.5) * 10;
+  const cb = C.plan && S.session ? band(C.plan[C.idx]) : null, k = cb ? 0.2 : 1;
+  const base = cb ? (cb[0] + cb[1]) / 2 : (C.plan && S.session && C.plan[C.idx].kind === 'test' ? 205 : 165);
+  D.power = base + k * (28 * Math.sin(ph) + 12 * Math.sin(D.t / 7.3)) + (Math.random() - 0.5) * 10;
   D.spm = 23 + 2.2 * Math.sin(ph + 0.6) + (Math.random() - 0.5) * 0.8;
   D.pace = 500 * Math.cbrt(2.8 / D.power); D.dist += 500 / D.pace * dt;
   D.kcalH = 3.4416 * D.power + 300; D.kcal += D.kcalH / 3600 * dt; D.strokes += D.spm / 60 * dt;
@@ -654,7 +740,7 @@ function render(d){
   $('vKcalH').textContent = d.active ? int(machH ? L.kcalH : (d.power != null ? kcalRate(d.power) : null)) : '–';
   $('sKcalH').textContent = d.active ? (machH ? 'dal vogatore' : 'stima dalla potenza') : '';
   $('vHr').textContent = d.hr ? int(d.hr) : '–';
-  $('sHr').textContent = d.hr ? ('da ' + d.hrSrc + (s && s.nHr ? ' · media ' + int(s.sumHr / s.nHr) : '')) : 'nessun sensore';
+  $('sHr').textContent = d.hr ? ((zoneOf(d.hr) ? zoneOf(d.hr) + ' · ' : '') + 'da ' + d.hrSrc + (s && s.nHr ? ' · media ' + int(s.sumHr / s.nHr) : '')) : 'nessun sensore';
   $('vStrokes').textContent = int(s ? total(s, 'strokes', 10) : 0);
   $('sStrokes').textContent = s && s.moving > 0 && dist > 0 && total(s, 'strokes', 10) > 0 ? (dist / total(s, 'strokes', 10)).toFixed(1).replace('.', ',') + ' m per colpo' : '';
 
@@ -667,6 +753,7 @@ function render(d){
   $('gCount').textContent = String(G.count);
   $('gHex').textContent = G.lastHex;
   $('gFields').textContent = G.fields.size ? Array.from(G.fields).join(', ') : '–';
+  renderCoach(d);
   drawChart(s);
 }
 function tok(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
@@ -735,12 +822,266 @@ function renderHistory(){
     const bDel = document.createElement('button'); bDel.type = 'button'; bDel.className = 'btn small danger'; bDel.textContent = 'Elimina';
     let armed = 0;
     bDel.addEventListener('click', () => {
-      if(Date.now() < armed){ history = history.filter(x => x.id !== rec.id); store.set('vg.hist', history); renderHistory(); return; }
+      if(Date.now() < armed){ history = history.filter(x => x.id !== rec.id); store.set('vg.hist', history); C.refCache = undefined; renderHistory(); return; }
       armed = Date.now() + 3000; bDel.textContent = 'Conferma'; setTimeout(() => { bDel.textContent = 'Elimina'; }, 3000);
     });
     acts.append(bDel);
-    li.append(h1, h2, acts); ul.append(li);
+    if(rec.coach && rec.coach.name){ const h3 = document.createElement('div'); h3.className = 'h2'; h3.textContent = 'Coach, ' + rec.coach.name + ': ' + rec.coach.note; li.append(h1, h2, h3, acts); }
+    else li.append(h1, h2, acts);
+    ul.append(li);
   }
+}
+
+/* ---------- coach ---------- */
+/*COACH-START*/
+const WORKOUTS = {
+  test: { name: 'Test di taratura', hard: true, desc: '5 minuti facili, poi 10 minuti al massimo ritmo che riesci a tenere uniforme. Da qui calcolo la tua potenza di soglia e taro tutti gli allenamenti su di te.' },
+  fondo: { name: 'Fondo', hard: false, desc: 'Ritmo facile e continuo. Se il cuore sale sopra la zona 2 abbasso io l\'obiettivo; se resta tranquillo lo alzo.' },
+  soglia: { name: 'Soglia', hard: true, desc: 'Blocchi da 8 minuti appena sotto la soglia, con 3 minuti di recupero. Se un blocco ti sfugge, alleggerisco i successivi.' },
+  intervalli: { name: 'Intervalli', hard: true, desc: 'Ripetute da 2 minuti sopra la soglia, con 2 minuti di recupero. Le ripetute si adattano a come chiudi la precedente.' },
+  cadenza: { name: 'Scala di frequenza', hard: false, desc: 'Gradini da 3 minuti a frequenza crescente: lavoro su tecnica e controllo del colpo, a potenza moderata.' }
+};
+function buildPlan(id, size){
+  const P = (kind, label, min, f, spm) => ({ kind, label, dur: Math.round(min * 60), f: f || null, spm: spm || null });
+  const out = [];
+  if(id === 'test'){
+    out.push(P('warm', 'Riscaldamento', 5, null, [18, 22]), P('test', 'Test, massimo ritmo uniforme', 10, null, null), P('cool', 'Defaticamento', 3, null, [16, 20]));
+  } else if(id === 'fondo'){
+    out.push(P('warm', 'Riscaldamento', 4, [0.45, 0.60], [18, 22]), P('work', 'Fondo in zona 2', [14, 24, 38][size], [0.60, 0.72], [18, 24]), P('cool', 'Defaticamento', 3, [0.35, 0.50], [16, 20]));
+  } else if(id === 'soglia'){
+    const n = [2, 3, 4][size];
+    out.push(P('warm', 'Riscaldamento', 5, [0.45, 0.65], [18, 22]));
+    for(let i = 0; i < n; i++){ out.push(P('work', 'Soglia ' + (i + 1) + ' di ' + n, 8, [0.88, 0.96], [22, 26])); if(i < n - 1) out.push(P('rec', 'Recupero', 3, [0.30, 0.50], null)); }
+    out.push(P('cool', 'Defaticamento', 3, [0.35, 0.50], [16, 20]));
+  } else if(id === 'intervalli'){
+    const n = [4, 6, 8][size];
+    out.push(P('warm', 'Riscaldamento', 6, [0.45, 0.65], [18, 22]));
+    for(let i = 0; i < n; i++){ out.push(P('work', 'Ripetuta ' + (i + 1) + ' di ' + n, 2, [1.05, 1.18], [26, 30])); if(i < n - 1) out.push(P('rec', 'Recupero', 2, [0.30, 0.50], null)); }
+    out.push(P('cool', 'Defaticamento', 4, [0.35, 0.50], [16, 20]));
+  } else if(id === 'cadenza'){
+    const steps = [[18, 20, 22, 24], [18, 20, 22, 24, 22, 20], [18, 20, 22, 24, 26, 24, 22, 20]][size];
+    out.push(P('warm', 'Riscaldamento', 3, [0.45, 0.60], [18, 20]));
+    steps.forEach(r => out.push(P('work', 'Frequenza ' + r + ' colpi al minuto', 3, [0.55, 0.85], [r - 1, r + 1])));
+    out.push(P('cool', 'Defaticamento', 2, [0.35, 0.50], [16, 20]));
+  }
+  return out;
+}
+function planTitle(id, size){
+  const plan = buildPlan(id, size), tot = Math.round(plan.reduce((a, p) => a + p.dur, 0) / 60), n = plan.filter(p => p.kind === 'work').length;
+  const det = id === 'soglia' ? ', ' + n + ' blocchi da 8 minuti' : id === 'intervalli' ? ', ' + n + ' ripetute da 2 minuti' : id === 'cadenza' ? ', ' + n + ' gradini' : '';
+  return WORKOUTS[id].name + ', ' + tot + ' minuti' + det;
+}
+// Miglior potenza media su una finestra di "win" secondi. samples = [tempo_di_voga_s, potenza_W, ...]
+function bestAvg(samples, win){
+  if(!samples || samples.length < 3) return null;
+  const t = [], E = []; let e = 0;
+  for(let i = 0; i < samples.length; i++){ const dt = i ? Math.max(0, Math.min(30, samples[i][0] - samples[i - 1][0])) : 0; e += samples[i][1] * dt; t.push(samples[i][0]); E.push(e); }
+  let best = null, j = 0;
+  for(let i = 1; i < samples.length; i++){
+    while(j + 1 < i && t[i] - t[j + 1] >= win) j++;
+    const span = t[i] - t[j];
+    if(span >= win && span <= win * 1.2){ const a = (E[i] - E[j]) / span; if(best == null || a > best) best = a; }
+  }
+  return best;
+}
+// Stima prudente della potenza di soglia dagli allenamenti degli ultimi 60 giorni.
+function estimateRef(hist, now){
+  let best = null;
+  for(const r of hist || []){
+    if(now - r.id > 60 * 864e5 || !r.samples) continue;
+    for(const [win, k] of [[1200, 0.95], [600, 0.90], [300, 0.85]]){ const b = bestAvg(r.samples, win); if(b != null && (best == null || b * k > best)) best = b * k; }
+  }
+  return best == null ? null : Math.round(best);
+}
+function recommend(hist, ref, refAt, now){
+  if(!ref) return { id: 'test', size: 1, why: 'Non conosco ancora la tua potenza di soglia. Con 18 minuti di test taro tutti gli allenamenti su di te.' };
+  const last = hist[0], days = last ? (now - last.id) / 864e5 : 99;
+  const durs = hist.slice(0, 5).map(r => r.dur).sort((a, b) => a - b), med = durs.length ? durs[Math.floor(durs.length / 2)] / 60 : 0;
+  const size = med < 18 ? 0 : med < 32 ? 1 : 2;
+  if(days > 10) return { id: 'fondo', size: 0, why: (last ? 'Sei fermo da ' + Math.round(days) + ' giorni' : 'Primo allenamento guidato') + ': ripartiamo con un fondo breve.' };
+  const isHard = (r) => !!(r.coach && WORKOUTS[r.coach.id] && WORKOUTS[r.coach.id].hard);
+  const hi = hist.findIndex(isHard), lastHard = hi >= 0 ? hist[hi] : null, dh = lastHard ? (now - lastHard.id) / 864e5 : 99;
+  if(dh < 1.5) return { id: 'fondo', size, why: 'Hai fatto un lavoro intenso da meno di 36 ore: oggi fondo, per recuperare.' };
+  if(refAt && now - refAt > 42 * 864e5) return { id: 'test', size: 1, why: 'La taratura ha più di 6 settimane: rifacciamo il test per aggiornare la soglia.' };
+  if(lastHard && hi === 0) return { id: 'fondo', size, why: 'L\'ultimo allenamento era intenso: alterniamo con un fondo.' };
+  if(lastHard && lastHard.coach.id === 'soglia') return { id: 'intervalli', size, why: 'L\'ultimo lavoro intenso era di soglia: oggi ripetute brevi sopra soglia.' };
+  if(hist.filter(r => now - r.id < 21 * 864e5 && r.coach && r.coach.id === 'cadenza').length === 0 && hist.length >= 4 && hist.length % 4 === 0) return { id: 'cadenza', size, why: 'È da un po\' che non lavori sulla tecnica: oggi scala di frequenza.' };
+  return { id: 'soglia', size, why: 'Sei recuperato: oggi blocchi di soglia, il lavoro che alza di più il ritmo che riesci a tenere a lungo.' };
+}
+/*COACH-END*/
+
+const C = { plan: null, id: null, size: 1, idx: 0, tIn: 0, lastMs: 0, started: false, done: false, adj: 1, ref: null, p10: null,
+  cue: 'pronto', cueSince: 0, lastVoice: 0, over: 0, under: 0, hot: 0, lastHot: 0, inBand: 0, workSecs: 0, repSum: 0, repN: 0,
+  testSum: 0, testN: 0, testDone: false, half: false, lastBeep: -1, audio: null, refCache: undefined, speed: location.hash === '#veloce' ? 60 : 1 };
+function curRef(){
+  if(cfg.ref > 0) return cfg.ref;
+  if(C.refCache === undefined) C.refCache = estimateRef(history, Date.now());
+  return C.refCache;
+}
+function hrAt(fr){ if(!(cfg.hrMax > 0)) return null; return Math.round(cfg.hrRest > 0 ? cfg.hrRest + fr * (cfg.hrMax - cfg.hrRest) : (fr + 0.10) * cfg.hrMax); }
+function zoneOf(hr){ if(!hr || !(cfg.hrMax > 0)) return ''; let z = 0; for(const fr of [0.5, 0.6, 0.7, 0.8, 0.9]) if(hr >= hrAt(fr)) z++; return z ? 'Z' + z : 'sotto Z1'; }
+function band(ph){
+  if(!ph || !ph.f || !C.ref) return null;
+  const m = ph.kind === 'work' ? C.adj : 1;
+  return [Math.round(ph.f[0] * C.ref * m / 5) * 5, Math.round(ph.f[1] * C.ref * m / 5) * 5];
+}
+function say(text){
+  if(!cfg.voice || C.speed > 1) return;
+  try{
+    if(!('speechSynthesis' in window)) return;
+    const u = new SpeechSynthesisUtterance(text); u.lang = 'it-IT'; u.rate = 1.05;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function beep(freq, dur){
+  if(!cfg.voice || !C.audio || C.speed > 1) return;
+  try{
+    const a = C.audio, o = a.createOscillator(), g = a.createGain();
+    o.frequency.value = freq; o.connect(g); g.connect(a.destination);
+    g.gain.setValueAtTime(0.25, a.currentTime); g.gain.exponentialRampToValueAtTime(0.001, a.currentTime + dur);
+    o.start(); o.stop(a.currentTime + dur + 0.02);
+  }catch(e){}
+}
+const minWords = (sec) => { const m = Math.round(sec / 60); return m === 1 ? 'un minuto' : m + ' minuti'; };
+function announcePhase(){
+  const ph = C.plan[C.idx], b = band(ph);
+  beep(660, 0.4);
+  say(ph.label + ', ' + minWords(ph.dur) + (b && ph.kind === 'work' ? ', da ' + b[0] + ' a ' + b[1] + ' watt' : '') + '.');
+  log('Coach: ' + ph.label + (b ? ' (' + b[0] + '-' + b[1] + ' W)' : ''));
+}
+function coachArm(id, size){
+  const ref = curRef();
+  if(id !== 'test' && !ref){ toast('Per questo allenamento mi serve la tua potenza di soglia: fai prima il test di taratura, o inseriscila in Impostazioni.', 7000); return; }
+  try{ C.audio = C.audio || new (window.AudioContext || window.webkitAudioContext)(); if(C.audio.resume) C.audio.resume(); }catch(e){ C.audio = null; }
+  Object.assign(C, { plan: buildPlan(id, size), id, size, idx: 0, tIn: 0, lastMs: 0, started: false, done: false, adj: 1, ref, p10: null, cue: 'pronto', cueSince: Date.now(),
+    lastVoice: 0, over: 0, under: 0, hot: 0, inBand: 0, workSecs: 0, repSum: 0, repN: 0, testSum: 0, testN: 0, testDone: false, half: false, lastBeep: -1 });
+  const pr = $('cProg'); pr.textContent = '';
+  C.plan.forEach(p => { const i = document.createElement('i'); i.className = p.kind; i.style.flex = p.dur + ' 1 0'; pr.append(i); });
+  say('Coach pronto. ' + WORKOUTS[id].name + '.' + (S.session ? '' : ' Parto al tuo primo colpo.'));
+  log('Coach attivato: ' + planTitle(id, size) + (ref ? ', soglia ' + ref + ' W' : ''));
+  window.scrollTo(0, 0); queueRender();
+}
+function coachOff(){ if(!C.plan) return; C.plan = null; toast('Coach chiuso.' + (S.session ? ' L\'allenamento continua senza guida.' : '')); queueRender(); }
+const CUE = {
+  pronto: ['Pronto: parto al tuo primo colpo', 'ok', ''], libero: ['Ritmo libero, facile', 'ok', ''], ok: ['In obiettivo, resta qui', 'ok', ''],
+  sotto: ['Sotto obiettivo: spingi di più con le gambe', 'warn', 'Sei sotto. Aumenta la spinta.'],
+  sopra: ['Sopra obiettivo: rallenta', 'warn', 'Sei sopra. Rallenta un po\'.'],
+  spmalta: ['Frequenza alta: colpo più lungo, meno colpi', 'warn', 'Frequenza alta. Allunga il colpo.'],
+  spmbassa: ['Frequenza bassa: aumenta i colpi', 'warn', 'Aumenta la frequenza.'],
+  fermo: ['Riprendi a vogare', 'bad', 'Riprendi a vogare.'],
+  cala: ['Stai calando: tieni il ritmo', 'warn', 'Stai calando. Tieni il ritmo.'],
+  forte: ['Più forte della tua media: attento a non scoppiare', 'warn', 'Stai andando più forte della tua media. Controllati.'],
+  regolare: ['Ritmo regolare, continua così', 'ok', ''],
+  pausa: ['In pausa', 'ok', ''], fine: ['Programma completato: tocca Termina per salvare', 'ok', '']
+};
+function endPhase(ph){
+  if(ph.kind === 'work' && C.repN > 20 && (C.id === 'soglia' || C.id === 'intervalli') && C.idx < C.plan.length - 2){
+    const b = band(ph), avg = C.repSum / C.repN;
+    if(b && avg < b[0] * 0.97 && C.adj > 0.84){ C.adj -= 0.04; say('Blocco sotto obiettivo. Alleggerisco i prossimi.'); log('Coach: media ' + Math.round(avg) + ' W sotto obiettivo, riduco del 4%'); }
+    else if(b && avg > b[1] * 1.03 && C.hot === 0 && C.adj < 1.12){ C.adj += 0.03; say('Sei andato sopra obiettivo. Alzo i prossimi.'); log('Coach: media ' + Math.round(avg) + ' W sopra obiettivo, aumento del 3%'); }
+  }
+  if(ph.kind === 'test') C.testDone = true;
+  C.repSum = 0; C.repN = 0; C.half = false; C.lastBeep = -1; C.over = 0; C.under = 0;
+}
+function coachTick(d){
+  if(!C.plan || C.done) return;
+  const s = S.session;
+  if(!s || s.state !== 'running'){ C.lastMs = 0; C.cue = s ? 'pausa' : 'pronto'; return; }
+  const now = Date.now(); let dt = C.lastMs ? (now - C.lastMs) / 1000 : 0; C.lastMs = now;
+  const real = Math.min(dt, 5); dt *= C.speed;
+  if(!C.started){ C.started = true; announcePhase(); }
+  const pNow = d.stale ? null : (d.active ? (d.power || 0) : 0);
+  if(pNow != null){ const a = 1 - Math.exp(-Math.max(dt, 0.2) / 6); C.p10 = C.p10 == null ? pNow : C.p10 + a * (pNow - C.p10); }
+  let ph = C.plan[C.idx]; const b = band(ph), p = C.p10 || 0;
+  if(ph.kind === 'work' && b){ C.workSecs += dt; if(p >= b[0] * 0.97 && p <= b[1] * 1.03) C.inBand += dt; C.repSum += p * dt; C.repN += dt; }
+  if(ph.kind === 'test' && pNow != null){ C.testSum += pNow * dt; C.testN += dt; }
+  // Autoregolazione sul cuore, solo nel fondo: l'obiettivo di potenza segue la zona 2.
+  const cap = hrAt(0.70), floor = hrAt(0.60);
+  if(d.hr && cap && C.id === 'fondo' && ph.kind === 'work' && b){
+    if(d.hr > cap){ C.over += dt; C.under = 0; } else { C.over = Math.max(0, C.over - dt); if(d.hr < floor && p >= b[0]) C.under += dt; else C.under = 0; }
+    if(C.over >= 60 && C.adj > 0.8){ C.adj = Math.max(0.8, C.adj - 0.05); C.over = 0; const nb = band(ph); say('Frequenza sopra zona due. Abbasso l\'obiettivo, da ' + nb[0] + ' a ' + nb[1] + ' watt.'); log('Coach: FC sopra zona 2, obiettivo ' + nb[0] + '-' + nb[1] + ' W'); }
+    if(C.under >= 180 && C.adj < 1.12){ C.adj += 0.03; C.under = 0; const nb = band(ph); say('Il cuore è tranquillo. Alzo l\'obiettivo, da ' + nb[0] + ' a ' + nb[1] + ' watt.'); log('Coach: FC sotto zona 2, obiettivo ' + nb[0] + '-' + nb[1] + ' W'); }
+  }
+  if(d.hr && cfg.hrMax > 0 && d.hr >= cfg.hrMax - 3){ C.hot += real; if(C.hot >= 15 && now - C.lastHot > 60000){ say('Frequenza cardiaca molto alta. Rallenta.'); C.lastHot = now; } } else C.hot = 0;
+  let key = 'libero';
+  if(ph.kind === 'test'){
+    const avg = C.testN > 0 ? C.testSum / C.testN : 0;
+    key = !d.active ? 'fermo' : C.testN < 90 ? 'regolare' : p < avg * 0.92 ? 'cala' : p > avg * 1.10 ? 'forte' : 'regolare';
+  } else if(!d.active){ key = ph.kind === 'work' ? 'fermo' : 'libero'; }
+  else if(b){
+    key = p < b[0] ? 'sotto' : p > b[1] ? 'sopra' : 'ok';
+    if(key === 'sotto' && ph.kind !== 'work') key = 'ok';
+    if(key === 'ok' && ph.spm && d.spm && ph.kind === 'work'){ if(d.spm > ph.spm[1] + 1) key = 'spmalta'; else if(d.spm < ph.spm[0] - 1) key = 'spmbassa'; }
+  }
+  if(key !== C.cue){ C.cue = key; C.cueSince = now; }
+  const left = ph.dur - C.tIn;
+  if(CUE[key][2] && now - C.cueSince > 12000 && now - C.lastVoice > 30000 && C.tIn > 15 && left > 12){ say(CUE[key][2]); C.lastVoice = now; }
+  C.tIn += dt;
+  if(!C.half && ph.dur >= 240 && (ph.kind === 'work' || ph.kind === 'test') && C.tIn >= ph.dur / 2){ C.half = true; say('Metà. ' + (ph.kind === 'test' ? 'Tieni il ritmo.' : 'Continua così.')); }
+  const r = Math.ceil(ph.dur - C.tIn); if(r >= 1 && r <= 3 && r !== C.lastBeep){ C.lastBeep = r; beep(880, 0.12); }
+  while(C.tIn >= ph.dur){
+    endPhase(ph); C.tIn -= ph.dur; C.idx++;
+    if(C.idx >= C.plan.length){ C.idx = C.plan.length - 1; C.tIn = C.plan[C.idx].dur; C.done = true; C.cue = 'fine'; beep(520, 0.8); say('Allenamento completato. Ottimo lavoro.'); toast('Programma del coach completato: tocca Termina per salvare.', 8000); break; }
+    ph = C.plan[C.idx]; announcePhase();
+  }
+}
+function coachFinish(s){
+  if(!C.plan) return null;
+  const completed = C.done || C.idx >= C.plan.length - 1, comp = C.workSecs > 30 ? C.inBand / C.workSecs : null;
+  let note = '', newRef = null;
+  if(C.id === 'test'){
+    if(C.testDone || C.testN >= 540){ const avg = C.testSum / C.testN; newRef = Math.round(avg * 0.90); note = 'Test: ' + Math.round(avg) + ' W medi. Potenza di soglia stimata: ' + newRef + ' W.'; }
+    else note = 'Test interrotto prima dei 10 minuti: soglia non aggiornata.';
+  } else if(C.id === 'soglia' || C.id === 'intervalli'){
+    if(completed && comp != null && comp >= 0.8 && C.adj >= 1){ newRef = Math.round(C.ref * 1.02); note = 'Lavoro completato in obiettivo: alzo la soglia del 2%, a ' + newRef + ' W.'; }
+    else if(C.adj <= 0.93 || (completed && comp != null && comp < 0.5)){ newRef = Math.round(C.ref * 0.98); note = 'Obiettivi troppo alti oggi: abbasso la soglia del 2%, a ' + newRef + ' W.'; }
+    else note = completed ? 'Lavoro completato. Soglia confermata a ' + C.ref + ' W.' : 'Allenamento interrotto: soglia invariata.';
+  } else if(C.id === 'fondo'){
+    if(C.adj <= 0.9) note = 'Il cuore oggi saliva presto e ho abbassato l\'obiettivo: può essere stanchezza, caldo o poco recupero. Soglia invariata.';
+    else if(C.adj >= 1.06 && completed){ newRef = Math.round(C.ref * 1.01); note = 'Fondo molto comodo per il cuore: alzo la soglia dell\'1%, a ' + newRef + ' W.'; }
+    else note = completed ? 'Fondo completato.' : 'Fondo interrotto.';
+  } else note = completed ? 'Scala completata.' : 'Scala interrotta.';
+  if(comp != null && C.id !== 'test') note += ' In obiettivo per il ' + Math.round(comp * 100) + '% del lavoro.';
+  const res = { id: C.id, size: C.size, name: WORKOUTS[C.id].name, ref: C.ref, adj: Math.round(C.adj * 100) / 100, comp: comp == null ? null : Math.round(comp * 100), done: completed, note, newRef };
+  C.plan = null;
+  return res;
+}
+function applyRef(newRef){
+  if(!(newRef > 0)) return;
+  cfg.ref = newRef; cfg.refAt = Date.now(); store.set('vg.cfg', cfg); $('inRef').value = newRef;
+}
+function coachChoice(){
+  const rec = recommend(history, curRef(), cfg.refAt || 0, Date.now());
+  const w = $('selWorkout').value, z = $('selSize').value;
+  const id = w === 'auto' ? rec.id : w, size = z === 'auto' ? (w === 'auto' ? rec.size : 1) : parseInt(z, 10);
+  return { id, size, auto: w === 'auto', why: w === 'auto' ? rec.why : WORKOUTS[id].desc };
+}
+function renderCoach(d){
+  const box = $('coachBox'), card = $('coachCard');
+  box.hidden = !C.plan; card.hidden = !!C.plan;
+  if(!C.plan){
+    const ch = coachChoice(), ref = curRef();
+    $('cRecTitle').textContent = (ch.auto ? 'Oggi ti propongo: ' : 'Hai scelto: ') + planTitle(ch.id, ch.size);
+    $('cRecWhy').textContent = ch.why;
+    $('cRecRef').textContent = ref ? 'Potenza di soglia ' + (cfg.ref > 0 ? '' : 'stimata dallo storico ') + ref + ' W' + (cfg.hrMax > 0 && hrAt(0.7) ? ' · zona 2 fino a ' + hrAt(0.7) + ' bpm' : '') : 'Potenza di soglia non ancora nota';
+    return;
+  }
+  const ph = C.plan[C.idx], b = band(ph), next = C.plan[C.idx + 1], left = Math.max(0, ph.dur - C.tIn);
+  let total = left; for(let i = C.idx + 1; i < C.plan.length; i++) total += C.plan[i].dur;
+  $('cPhase').textContent = ph.label + ' · fase ' + (C.idx + 1) + ' di ' + C.plan.length;
+  $('cClock').textContent = fmtTime(Math.ceil(left));
+  let tb = b;
+  if(ph.kind === 'test' && C.testN > 60){ const avg = C.testSum / C.testN; tb = [Math.round(avg * 0.95), Math.round(avg * 1.05)]; }
+  $('cTarget').textContent = (b ? (ph.kind === 'work' ? 'Obiettivo ' : 'Facile, ') + b[0] + '–' + b[1] + ' W' : ph.kind === 'test' ? 'Massimo ritmo uniforme' + (tb ? ' · media ' + Math.round(C.testSum / C.testN) + ' W' : '') : 'A sensazione, facile')
+    + (ph.spm ? ' · ' + ph.spm[0] + '–' + ph.spm[1] + ' colpi/min' : '');
+  // Scala della barra centrata sull'obiettivo, così la fascia resta larga e leggibile.
+  const p = C.p10 || 0, g0 = tb ? tb[0] * 0.72 : 0, g1 = tb ? tb[1] * 1.28 : Math.max(250, p * 1.3), gx = (v) => Math.max(0, Math.min(100, (v - g0) / (g1 - g0) * 100));
+  const bandEl = $('cBand'); bandEl.hidden = !tb;
+  if(tb){ bandEl.style.left = gx(tb[0]) + '%'; bandEl.style.width = (gx(tb[1]) - gx(tb[0])) + '%'; }
+  $('cMark').style.left = gx(p) + '%';
+  const cue = CUE[C.cue] || CUE.libero, el = $('cCue'); el.textContent = cue[0]; el.dataset.k = cue[1];
+  $('cNext').textContent = (next ? 'Poi: ' + next.label + ', ' + fmtTime(next.dur) : 'Ultima fase') + ' · mancano ' + fmtTime(Math.ceil(total));
+  const segs = $('cProg').children; for(let i = 0; i < segs.length; i++){ segs[i].classList.toggle('done', i < C.idx); segs[i].classList.toggle('cur', i === C.idx); }
 }
 
 /* ---------- video ---------- */
@@ -795,6 +1136,23 @@ $('btnCopyLog').addEventListener('click', async () => {
 $('inWeight').value = cfg.weight; $('inAuto').checked = !!cfg.autoStart;
 $('inWeight').addEventListener('change', () => { const v = parseFloat(String($('inWeight').value).replace(',', '.')); if(v >= 35 && v <= 200){ cfg.weight = v; store.set('vg.cfg', cfg); } else { $('inWeight').value = cfg.weight; toast('Inserisci un peso tra 35 e 200 kg.'); } });
 $('inAuto').addEventListener('change', () => { cfg.autoStart = $('inAuto').checked; store.set('vg.cfg', cfg); });
+$('inVoice').checked = !!cfg.voice;
+$('inVoice').addEventListener('change', () => { cfg.voice = $('inVoice').checked; store.set('vg.cfg', cfg); });
+function bindNum(id, key, min, max){
+  const el = $(id); el.value = cfg[key] > 0 ? cfg[key] : '';
+  el.addEventListener('change', () => {
+    const raw = String(el.value).trim().replace(',', '.');
+    if(raw === '') cfg[key] = 0;
+    else { const v = parseFloat(raw); if(!(v >= min && v <= max)){ el.value = cfg[key] > 0 ? cfg[key] : ''; toast('Valore non valido: inserisci un numero tra ' + min + ' e ' + max + ', o lascia vuoto.'); return; } cfg[key] = Math.round(v); }
+    if(key === 'ref') cfg.refAt = cfg.ref > 0 ? Date.now() : 0;
+    store.set('vg.cfg', cfg); queueRender();
+  });
+}
+bindNum('inHrMax', 'hrMax', 120, 230); bindNum('inHrRest', 'hrRest', 30, 110); bindNum('inRef', 'ref', 40, 600);
+$('btnCoachGo').addEventListener('click', () => { const ch = coachChoice(); coachArm(ch.id, ch.size); });
+$('btnCoachOff').addEventListener('click', coachOff);
+$('btnSkip').addEventListener('click', () => { if(C.plan && !C.done && S.session && S.session.state === 'running') C.tIn = C.plan[C.idx].dur; else toast('Si può saltare una fase solo ad allenamento in corso.'); });
+$('selWorkout').addEventListener('change', queueRender); $('selSize').addEventListener('change', queueRender);
 window.addEventListener('resize', queueRender);
 
 renderHistory();
