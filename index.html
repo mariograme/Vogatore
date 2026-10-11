@@ -245,6 +245,8 @@ input[type=checkbox]{width:24px;height:24px;accent-color:var(--water)}
 .hstats b{font-family:var(--num);font-weight:600;font-size:20px;font-variant-numeric:tabular-nums}
 .hstats b small{font-size:.65em;color:var(--muted);font-weight:500;margin-left:2px}
 .hnote{font-size:14px;color:var(--muted)}
+.hrsteps{margin:4px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)}
+.tile.tap{cursor:pointer}
 dl.diag{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0;font-size:14px}
 dl.diag dt{color:var(--muted)}
 dl.diag dd{margin:0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
@@ -472,9 +474,15 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
         <div class="row"><label for="inRef">Potenza di soglia (W)</label><input id="inRef" type="number" inputmode="numeric" min="0" max="600" step="1" placeholder="auto"></div>
         <p class="hint">La imposta il coach dopo il test di taratura e poi la aggiorna da solo. Lasciala vuota per farla stimare dallo storico.</p>
       </div>
-      <div class="set">
+      <div class="set" id="setHr">
         <div class="row"><span>Cardiofrequenzimetro <span class="hint" id="hrName"></span></span><button class="btn small" id="btnHr" type="button">Collega cardio</button></div>
-        <p class="hint">Fascia cardio, o Garmin con "Trasmetti FC" attivo.</p>
+        <div class="row"><span class="hint">Non compare nell'elenco?</span><button class="btn small" id="btnHrAll" type="button">Mostra tutti</button></div>
+        <ol class="hrsteps">
+          <li>Sul Fenix tieni premuto MENU e vai in Sensori e accessori, poi Frequenza cardiaca al polso, poi Trasmetti frequenza cardiaca, e premi START. Lascia l'orologio su quella schermata.</li>
+          <li>Qui tocca Collega cardio e scegli l'orologio (di solito si chiama fēnix 7S). Se non c'è, usa Mostra tutti.</li>
+          <li>Non usare "Trasmetti durante l'attività": può trasmettere solo in ANT+, che l'iPhone non riceve.</li>
+        </ol>
+        <p class="hint">Le voci del menu possono avere nomi leggermente diversi a seconda della versione del Fenix.</p>
       </div>
       <div class="set">
         <div class="row"><span>Il vogatore non compare in elenco?</span><button class="btn small" id="btnAll" type="button">Mostra tutti i dispositivi</button></div>
@@ -582,7 +590,7 @@ const store = {
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const hex = (dv) => { let s = ''; for(let i = 0; i < dv.byteLength; i++) s += dv.getUint8(i).toString(16).padStart(2, '0') + ' '; return s.trim(); };
 
-const APP_VERSION = 6;
+const APP_VERSION = 7;
 // UUID sempre per esteso: alcuni browser (Bluefy) non accettano gli alias numerici a 16 bit.
 const u16 = (n) => '0000' + n.toString(16).padStart(4, '0') + '-0000-1000-8000-00805f9b34fb';
 const FTMS = u16(0x1826), ROWER = u16(0x2ad1), HRS = u16(0x180d), HRM = u16(0x2a37);
@@ -887,41 +895,79 @@ async function autoConnect(){
     catch(e){ log('Collegamento automatico non riuscito: ' + btError(e)); if(token === S.rcToken) setConn('idle', 'Tocca Collega vogatore'); }
   }catch(e){ log('Collegamento automatico non disponibile: ' + btError(e)); }
 }
-async function connectHr(){
+// Cardio: fascia Bluetooth o orologio Garmin con "Trasmetti frequenza cardiaca" attivo (l'iPhone non ha ANT+, serve il Bluetooth).
+function hrCleanup(dev){
+  try{ if(S.hrDisc) dev.removeEventListener('gattserverdisconnected', S.hrDisc); }catch(e){}
+  try{ if(dev.gatt.connected) dev.gatt.disconnect(); }catch(e){}
+  if(S.hrDev === dev){ S.hrDev = null; S.hrDisc = null; }
+  hrUi(null);
+}
+function hrUi(name){
+  $('btnHr').textContent = name ? 'Cambia cardio' : 'Collega cardio';
+  $('hrName').textContent = name ? '· collegato: ' + name : '';
+  queueRender();
+}
+async function connectHr(all){
   if(!btUsable){ toast('Qui il Bluetooth non è disponibile.'); return; }
+  let dev = null, stage = 'scelta del dispositivo';
   try{
-    let dev;
-    try{ dev = await navigator.bluetooth.requestDevice({ filters: [{ services: [HRS] }] }); }
-    catch(e1){
-      if(isCancel(e1)) throw e1;
-      log('Ricerca cardio filtrata non riuscita: ' + btError(e1) + ' [' + errKind(e1) + ']. Mostro tutti i dispositivi.');
-      dev = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: [HRS] });
+    // Elenco filtrato: chi annuncia il servizio cardio, più gli orologi Garmin per nome (alcuni non lo annunciano finché non ci si collega).
+    const flt = { filters: [{ services: [HRS] }, { namePrefix: 'fēnix' }, { namePrefix: 'fenix' }, { namePrefix: 'Fenix' }, { namePrefix: 'Forerunner' }, { namePrefix: 'Garmin' }], optionalServices: [HRS] };
+    const any = { acceptAllDevices: true, optionalServices: [HRS] };
+    if(all) dev = await navigator.bluetooth.requestDevice(any);
+    else {
+      try{ dev = await navigator.bluetooth.requestDevice(flt); }
+      catch(e1){
+        if(isCancel(e1)) throw e1;
+        log('Ricerca cardio filtrata non riuscita: ' + btError(e1) + ' [' + errKind(e1) + ']. Mostro tutti i dispositivi.');
+        dev = await navigator.bluetooth.requestDevice(any);
+      }
     }
-    // Un secondo collegamento (stesso o altro sensore) non deve lasciare attivi i vecchi ascoltatori e i vecchi cicli di riconnessione.
-    if(S.hrDev && S.hrDisc){ try{ S.hrDev.removeEventListener('gattserverdisconnected', S.hrDisc); }catch(e){} }
-    if(S.hrDev && S.hrDev !== dev){ try{ S.hrDev.gatt.disconnect(); }catch(e){} }
+    log('Cardio scelto: ' + (dev.name || '(senza nome)'));
+    if(S.hrDev && S.hrDev !== dev) hrCleanup(S.hrDev);
+    else if(S.hrDev && S.hrDisc){ try{ S.hrDev.removeEventListener('gattserverdisconnected', S.hrDisc); }catch(e){} }
     S.hrDev = dev;
     const open = async () => {
+      stage = 'collegamento';
       const srv = await withTimeout(dev.gatt.connect(), 15000, dev);
-      const ch = await (await srv.getPrimaryService(HRS)).getCharacteristic(HRM);
+      stage = 'servizio frequenza cardiaca';
+      let svc;
+      try{ svc = await srv.getPrimaryService(HRS); }
+      catch(e){
+        let list = ''; try{ list = (await srv.getPrimaryServices()).map(x => x.uuid.slice(4, 8)).join(', '); }catch(x){}
+        log('Il dispositivo non espone il servizio cardio. Servizi visti: ' + (list || 'nessuno leggibile'));
+        const err = new Error('Collegato a ' + (dev.name || 'dispositivo') + ', ma non sta trasmettendo la frequenza cardiaca. Sull\'orologio avvia "Trasmetti frequenza cardiaca" e riprova.');
+        err.hrNoService = true; throw err;
+      }
+      const ch = await svc.getCharacteristic(HRM);
       ch.removeEventListener('characteristicvaluechanged', onHrEvt);
       ch.addEventListener('characteristicvaluechanged', onHrEvt);
+      stage = 'attivazione notifiche';
       await ch.startNotifications();
       log('Cardio collegato: ' + (dev.name || 'senza nome'));
-      $('btnHr').textContent = 'Cambia cardio';
-      $('hrName').textContent = dev.name || 'cardio';
+      hrUi(dev.name || 'cardio');
     };
     let looping = false;
     S.hrDisc = async () => {
       log('Cardio scollegato');
-      if(looping) return; looping = true;
+      if(looping || S.hrDev !== dev) return; looping = true;
+      hrUi(null); $('hrName').textContent = '· riconnessione…';
       for(let n = 0; n < 10 && S.hrDev === dev; n++){ await sleep(3000); if(S.hrDev !== dev) break; try{ await open(); looping = false; return; }catch(e){} }
       looping = false;
-      if(S.hrDev === dev){ $('btnHr').textContent = 'Collega cardio'; $('hrName').textContent = ''; toast('Cardiofrequenzimetro non più raggiungibile.', 5000); }
+      if(S.hrDev === dev){ hrCleanup(dev); toast('Cardio non più raggiungibile: controlla che l\'orologio stia ancora trasmettendo.', 6000); }
     };
     dev.addEventListener('gattserverdisconnected', S.hrDisc);
     await open(); toast('Cardiofrequenzimetro collegato.');
-  }catch(e){ const m = btError(e); log('Cardio: ' + m); toast(m, 5000); }
+    // Se entro 10 secondi non arriva nessun battito, lo si dice: di solito la trasmissione sull'orologio si è fermata.
+    const t0 = performance.now();
+    setTimeout(() => { if(S.hrDev === dev && !(S.hrExtAt > t0)) toast('Collegato, ma non arriva la frequenza: controlla che sull\'orologio la trasmissione sia ancora attiva.', 7000); }, 10000);
+  }catch(e){
+    const m = e && e.hrNoService ? e.message : btError(e);
+    log('Cardio, errore nella fase "' + stage + '": ' + m + ' [' + errKind(e) + ']');
+    if(dev && !isCancel(e)) hrCleanup(dev);
+    if(isCancel(e) && !all) toast('Non vedi l\'orologio nell\'elenco? In Impostazioni tocca "Mostra tutti" accanto al cardio.', 7000);
+    else toast(m + (isCancel(e) || e.hrNoService ? '' : ' (fase: ' + stage + ')'), 8000);
+  }
 }
 
 /* ---------- demo ---------- */
@@ -994,7 +1040,8 @@ function render(d){
   $('vKcalH').textContent = d.active ? int(machH ? L.kcalH : (d.power != null ? kcalRate(d.power) : null)) : '–';
   $('sKcalH').textContent = d.active ? (machH ? 'dal vogatore' : 'stima dalla potenza') : '';
   $('vHr').textContent = d.hr ? int(d.hr) : '–';
-  $('sHr').textContent = d.hr ? ((zoneOf(d.hr) ? zoneOf(d.hr) + ' · ' : '') + d.hrSrc + (s && s.nHr ? ' · media ' + int(s.sumHr / s.nHr) : '')) : 'nessun sensore';
+  $('sHr').textContent = d.hr ? ((zoneOf(d.hr) ? zoneOf(d.hr) + ' · ' : '') + d.hrSrc + (s && s.nHr ? ' · media ' + int(s.sumHr / s.nHr) : '')) : (S.hrDev ? 'cardio collegato, in attesa' : (btUsable ? 'tocca per collegare il cardio' : 'nessun sensore'));
+  $('vHr').closest('.tile').classList.toggle('tap', !S.hrDev && btUsable);
   const zi = d.hr ? zoneIdx(d.hr) : 0, zs = $('hrZones').children;
   for(let i = 0; i < zs.length; i++) zs[i].classList.toggle('on', i + 1 === zi);
   $('vStrokes').textContent = int(s ? total(s, 'strokes', 10) : 0);
@@ -1736,7 +1783,10 @@ $('btnConnect').addEventListener('click', () => {
   if(S.conn === 'connected' || S.conn === 'raw' || S.conn === 'connecting' || S.conn === 'reconnecting') disconnect(); else connectFlow(false);
 });
 $('btnAll').addEventListener('click', () => connectFlow(true));
-$('btnHr').addEventListener('click', connectHr);
+$('btnHr').addEventListener('click', () => connectHr(false));
+$('btnHrAll').addEventListener('click', () => connectHr(true));
+// Toccare la scheda della frequenza cardiaca quando non c'è sensore avvia il collegamento del cardio.
+$('vHr').closest('.tile').addEventListener('click', () => { if(!S.hrDev && btUsable) connectHr(false); });
 $('btnDemo').addEventListener('click', () => { if(S.conn === 'demo') stopDemo(); else startDemo(); });
 $('btnMain').addEventListener('click', () => { if(!S.session) startSession(false); else togglePause(); });
 $('btnStop').addEventListener('click', () => { if(stopArmed && Date.now() < stopArmed) stopSession(); else { stopArmed = Date.now() + 3000; queueRender(); } });
