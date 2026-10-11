@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Vogatore">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px)}[hidden]{display:none!important}</style>
 <title>Vogatore Domyos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -294,7 +300,8 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
 /* Telefono in orizzontale col video: una sola schermata senza scorrere.
    Video a sinistra; a destra coach, potenza, sei valori principali e comandi. */
 @media (orientation:landscape) and (max-height:520px){
-  body.video{overflow:hidden}
+  body.video{overflow-y:auto;min-height:calc(100% + 90px)}
+  body.video::after{content:"";display:block;height:calc(100vh + 90px)}
   body.video .bar{display:none}
   .wrap.video{position:fixed;inset:0;max-width:none;margin:0;gap:0;
     display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);
@@ -634,7 +641,7 @@ const store = {
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const hex = (dv) => { let s = ''; for(let i = 0; i < dv.byteLength; i++) s += dv.getUint8(i).toString(16).padStart(2, '0') + ' '; return s.trim(); };
 
-const APP_VERSION = 8;
+const APP_VERSION = 9;
 // UUID sempre per esteso: alcuni browser (Bluefy) non accettano gli alias numerici a 16 bit.
 const u16 = (n) => '0000' + n.toString(16).padStart(4, '0') + '-0000-1000-8000-00805f9b34fb';
 const FTMS = u16(0x1826), ROWER = u16(0x2ad1), HRS = u16(0x180d), HRM = u16(0x2a37);
