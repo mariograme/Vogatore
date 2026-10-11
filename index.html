@@ -6,138 +6,219 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <style>:root{padding-top:env(safe-area-inset-top,0px)}[hidden]{display:none!important}</style>
 <title>Vogatore Domyos</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
 <style>
-/* Layout: strumento da leggere a distanza. Potenza in testa, griglia 2xN di valori, traccia della potenza, comandi fissi in basso. */
+/* Layout: strumento da leggere a distanza mentre remi. Coach in testa quando attivo, potenza grande, griglia di valori in schede,
+   traccia della potenza con fascia obiettivo, comandi fissi in basso. Acqua (teal) per l'interfaccia, legno per la potenza,
+   scala rossa sequenziale per le zone cardiache. */
 :root{
-  --bg:#eef3f2; --surface:#ffffff; --ink:#0e2a30; --muted:#557177; --line:#d3dedc;
-  --water:#1b7f8c; --water-soft:rgba(27,127,140,.16); --wood:#a8651c; --on-wood:#ffffff;
+  --bg:#eef3f2; --surface:#ffffff; --surface-2:#e4edeb; --ink:#0e2a30; --muted:#557177; --line:#d3dedc; --line-2:#b4c8c5;
+  --water:#1b7f8c; --water-soft:rgba(27,127,140,.16); --wood:#a8651c; --on-wood:#ffffff; --wood-soft:rgba(168,101,28,.13);
   --ok:#1f8a4c; --warn:#a86a10; --bad:#c0392b;
+  --z1:#f0cbc6; --z2:#e59a90; --z3:#d5695c; --z4:#bd3e32; --z5:#8a1f18;
+  --shadow:0 1px 2px rgba(14,42,48,.05),0 6px 18px rgba(14,42,48,.06);
   --num:"Barlow Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif;
   --txt:"Barlow","Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0a1f25; --surface:#11303a; --ink:#eaf4f2; --muted:#8fb0b3; --line:#1f4350;
-    --water:#4fc3cf; --water-soft:rgba(79,195,207,.18); --wood:#f0b469; --on-wood:#1c1206;
-    --ok:#5fd08a; --warn:#f0c160; --bad:#ff8a7a; color-scheme:dark;
+    --bg:#0a1f25; --surface:#11303a; --surface-2:#173b46; --ink:#eaf4f2; --muted:#8fb0b3; --line:#1f4350; --line-2:#30606f;
+    --water:#4fc3cf; --water-soft:rgba(79,195,207,.18); --wood:#f0b469; --on-wood:#1c1206; --wood-soft:rgba(240,180,105,.16);
+    --ok:#5fd08a; --warn:#f0c160; --bad:#ff8a7a;
+    --z1:#5c2c29; --z2:#8d3c34; --z3:#c55340; --z4:#ef7862; --z5:#ffac9a;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.22);
+    color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0a1f25; --surface:#11303a; --ink:#eaf4f2; --muted:#8fb0b3; --line:#1f4350;
-  --water:#4fc3cf; --water-soft:rgba(79,195,207,.18); --wood:#f0b469; --on-wood:#1c1206;
-  --ok:#5fd08a; --warn:#f0c160; --bad:#ff8a7a; color-scheme:dark;
+  --bg:#0a1f25; --surface:#11303a; --surface-2:#173b46; --ink:#eaf4f2; --muted:#8fb0b3; --line:#1f4350; --line-2:#30606f;
+  --water:#4fc3cf; --water-soft:rgba(79,195,207,.18); --wood:#f0b469; --on-wood:#1c1206; --wood-soft:rgba(240,180,105,.16);
+  --ok:#5fd08a; --warn:#f0c160; --bad:#ff8a7a;
+  --z1:#5c2c29; --z2:#8d3c34; --z3:#c55340; --z4:#ef7862; --z5:#ffac9a;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.22);
+  color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--txt);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
-.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:14px 132px;display:flex;flex-direction:column;gap:14px}
+.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:12px 132px;display:flex;flex-direction:column;gap:12px}
 button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
-button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--water);outline-offset:2px}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--water);outline-offset:2px}
+.lab{font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.hint{font-size:14px;color:var(--muted);margin:0}
 
-.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.status{display:flex;align-items:center;gap:8px;min-width:0;font-weight:500}
-.status span:last-child{min-width:0;overflow-wrap:anywhere}
-.dot{flex:none;width:11px;height:11px;border-radius:50%;background:var(--muted)}
-.dot[data-s="connected"]{background:var(--ok)}
+/* Intestazione */
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand btn" "status status";gap:8px 10px;align-items:center}
+.brand{grid-area:brand;display:flex;align-items:center;gap:8px;min-width:0}
+.brand svg{flex:none;width:28px;height:28px;color:var(--water)}
+.brand b{font-family:var(--num);font-weight:700;font-size:24px;letter-spacing:.04em;text-transform:uppercase;line-height:1}
+.brand small{display:block;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:0;text-transform:none}
+#btnConnect{grid-area:btn}
+.status{grid-area:status;justify-self:start;display:flex;align-items:center;gap:8px;min-width:0;max-width:100%;font-weight:500;font-size:14.5px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+.status span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{flex:none;width:10px;height:10px;border-radius:50%;background:var(--muted)}
+.dot[data-s="connected"]{background:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 25%,transparent)}
 .dot[data-s="connecting"],.dot[data-s="reconnecting"]{background:var(--warn);animation:pulse 1s infinite}
 .dot[data-s="demo"],.dot[data-s="raw"]{background:var(--warn)}
 @keyframes pulse{50%{opacity:.3}}
-@media (prefers-reduced-motion:reduce){.dot{animation:none!important}}
+
+/* Pulsanti */
 .btn{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 14px;font-weight:600;min-height:44px}
+.btn:hover{border-color:var(--line-2)}
 .btn.primary{background:var(--wood);border-color:var(--wood);color:var(--on-wood)}
 .btn.small{min-height:36px;padding:6px 10px;font-size:14px;font-weight:500}
 .btn.danger{color:var(--bad)}
 
-.notice{border:1.5px solid var(--warn);border-radius:10px;padding:10px 12px;font-size:15px;background:var(--surface)}
+.notice{border:1.5px solid var(--warn);border-radius:12px;padding:10px 12px;font-size:15px;background:var(--surface)}
 .notice strong{color:var(--warn)}
 
-.hero{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px 14px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.lab{font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+/* Potenza */
+.hero{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 16px 12px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow)}
 .hero .big{font-family:var(--num);font-weight:700;font-size:clamp(88px,30vw,150px);line-height:.86;font-variant-numeric:tabular-nums;color:var(--wood)}
 .hero .unit{font-family:var(--num);font-size:34px;font-weight:600;color:var(--muted);margin-left:6px}
-.hero .side{margin-left:auto;display:flex;flex-direction:column;gap:2px;text-align:right;font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums}
-.hero .side b{color:var(--ink);font-weight:600}
+.hero .side{display:flex;align-items:baseline;gap:6px 10px;flex-wrap:wrap;font-variant-numeric:tabular-nums;border-top:1px solid var(--line);padding-top:8px}
+.hero .side span{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.hero .side b{font-family:var(--num);font-size:30px;font-weight:600;line-height:1;margin-right:8px}
+.hero .side b small{font-size:.5em;color:var(--muted);margin-left:2px;font-weight:500}
+.state{margin-left:auto;align-self:center;font-size:13.5px;font-weight:600;padding:2px 10px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
+.state[data-k="run"]{background:var(--water-soft);color:var(--water)}
+.state[data-k="pause"]{background:var(--wood-soft);color:var(--wood)}
 .tag{display:inline-block;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;border:1px solid var(--warn);color:var(--warn);border-radius:5px;padding:0 5px;vertical-align:middle}
 
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-@media (min-width:600px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.tile{border-top:2px solid var(--line);padding:8px 2px 2px;min-width:0}
-.tile .v{font-family:var(--num);font-weight:600;font-size:clamp(46px,14vw,60px);line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+/* Valori */
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (min-width:640px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px 10px;min-width:0;display:flex;flex-direction:column;gap:2px}
+.tile .v{font-family:var(--num);font-weight:600;font-size:clamp(42px,12.5vw,56px);line-height:1.02;font-variant-numeric:tabular-nums;white-space:nowrap}
 .tile .v small{font-size:.42em;font-weight:500;color:var(--muted);margin-left:4px}
 .tile .s{font-size:13.5px;color:var(--muted);min-height:19px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.zbar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;height:6px;margin-top:4px}
+.zbar i{border-radius:2px;opacity:.25}
+.zbar i:nth-child(1){background:var(--z1)} .zbar i:nth-child(2){background:var(--z2)} .zbar i:nth-child(3){background:var(--z3)}
+.zbar i:nth-child(4){background:var(--z4)} .zbar i:nth-child(5){background:var(--z5)}
+.zbar i.on{opacity:1}
 
-.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
-.chartbox canvas{display:block;width:100%;height:150px}
+/* Grafico */
+.chartbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 12px 8px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:6px}
+.chead2{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.legend{display:flex;gap:12px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{display:inline-block;width:14px;height:0;border-top:2px solid var(--water)}
+.legend i.avg{border-top:2px dashed var(--wood)}
+.legend i.tgt{height:10px;border:0;background:var(--surface-2);border-top:1px dashed var(--water);border-bottom:1px dashed var(--water)}
+.chartbox canvas{display:block;width:100%;height:160px}
 
-details{border-top:1px solid var(--line);padding-top:10px}
-summary{font-weight:600;font-size:17px;cursor:pointer;padding:4px 0}
-.sec{display:flex;flex-direction:column;gap:10px;padding-top:10px}
-.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.row label{font-weight:500}
-input[type=number],input[type=url]{font:inherit;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
-input[type=number]{width:92px}
-input[type=url]{flex:1;min-width:0}
-input[type=checkbox]{width:22px;height:22px;accent-color:var(--water)}
-.hint{font-size:14px;color:var(--muted);margin:0}
-.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
-.hist li{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface);display:flex;flex-direction:column;gap:6px}
-.hist .h1{font-weight:600}
-.hist .h2{font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums}
-.hist .acts{display:flex;gap:8px;flex-wrap:wrap}
-dl.diag{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0;font-size:14px}
-dl.diag dt{color:var(--muted)}
-dl.diag dd{margin:0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
-pre.log{margin:0;max-height:220px;overflow:auto;font-size:12px;line-height:1.35;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px;white-space:pre-wrap;overflow-wrap:anywhere}
-textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
-
-.bar{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));z-index:5}
-.bar .in{max-width:720px;margin:0 auto;display:flex;gap:10px}
-.bar .btn{flex:1;min-height:56px;font-size:19px;font-family:var(--num);letter-spacing:.04em;text-transform:uppercase}
-.toast{position:fixed;left:16px;right:16px;bottom:calc(92px + env(safe-area-inset-bottom,0px));margin:0 auto;max-width:520px;background:var(--ink);color:var(--bg);border-radius:10px;padding:10px 14px;font-size:15px;z-index:6;text-align:center}
-
-.coach{background:var(--surface);border:1.5px solid var(--water);border-radius:14px;padding:10px 14px 12px;display:flex;flex-direction:column;gap:8px}
+/* Coach in corso */
+.coach{background:var(--surface);border:2px solid var(--water);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow)}
 .coach .chead{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-.coach .chead .lab{min-width:0}
-.coach .cclock{font-family:var(--num);font-weight:700;font-size:44px;line-height:.9;font-variant-numeric:tabular-nums}
+.coach .chead .lab{min-width:0;color:var(--water)}
+.coach .cclock{font-family:var(--num);font-weight:700;font-size:48px;line-height:.9;font-variant-numeric:tabular-nums}
 .coach .ctarget{font-weight:600;font-size:17px}
-.gauge{position:relative;height:24px;border-radius:6px;background:var(--line);overflow:hidden}
+.gwrap{position:relative;padding-bottom:16px}
+.gauge{position:relative;height:28px;border-radius:8px;background:var(--surface-2);overflow:hidden}
 .gauge .band{position:absolute;top:0;bottom:0;background:var(--water-soft);border-inline:2px solid var(--water)}
-.gauge .mark{position:absolute;top:0;bottom:0;width:6px;margin-left:-3px;background:var(--wood);border-radius:2px;transition:left .6s linear}
-@media (prefers-reduced-motion:reduce){.gauge .mark{transition:none}}
-.ccue{font-weight:600;font-size:18px;min-height:25px}
+.gauge .mark{position:absolute;top:2px;bottom:2px;width:8px;margin-left:-4px;background:var(--wood);border-radius:3px;box-shadow:0 0 0 2px var(--surface);transition:left .6s linear}
+.gscale span{position:absolute;bottom:0;transform:translateX(-50%);font-family:var(--num);font-size:13px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ccue{font-weight:600;font-size:18px;min-height:25px;display:flex;align-items:center;gap:8px}
+.ccue::before{content:"";flex:none;width:10px;height:10px;border-radius:50%;background:currentColor}
 .ccue[data-k="ok"]{color:var(--ok)}
 .ccue[data-k="warn"]{color:var(--warn)}
 .ccue[data-k="bad"]{color:var(--bad)}
-.cprog{display:flex;gap:2px;height:8px}
-.cprog i{display:block;border-radius:2px;background:var(--line);min-width:2px}
-.cprog i.work,.cprog i.test{background:var(--muted)}
-.cprog i.done{opacity:.35}
-.cprog i.cur{background:var(--wood)}
+.cprog{display:flex;gap:2px;height:10px}
+.cprog i{display:block;border-radius:3px;background:var(--line);min-width:3px}
+.cprog i.warm,.cprog i.cool{background:var(--line-2)}
+.cprog i.rec{background:var(--water-soft)}
+.cprog i.work{background:var(--water)}
+.cprog i.test{background:var(--wood)}
+.cprog i.done{opacity:.3}
+.cprog i.cur{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink)}
 .acts{display:flex;gap:8px;flex-wrap:wrap}
-.coachcard{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surface);display:flex;flex-direction:column;gap:8px}
-.coachcard h2{margin:0;font-size:19px;line-height:1.25;font-weight:600;text-wrap:balance}
-.coachcard .row{justify-content:flex-start}
-select{font:inherit;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);min-width:0;max-width:100%}
-.wrap.video .coachcard{display:none}
-.wrap.video .coach{padding:6px 12px 8px;gap:5px}
-.wrap.video .coach .cclock{font-size:28px}
-.wrap.video .coach .cprog,.wrap.video .coach .cfoot{display:none}
-.wrap.video .coach .ctarget,.wrap.video .ccue{font-size:15px;min-height:0}
-.wrap.video .gauge{height:14px}
+.cfoot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+
+/* Proposta del coach */
+.coachcard{border:1px solid var(--line);border-radius:16px;padding:14px;background:var(--surface);display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
+.coachcard .lab{color:var(--water)}
+.coachcard h2{margin:0;font-family:var(--num);font-size:26px;line-height:1.08;font-weight:600;text-wrap:balance}
+.coachcard .sel{display:grid;grid-template-columns:1fr;gap:8px}
+@media (min-width:480px){.coachcard .sel{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.reft{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--muted);background:var(--surface-2);border-radius:8px;padding:4px 8px;align-self:flex-start;font-variant-numeric:tabular-nums}
+select{font:inherit;padding:9px 10px;border:1.5px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);min-width:0;width:100%;min-height:44px}
+
+/* Sezioni */
+details{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:0 14px}
+summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:600;font-size:17px;cursor:pointer;min-height:52px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"";flex:none;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin-top:-5px;transition:transform .15s}
+details[open] summary::after{transform:rotate(-135deg);margin-top:4px}
+.sec{display:flex;flex-direction:column;gap:12px;padding-bottom:14px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.row label{font-weight:500}
+.set{display:flex;flex-direction:column;gap:2px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.set:last-child{border-bottom:0;padding-bottom:0}
+input[type=number],input[type=url]{font:inherit;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);min-height:44px}
+input[type=number]{width:96px;text-align:right;font-variant-numeric:tabular-nums}
+input[type=url]{flex:1;min-width:0}
+input[type=checkbox]{width:24px;height:24px;accent-color:var(--water)}
+
+/* Storico */
+.wsum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;background:var(--surface-2);border-radius:12px;padding:10px 12px}
+.wsum .lab{grid-column:1 / -1;margin-bottom:2px}
+.wsum div span{display:block;font-size:12px;color:var(--muted)}
+.wsum div b{font-family:var(--num);font-weight:600;font-size:22px;font-variant-numeric:tabular-nums;line-height:1.1}
+.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.hist li{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);display:flex;flex-direction:column;gap:8px}
+.hhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.hhead .h1{font-weight:600}
+.hhead .dur{font-family:var(--num);font-weight:700;font-size:22px;font-variant-numeric:tabular-nums}
+.badge{display:inline-block;margin-left:6px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--water);border:1px solid var(--water);border-radius:5px;padding:0 5px;vertical-align:2px}
+.spark{display:block;width:100%;height:42px}
+.spark .sa{fill:var(--water-soft)}
+.spark .sl{fill:none;stroke:var(--water);stroke-width:1.6;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.hstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 10px}
+.hstats span{display:block;font-size:12px;color:var(--muted)}
+.hstats b{font-family:var(--num);font-weight:600;font-size:20px;font-variant-numeric:tabular-nums}
+.hstats b small{font-size:.65em;color:var(--muted);font-weight:500;margin-left:2px}
+.hnote{font-size:14px;color:var(--muted)}
+dl.diag{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:0;font-size:14px}
+dl.diag dt{color:var(--muted)}
+dl.diag dd{margin:0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+pre.log{margin:0;max-height:220px;overflow:auto;font-size:12px;line-height:1.35;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px;white-space:pre-wrap;overflow-wrap:anywhere}
+textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+
+/* Barra comandi */
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));z-index:5;box-shadow:0 -6px 18px rgba(0,0,0,.06)}
+.bar .in{max-width:720px;margin:0 auto;display:flex;gap:10px}
+.bar .btn{flex:1;min-height:58px;font-size:20px;font-family:var(--num);font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:12px}
+.bar .btn.danger{border-color:var(--bad)}
+.toast{position:fixed;left:16px;right:16px;bottom:calc(94px + env(safe-area-inset-bottom,0px));margin:0 auto;max-width:520px;background:var(--ink);color:var(--bg);border-radius:12px;padding:10px 14px;font-size:15px;z-index:6;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+
+@media (prefers-reduced-motion:reduce){.dot,.gauge .mark,summary::after{animation:none!important;transition:none!important}}
 
 /* Modalità video: il video resta in alto, i dati si compattano sotto (o a fianco, col telefono in orizzontale). */
 .videobox{position:sticky;top:env(safe-area-inset-top,0px);z-index:4;background:#000;border-radius:10px;overflow:hidden;aspect-ratio:16/9;max-width:100%}
 .videobox iframe{display:block;width:100%;height:100%;border:0}
 .wrap.video{gap:8px}
+.wrap.video .top{grid-template-areas:"status btn"}
+.wrap.video .brand{display:none}
+.wrap.video .coachcard{display:none}
+.wrap.video .coach{padding:6px 12px 8px;gap:5px}
+.wrap.video .coach .cclock{font-size:28px}
+.wrap.video .coach .cprog,.wrap.video .coach .cfoot,.wrap.video .gscale{display:none}
+.wrap.video .gwrap{padding-bottom:0}
+.wrap.video .coach .ctarget,.wrap.video .ccue{font-size:15px;min-height:0}
+.wrap.video .gauge{height:14px}
 .wrap.video .hero{padding:6px 14px 8px}
 .wrap.video .hero .big{font-size:60px}
 .wrap.video .hero .unit{font-size:22px}
-.wrap.video .hero .side{font-size:13px}
+.wrap.video .hero .side b{font-size:20px}
+.wrap.video .hero .side{padding-top:4px}
 .wrap.video .grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
-.wrap.video .tile{padding-top:4px}
+.wrap.video .tile{padding:4px 6px 6px}
 .wrap.video .tile .lab{font-size:10.5px;letter-spacing:.05em;white-space:nowrap}
 .wrap.video .tile .v{font-size:28px}
-.wrap.video .tile .s,.wrap.video .chartbox{display:none}
+.wrap.video .tile .v small{display:none}
+.wrap.video .tile .s,.wrap.video .zbar,.wrap.video .chartbox{display:none}
 @media (orientation:landscape) and (max-height:520px){
   .wrap.video{max-width:none;display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);column-gap:12px;align-items:start}
   .wrap.video > *{grid-column:2}
@@ -155,10 +236,14 @@ select{font:inherit;padding:8px 10px;border:1.5px solid var(--line);border-radiu
 <body>
 
 <div class="wrap">
-  <div class="top">
-    <div class="status"><span class="dot" id="dot" data-s="idle"></span><span id="statusText">Non collegato</span></div>
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="12" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M6 15.5c2.6-2.4 5.2 2.4 8 0s5.4 2.4 8 0" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <div><b>Vogatore</b><small>Domyos ad acqua</small></div>
+    </div>
     <button class="btn" id="btnConnect" type="button">Collega vogatore</button>
-  </div>
+    <div class="status"><span class="dot" id="dot" data-s="idle"></span><span id="statusText">Non collegato</span></div>
+  </header>
 
   <div class="notice" id="notice" hidden></div>
 
@@ -167,18 +252,21 @@ select{font:inherit;padding:8px 10px;border:1.5px solid var(--line);border-radiu
   <section class="coach" id="coachBox" aria-label="Coach" hidden>
     <div class="chead"><div class="lab" id="cPhase">Coach</div><div class="cclock" id="cClock">0:00</div></div>
     <div class="ctarget" id="cTarget"></div>
-    <div class="gauge" aria-hidden="true"><div class="band" id="cBand"></div><div class="mark" id="cMark"></div></div>
+    <div class="gwrap" aria-hidden="true">
+      <div class="gauge"><div class="band" id="cBand"></div><div class="mark" id="cMark"></div></div>
+      <div class="gscale"><span id="cLo"></span><span id="cHi"></span></div>
+    </div>
     <div class="ccue" id="cCue" data-k="ok" role="status"></div>
     <div class="cprog" id="cProg" aria-hidden="true"></div>
-    <div class="row cfoot"><span class="hint" id="cNext"></span><span class="acts"><button class="btn small" id="btnSkip" type="button">Salta fase</button><button class="btn small" id="btnCoachOff" type="button">Chiudi coach</button></span></div>
+    <div class="cfoot"><span class="hint" id="cNext"></span><span class="acts"><button class="btn small" id="btnSkip" type="button">Salta fase</button><button class="btn small" id="btnCoachOff" type="button">Chiudi coach</button></span></div>
   </section>
 
   <section class="coachcard" id="coachCard" aria-label="Coach">
     <div class="lab">Coach</div>
     <h2 id="cRecTitle"></h2>
     <p class="hint" id="cRecWhy"></p>
-    <p class="hint" id="cRecRef"></p>
-    <div class="row">
+    <span class="reft" id="cRecRef"></span>
+    <div class="sel">
       <select id="selWorkout" aria-label="Allenamento">
         <option value="auto">Scelta del coach</option>
         <option value="fondo">Fondo</option>
@@ -203,9 +291,9 @@ select{font:inherit;padding:8px 10px;border:1.5px solid var(--line);border-radiu
       <div><span class="big" id="vPower">–</span><span class="unit">W</span></div>
     </div>
     <div class="side">
-      <span>media <b id="vAvgP">–</b> W</span>
-      <span>max <b id="vMaxP">–</b> W</span>
-      <span id="vState">in attesa</span>
+      <span>media</span><b id="vAvgP">–</b>
+      <span>max</span><b id="vMaxP">–</b>
+      <span class="state" id="vState" data-k="idle">in attesa</span>
     </div>
   </section>
 
@@ -214,16 +302,29 @@ select{font:inherit;padding:8px 10px;border:1.5px solid var(--line);border-radiu
     <div class="tile"><div class="lab" data-short="Colpi/min">Colpi/min</div><div class="v" id="vSpm">–</div><div class="s" id="sSpm"></div></div>
     <div class="tile"><div class="lab" data-short="Tempo">Tempo</div><div class="v" id="vTime">0:00</div><div class="s" id="sTime"></div></div>
     <div class="tile"><div class="lab" data-short="Metri">Distanza</div><div class="v"><span id="vDist">0</span><small>m</small></div><div class="s" id="sDist"></div></div>
+    <div class="tile"><div class="lab" data-short="FC">Frequenza cardiaca</div><div class="v"><span id="vHr">–</span><small>bpm</small></div><div class="s" id="sHr"></div><div class="zbar" id="hrZones" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></div>
     <div class="tile"><div class="lab" data-short="Kcal">Calorie</div><div class="v"><span id="vKcal">0</span><small>kcal</small></div><div class="s" id="sKcal"></div></div>
     <div class="tile"><div class="lab" data-short="Kcal/h">Consumo kcal/h</div><div class="v" id="vKcalH">–</div><div class="s" id="sKcalH"></div></div>
-    <div class="tile"><div class="lab" data-short="FC">Frequenza cardiaca</div><div class="v"><span id="vHr">–</span><small>bpm</small></div><div class="s" id="sHr"></div></div>
     <div class="tile"><div class="lab" data-short="Colpi">Colpi totali</div><div class="v" id="vStrokes">0</div><div class="s" id="sStrokes"></div></div>
   </section>
 
   <section class="chartbox" aria-label="Potenza negli ultimi 5 minuti">
-    <div class="lab">Potenza, ultimi 5 minuti</div>
+    <div class="chead2">
+      <div class="lab">Potenza, ultimi 5 minuti</div>
+      <div class="legend" aria-hidden="true"><span><i></i>potenza</span><span><i class="avg"></i>media</span><span id="lgTgt" hidden><i class="tgt"></i>obiettivo</span></div>
+    </div>
     <canvas id="chart" role="img" aria-label="Grafico della potenza negli ultimi 5 minuti"></canvas>
   </section>
+
+  <details id="dHist" open>
+    <summary>Storico allenamenti</summary>
+    <div class="sec">
+      <div class="wsum" id="weekSum" hidden></div>
+      <p class="hint" id="histEmpty">Qui compaiono gli allenamenti conclusi, salvati su questo telefono.</p>
+      <ul class="hist" id="hist"></ul>
+      <textarea class="csv" id="csvOut" readonly hidden aria-label="CSV dell'allenamento"></textarea>
+    </div>
+  </details>
 
   <details id="dVideo">
     <summary>Video durante l'allenamento</summary>
@@ -233,30 +334,34 @@ select{font:inherit;padding:8px 10px;border:1.5px solid var(--line);border-radiu
     </div>
   </details>
 
-  <details id="dHist" open>
-    <summary>Storico allenamenti</summary>
-    <div class="sec">
-      <p class="hint" id="histEmpty">Qui compaiono gli allenamenti conclusi, salvati su questo telefono.</p>
-      <ul class="hist" id="hist"></ul>
-      <textarea class="csv" id="csvOut" readonly hidden aria-label="CSV dell'allenamento"></textarea>
-    </div>
-  </details>
-
   <details id="dSet">
     <summary>Impostazioni</summary>
     <div class="sec">
-      <div class="row"><label for="inWeight">Peso corporeo (kg)</label><input id="inWeight" type="number" inputmode="decimal" min="35" max="200" step="0.5"></div>
-      <p class="hint">Serve solo se il vogatore non invia le calorie: in quel caso le stimo dalla potenza con la formula Concept2 corretta per il peso.</p>
-      <div class="row"><label for="inAuto">Avvia da solo al primo colpo</label><input id="inAuto" type="checkbox"></div>
-      <div class="row"><label for="inVoice">Voce e segnali acustici del coach</label><input id="inVoice" type="checkbox"></div>
-      <div class="row"><label for="inHrMax">Frequenza cardiaca massima (bpm)</label><input id="inHrMax" type="number" inputmode="numeric" min="120" max="230" step="1"></div>
-      <div class="row"><label for="inHrRest">Frequenza cardiaca a riposo (bpm)</label><input id="inHrRest" type="number" inputmode="numeric" min="30" max="110" step="1"></div>
-      <p class="hint">Le zone sono calcolate sulla riserva cardiaca (Karvonen). La massima preimpostata è una stima per età (208 − 0,7 × età): sostituiscila con il tuo valore reale se lo conosci.</p>
-      <div class="row"><label for="inRef">Potenza di soglia (W)</label><input id="inRef" type="number" inputmode="numeric" min="0" max="600" step="1" placeholder="auto"></div>
-      <p class="hint">La imposta il coach dopo il test di taratura e poi la aggiorna da solo. Lasciala vuota per farla stimare dallo storico.</p>
-      <div class="row"><span>Cardiofrequenzimetro Bluetooth (fascia, o Garmin con "Trasmetti FC")</span><button class="btn small" id="btnHr" type="button">Collega cardio</button></div>
-      <div class="row"><span>Il vogatore non compare in elenco?</span><button class="btn small" id="btnAll" type="button">Mostra tutti i dispositivi</button></div>
-      <div class="row"><span>Prova senza vogatore</span><button class="btn small" id="btnDemo" type="button">Avvia demo</button></div>
+      <div class="set">
+        <div class="row"><label for="inWeight">Peso corporeo (kg)</label><input id="inWeight" type="number" inputmode="decimal" min="35" max="200" step="0.5"></div>
+        <p class="hint">Serve solo se il vogatore non invia le calorie: in quel caso le stimo dalla potenza con la formula Concept2 corretta per il peso.</p>
+      </div>
+      <div class="set">
+        <div class="row"><label for="inAuto">Avvia da solo al primo colpo</label><input id="inAuto" type="checkbox"></div>
+        <div class="row"><label for="inVoice">Voce e segnali acustici del coach</label><input id="inVoice" type="checkbox"></div>
+      </div>
+      <div class="set">
+        <div class="row"><label for="inHrMax">Frequenza cardiaca massima (bpm)</label><input id="inHrMax" type="number" inputmode="numeric" min="120" max="230" step="1"></div>
+        <div class="row"><label for="inHrRest">Frequenza cardiaca a riposo (bpm)</label><input id="inHrRest" type="number" inputmode="numeric" min="30" max="110" step="1"></div>
+        <p class="hint">Le zone sono calcolate sulla riserva cardiaca (Karvonen). La massima preimpostata è una stima per età (208 − 0,7 × età): sostituiscila con il tuo valore reale se lo conosci.</p>
+      </div>
+      <div class="set">
+        <div class="row"><label for="inRef">Potenza di soglia (W)</label><input id="inRef" type="number" inputmode="numeric" min="0" max="600" step="1" placeholder="auto"></div>
+        <p class="hint">La imposta il coach dopo il test di taratura e poi la aggiorna da solo. Lasciala vuota per farla stimare dallo storico.</p>
+      </div>
+      <div class="set">
+        <div class="row"><span>Cardiofrequenzimetro <span class="hint" id="hrName"></span></span><button class="btn small" id="btnHr" type="button">Collega cardio</button></div>
+        <p class="hint">Fascia cardio, o Garmin con "Trasmetti FC" attivo.</p>
+      </div>
+      <div class="set">
+        <div class="row"><span>Il vogatore non compare in elenco?</span><button class="btn small" id="btnAll" type="button">Mostra tutti i dispositivi</button></div>
+        <div class="row"><span>Prova senza vogatore</span><button class="btn small" id="btnDemo" type="button">Avvia demo</button></div>
+      </div>
     </div>
   </details>
 
@@ -359,7 +464,7 @@ const store = {
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const hex = (dv) => { let s = ''; for(let i = 0; i < dv.byteLength; i++) s += dv.getUint8(i).toString(16).padStart(2, '0') + ' '; return s.trim(); };
 
-const APP_VERSION = 4;
+const APP_VERSION = 5;
 // UUID sempre per esteso: alcuni browser (Bluefy) non accettano gli alias numerici a 16 bit.
 const u16 = (n) => '0000' + n.toString(16).padStart(4, '0') + '-0000-1000-8000-00805f9b34fb';
 const FTMS = u16(0x1826), ROWER = u16(0x2ad1), HRS = u16(0x180d), HRM = u16(0x2a37);
@@ -374,7 +479,8 @@ const cfg = Object.assign({ weight: 80, autoStart: true, voice: true, hrMax: 182
 let history = store.get('vg.hist', []); if(!Array.isArray(history)) history = [];
 
 const L = { power: null, spm: null, pace: null, dist: null, kcal: null, kcalH: null, hr: null, strokes: null };
-const S = { conn: 'idle', msg: '', device: null, userOff: false, rcToken: 0, opening: false, lastPacket: 0, session: null, hrExt: null, hrExtAt: 0, hrDev: null };
+const S = { conn: 'idle', msg: '', device: null, userOff: false, rcToken: 0, opening: false, lastPacket: 0, session: null, hrExt: null, hrExtAt: 0, hrDev: null, hrDisc: null,
+  autoHold: false, quietSince: 0, video: false };
 const G = { name: '–', services: [], count: 0, lastHex: '–', fields: new Set() };
 const trace = [];
 const logLines = [];
@@ -398,6 +504,12 @@ const int = (v) => (v == null || !isFinite(v)) ? '–' : String(Math.round(v));
 const kcalRate = (p) => 3.4416 * Math.max(0, p || 0) + 3.779 * cfg.weight; // Concept2: 4·W·0,8604 + 300, con 300 riscalato sul peso
 
 /* ---------- dati ---------- */
+function onRowerEvt(ev){ onRowerData(ev.target.value); }
+function onHrEvt(ev){
+  const v = ev.target.value; if(!v || v.byteLength < 2) return;
+  const hr = (v.getUint8(0) & 1) ? (v.byteLength >= 3 ? v.getUint16(1, true) : 0) : v.getUint8(1);
+  if(hr > 0){ if(!S.hrExt) log('Prima frequenza ricevuta dal cardio: ' + hr + ' bpm'); S.hrExt = hr; S.hrExtAt = performance.now(); queueRender(); }
+}
 function onRowerData(dv){
   let o; try{ o = parseRower(dv); }catch(e){ log('Pacchetto illeggibile: ' + e.message); return; }
   if(!o) return;
@@ -418,7 +530,7 @@ function derive(){
   if(pace == null && power > 0){ pace = 500 * Math.cbrt(2.8 / power); paceEst = true; }
   const active = !stale && (spm != null ? spm > 0 : (power || 0) > 0);
   let hr = (S.hrExt && now - S.hrExtAt < 6000) ? S.hrExt : (stale ? null : L.hr);
-  return { power, pace, spm, powerEst, paceEst, active, stale, hr, hrSrc: (S.hrExt && now - S.hrExtAt < 6000) ? 'cardio' : 'vogatore' };
+  return { power, pace, spm, powerEst, paceEst, active, stale, hr, hrSrc: (S.hrExt && now - S.hrExtAt < 6000) ? 'dal cardio' : 'dal vogatore' };
 }
 function newSession(){
   return { startedAt: Date.now(), state: 'running', demo: S.conn === 'demo', moving: 0,
@@ -442,7 +554,14 @@ function tick(){
   const d = derive();
   const live = S.conn === 'connected' || S.conn === 'demo';
   if(live && !d.stale){ trace.push(d.active ? Math.round(d.power || 0) : 0); if(trace.length > 300) trace.shift(); }
-  if(!S.session && cfg.autoStart && live && d.active) startSession(true);
+  // Dopo "Termina" la partenza automatica resta sospesa finché il vogatore non è fermo da 5 secondi:
+  // l'acqua continua a girare e senza questo blocco si apriva subito un nuovo allenamento.
+  if(S.autoHold){
+    if(d.active) S.quietSince = 0;
+    else if(!S.quietSince) S.quietSince = now;
+    else if(now - S.quietSince > 5000) S.autoHold = false;
+  }
+  if(!S.session && cfg.autoStart && live && d.active && !S.autoHold) startSession(true);
   const s = S.session;
   if(s && s.state === 'running' && !d.stale){
     // Dopo un buco (app in background, connessione caduta) i totali si recuperano dai contatori del vogatore, che ha continuato a contare.
@@ -476,7 +595,7 @@ function tick(){
 
 /* ---------- sessione ---------- */
 function startSession(auto){
-  S.session = newSession(); stopArmed = 0; requestWake();
+  S.session = newSession(); stopArmed = 0; S.autoHold = false; S.quietSince = 0; requestWake();
   log('Allenamento avviato' + (auto ? ' (automatico)' : ''));
   queueRender();
 }
@@ -488,7 +607,7 @@ function togglePause(){
 }
 function stopSession(){
   const s = S.session; if(!s) return;
-  S.session = null; stopArmed = 0; releaseWake();
+  S.session = null; stopArmed = 0; S.autoHold = true; S.quietSince = 0; releaseWake();
   const cres = coachFinish(s);
   if(s.demo){ toast('Allenamento demo terminato: non viene salvato.' + (cres ? ' ' + cres.note : ''), cres ? 9000 : 3500); queueRender(); return; }
   if(s.moving < 10){ toast('Meno di 10 secondi di voga: non salvato.'); queueRender(); return; }
@@ -552,7 +671,9 @@ async function openGatt(dev, quiet){
       log('FTMS presente ma senza Rower Data (2ad1). Caratteristiche: ' + (list.join(', ') || 'nessuna leggibile'));
       setConn('raw', 'Collegato, ma il vogatore non invia dati da vogatore standard'); return;
     }
-    ch.addEventListener('characteristicvaluechanged', (ev) => onRowerData(ev.target.value));
+    // Alla riconnessione il browser può restituire lo stesso oggetto: si toglie l'ascoltatore prima di rimetterlo, altrimenti ogni pacchetto arriva due volte.
+    ch.removeEventListener('characteristicvaluechanged', onRowerEvt);
+    ch.addEventListener('characteristicvaluechanged', onRowerEvt);
     log('Attivo le notifiche dei dati');
     await ch.startNotifications();
     log('Notifiche attive, in attesa dei dati');
@@ -654,22 +775,29 @@ async function connectHr(){
       log('Ricerca cardio filtrata non riuscita: ' + btError(e1) + ' [' + errKind(e1) + ']. Mostro tutti i dispositivi.');
       dev = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: [HRS] });
     }
+    // Un secondo collegamento (stesso o altro sensore) non deve lasciare attivi i vecchi ascoltatori e i vecchi cicli di riconnessione.
+    if(S.hrDev && S.hrDisc){ try{ S.hrDev.removeEventListener('gattserverdisconnected', S.hrDisc); }catch(e){} }
+    if(S.hrDev && S.hrDev !== dev){ try{ S.hrDev.gatt.disconnect(); }catch(e){} }
     S.hrDev = dev;
     const open = async () => {
       const srv = await withTimeout(dev.gatt.connect(), 15000, dev);
       const ch = await (await srv.getPrimaryService(HRS)).getCharacteristic(HRM);
-      ch.addEventListener('characteristicvaluechanged', (ev) => {
-        const v = ev.target.value; if(v.byteLength < 2) return;
-        const hr = (v.getUint8(0) & 1) ? (v.byteLength >= 3 ? v.getUint16(1, true) : 0) : v.getUint8(1);
-        if(hr > 0){ if(!S.hrExt) log('Prima frequenza ricevuta dal cardio: ' + hr + ' bpm'); S.hrExt = hr; S.hrExtAt = performance.now(); queueRender(); }
-      });
+      ch.removeEventListener('characteristicvaluechanged', onHrEvt);
+      ch.addEventListener('characteristicvaluechanged', onHrEvt);
       await ch.startNotifications();
       log('Cardio collegato: ' + (dev.name || 'senza nome'));
+      $('btnHr').textContent = 'Cambia cardio';
+      $('hrName').textContent = dev.name || 'cardio';
     };
-    dev.addEventListener('gattserverdisconnected', async () => {
+    let looping = false;
+    S.hrDisc = async () => {
       log('Cardio scollegato');
-      for(let n = 0; n < 10 && S.hrDev === dev; n++){ await sleep(3000); try{ await open(); return; }catch(e){} }
-    });
+      if(looping) return; looping = true;
+      for(let n = 0; n < 10 && S.hrDev === dev; n++){ await sleep(3000); if(S.hrDev !== dev) break; try{ await open(); looping = false; return; }catch(e){} }
+      looping = false;
+      if(S.hrDev === dev){ $('btnHr').textContent = 'Collega cardio'; $('hrName').textContent = ''; toast('Cardiofrequenzimetro non più raggiungibile.', 5000); }
+    };
+    dev.addEventListener('gattserverdisconnected', S.hrDisc);
     await open(); toast('Cardiofrequenzimetro collegato.');
   }catch(e){ const m = btError(e); log('Cardio: ' + m); toast(m, 5000); }
 }
@@ -696,7 +824,9 @@ function startDemo(){
 function stopDemo(){
   if(!demoTimer) return;
   clearInterval(demoTimer); demoTimer = null;
-  if(S.session && S.session.demo) S.session = null;
+  // Un allenamento demo non si salva: si chiude insieme al coach eventualmente attivo, e lo schermo può tornare a spegnersi.
+  if(S.session && S.session.demo){ S.session = null; C.plan = null; releaseWake(); }
+  S.autoHold = false; S.quietSince = 0;
   trace.length = 0; S.lastPacket = 0; G.count = 0; G.fields.clear();
   if(S.conn === 'demo') setConn('idle');
 }
@@ -722,7 +852,9 @@ function render(d){
   $('powerTag').hidden = !(d.active && d.powerEst);
   $('vAvgP').textContent = s && s.nP ? int(s.sumP / s.nP) : '–';
   $('vMaxP').textContent = s && s.maxP ? int(s.maxP) : '–';
-  $('vState').textContent = !s ? (d.active ? 'stai vogando' : 'in attesa') : s.state === 'paused' ? 'in pausa' : d.active ? 'allenamento in corso' : 'fermo, tempo sospeso';
+  const vs = $('vState');
+  vs.textContent = !s ? (S.autoHold ? 'allenamento concluso' : d.active ? 'stai vogando' : 'in attesa') : s.state === 'paused' ? 'in pausa' : d.active ? 'allenamento in corso' : 'fermo, tempo sospeso';
+  vs.dataset.k = !s ? 'idle' : s.state === 'paused' ? 'pause' : d.active ? 'run' : 'pause';
 
   $('vPace').textContent = d.active ? fmtPace(d.pace) : '–:––';
   const dist = s ? total(s, 'dist', 30) : 0;
@@ -740,7 +872,9 @@ function render(d){
   $('vKcalH').textContent = d.active ? int(machH ? L.kcalH : (d.power != null ? kcalRate(d.power) : null)) : '–';
   $('sKcalH').textContent = d.active ? (machH ? 'dal vogatore' : 'stima dalla potenza') : '';
   $('vHr').textContent = d.hr ? int(d.hr) : '–';
-  $('sHr').textContent = d.hr ? ((zoneOf(d.hr) ? zoneOf(d.hr) + ' · ' : '') + 'da ' + d.hrSrc + (s && s.nHr ? ' · media ' + int(s.sumHr / s.nHr) : '')) : 'nessun sensore';
+  $('sHr').textContent = d.hr ? ((zoneOf(d.hr) ? zoneOf(d.hr) + ' · ' : '') + d.hrSrc + (s && s.nHr ? ' · media ' + int(s.sumHr / s.nHr) : '')) : 'nessun sensore';
+  const zi = d.hr ? zoneIdx(d.hr) : 0, zs = $('hrZones').children;
+  for(let i = 0; i < zs.length; i++) zs[i].classList.toggle('on', i + 1 === zi);
   $('vStrokes').textContent = int(s ? total(s, 'strokes', 10) : 0);
   $('sStrokes').textContent = s && s.moving > 0 && dist > 0 && total(s, 'strokes', 10) > 0 ? (dist / total(s, 'strokes', 10)).toFixed(1).replace('.', ',') + ' m per colpo' : '';
 
@@ -763,12 +897,23 @@ function drawChart(s){
   if(c.width !== W || c.height !== H){ c.width = W; c.height = H; }
   const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
   const w = r.width, h = r.height; g.clearRect(0, 0, w, h);
-  const cMuted = tok('--muted'), cLine = tok('--line'), cWater = tok('--water'), cSoft = tok('--water-soft'), cWood = tok('--wood');
+  const cMuted = tok('--muted'), cLine = tok('--line'), cWater = tok('--water'), cSoft = tok('--water-soft'), cWood = tok('--wood'), cBandBg = tok('--surface-2');
   const pl = 36, pr = 10, pt = 10, pb = 20, pw = w - pl - pr, ph = h - pt - pb, N = 300;
+  const tb = (C.plan && S.session) ? band(C.plan[C.idx]) : null;
+  $('lgTgt').hidden = !tb;
   let mx = 100; for(const v of trace) if(v > mx) mx = v;
+  if(tb && tb[1] > mx) mx = tb[1];
   const steps = [100, 150, 200, 300, 400, 500, 600, 800, 1000, 1500]; let top = steps[steps.length - 1]; for(const st of steps){ if(st >= mx){ top = st; break; } }
   const X = (i) => pl + (i + N - trace.length) / (N - 1) * pw, Y = (v) => pt + ph - Math.min(v, top) / top * ph;
   g.font = '12px ' + (tok('--txt') || 'sans-serif'); g.textBaseline = 'middle'; g.lineWidth = 1;
+  if(tb){
+    // Fascia obiettivo della fase in corso del coach.
+    const y1 = Y(tb[1]), y0 = Y(tb[0]);
+    g.fillStyle = cBandBg; g.fillRect(pl, y1, pw, y0 - y1);
+    g.setLineDash([3, 3]); g.strokeStyle = cWater; g.lineWidth = 1;
+    g.beginPath(); g.moveTo(pl, y1 + 0.5); g.lineTo(w - pr, y1 + 0.5); g.moveTo(pl, y0 - 0.5); g.lineTo(w - pr, y0 - 0.5); g.stroke();
+    g.setLineDash([]);
+  }
   for(const v of [0, top / 2, top]){
     g.strokeStyle = cLine; g.beginPath(); g.moveTo(pl, Y(v) + 0.5); g.lineTo(w - pr, Y(v) + 0.5); g.stroke();
     g.fillStyle = cMuted; g.textAlign = 'right'; g.fillText(String(v), pl - 6, Y(v));
@@ -790,16 +935,63 @@ function csvOf(rec){
   for(const r of (rec.samples || [])) rows.push(r.map(n).join(';'));
   return rows.join('\n');
 }
+// Mini-grafico della potenza di un allenamento salvato. samples = [tempo_s, potenza_W, ...]
+function sparkSVG(samples){
+  if(!samples || samples.length < 4) return '';
+  const n = samples.length, step = Math.max(1, Math.floor(n / 90)), pts = [];
+  for(let i = 0; i < n; i += step) pts.push(samples[i]);
+  if(pts[pts.length - 1] !== samples[n - 1]) pts.push(samples[n - 1]);
+  const t0 = pts[0][0], t1 = pts[pts.length - 1][0];
+  let mx = 50; for(const p of pts) if(p[1] > mx) mx = p[1];
+  const X = (t) => ((t - t0) / Math.max(1, t1 - t0) * 300).toFixed(1), Y = (v) => (40 - Math.max(0, v) / mx * 36).toFixed(1);
+  let d = ''; pts.forEach((p, i) => { d += (i ? 'L' : 'M') + X(p[0]) + ' ' + Y(p[1]); });
+  return '<svg class="spark" viewBox="0 0 300 42" preserveAspectRatio="none" aria-hidden="true"><path class="sa" d="' + d + 'L300 42L0 42Z"/><path class="sl" d="' + d + '"/></svg>';
+}
+function statCell(label, value, unit){
+  const c = document.createElement('div');
+  const sp = document.createElement('span'); sp.textContent = label;
+  const b = document.createElement('b'); b.textContent = value;
+  if(unit && value !== '–'){ const sm = document.createElement('small'); sm.textContent = unit; b.append(sm); }
+  c.append(sp, b); return c;
+}
+function renderWeek(){
+  const box = $('weekSum'), now = Date.now();
+  const recs = history.filter(r => now - r.id < 7 * 864e5);
+  box.hidden = history.length === 0; box.textContent = '';
+  if(!history.length) return;
+  const sum = (k) => recs.reduce((a, r) => a + (r[k] || 0), 0);
+  const lab = document.createElement('div'); lab.className = 'lab'; lab.textContent = 'Ultimi 7 giorni';
+  box.append(lab,
+    statCell('Allenamenti', String(recs.length)),
+    statCell('Tempo', fmtTime(sum('dur'))),
+    statCell('Metri', recs.length ? Math.round(sum('dist')).toLocaleString('it-IT') : '–'),
+    statCell('Kcal', recs.length ? String(Math.round(sum('kcal'))) : '–'));
+}
 function renderHistory(){
   const ul = $('hist'); ul.textContent = ''; $('histEmpty').hidden = history.length > 0;
+  renderWeek();
   for(const rec of history){
     const li = document.createElement('li');
-    const h1 = document.createElement('div'); h1.className = 'h1';
     const dt = new Date(rec.id);
+    const head = document.createElement('div'); head.className = 'hhead';
+    const h1 = document.createElement('div'); h1.className = 'h1';
     h1.textContent = dt.toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' }) + ', ' + dt.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
-    const h2 = document.createElement('div'); h2.className = 'h2';
-    h2.textContent = [fmtTime(rec.dur), rec.dist + ' m', rec.kcal + ' kcal' + (rec.kcalSrc === 'stima' ? ' (stima)' : ''), rec.avgP != null ? rec.avgP + ' W medi' : null,
-      rec.avgPace ? fmtPace(rec.avgPace) + ' /500 m' : null, rec.avgSpm ? String(rec.avgSpm).replace('.', ',') + ' colpi/min' : null, rec.avgHr ? rec.avgHr + ' bpm' : null].filter(Boolean).join(' · ');
+    if(rec.coach && rec.coach.name){ const bd = document.createElement('span'); bd.className = 'badge'; bd.textContent = rec.coach.name; h1.append(bd); }
+    const dur = document.createElement('div'); dur.className = 'dur'; dur.textContent = fmtTime(rec.dur);
+    head.append(h1, dur);
+    li.append(head);
+    const sp = sparkSVG(rec.samples);
+    if(sp){ const wrapSp = document.createElement('div'); wrapSp.innerHTML = sp; li.append(wrapSp.firstChild); }
+    const st = document.createElement('div'); st.className = 'hstats';
+    st.append(
+      statCell('Distanza', rec.dist ? rec.dist.toLocaleString('it-IT') : '–', ' m'),
+      statCell('Potenza media', rec.avgP != null ? String(rec.avgP) : '–', ' W'),
+      statCell('Passo /500 m', rec.avgPace ? fmtPace(rec.avgPace) : '–'),
+      statCell('Colpi/min', rec.avgSpm ? String(rec.avgSpm).replace('.', ',') : '–'),
+      statCell('FC media', rec.avgHr ? String(rec.avgHr) : '–', ' bpm'),
+      statCell(rec.kcalSrc === 'stima' ? 'Kcal (stima)' : 'Kcal', rec.kcal != null ? String(rec.kcal) : '–'));
+    li.append(st);
+    if(rec.coach && rec.coach.note){ const nt = document.createElement('div'); nt.className = 'hnote'; nt.textContent = rec.coach.note; li.append(nt); }
     const acts = document.createElement('div'); acts.className = 'acts';
     const bCopy = document.createElement('button'); bCopy.type = 'button'; bCopy.className = 'btn small'; bCopy.textContent = 'Copia CSV';
     bCopy.addEventListener('click', async () => {
@@ -826,8 +1018,7 @@ function renderHistory(){
       armed = Date.now() + 3000; bDel.textContent = 'Conferma'; setTimeout(() => { bDel.textContent = 'Elimina'; }, 3000);
     });
     acts.append(bDel);
-    if(rec.coach && rec.coach.name){ const h3 = document.createElement('div'); h3.className = 'h2'; h3.textContent = 'Coach, ' + rec.coach.name + ': ' + rec.coach.note; li.append(h1, h2, h3, acts); }
-    else li.append(h1, h2, acts);
+    li.append(acts);
     ul.append(li);
   }
 }
@@ -919,7 +1110,8 @@ function curRef(){
   return C.refCache;
 }
 function hrAt(fr){ if(!(cfg.hrMax > 0)) return null; return Math.round(cfg.hrRest > 0 ? cfg.hrRest + fr * (cfg.hrMax - cfg.hrRest) : (fr + 0.10) * cfg.hrMax); }
-function zoneOf(hr){ if(!hr || !(cfg.hrMax > 0)) return ''; let z = 0; for(const fr of [0.5, 0.6, 0.7, 0.8, 0.9]) if(hr >= hrAt(fr)) z++; return z ? 'Z' + z : 'sotto Z1'; }
+function zoneIdx(hr){ if(!hr || !(cfg.hrMax > 0)) return 0; let z = 0; for(const fr of [0.5, 0.6, 0.7, 0.8, 0.9]) if(hr >= hrAt(fr)) z++; return z; }
+function zoneOf(hr){ if(!hr || !(cfg.hrMax > 0)) return ''; const z = zoneIdx(hr); return z ? 'Z' + z : 'sotto Z1'; }
 function band(ph){
   if(!ph || !ph.f || !C.ref) return null;
   const m = ph.kind === 'work' ? C.adj : 1;
@@ -1068,7 +1260,7 @@ function renderCoach(d){
   }
   const ph = C.plan[C.idx], b = band(ph), next = C.plan[C.idx + 1], left = Math.max(0, ph.dur - C.tIn);
   let total = left; for(let i = C.idx + 1; i < C.plan.length; i++) total += C.plan[i].dur;
-  $('cPhase').textContent = ph.label + ' · fase ' + (C.idx + 1) + ' di ' + C.plan.length;
+  $('cPhase').textContent = ph.label + ' · ' + (C.idx + 1) + '/' + C.plan.length;
   $('cClock').textContent = fmtTime(Math.ceil(left));
   let tb = b;
   if(ph.kind === 'test' && C.testN > 60){ const avg = C.testSum / C.testN; tb = [Math.round(avg * 0.95), Math.round(avg * 1.05)]; }
@@ -1078,6 +1270,9 @@ function renderCoach(d){
   const p = C.p10 || 0, g0 = tb ? tb[0] * 0.72 : 0, g1 = tb ? tb[1] * 1.28 : Math.max(250, p * 1.3), gx = (v) => Math.max(0, Math.min(100, (v - g0) / (g1 - g0) * 100));
   const bandEl = $('cBand'); bandEl.hidden = !tb;
   if(tb){ bandEl.style.left = gx(tb[0]) + '%'; bandEl.style.width = (gx(tb[1]) - gx(tb[0])) + '%'; }
+  const lo = $('cLo'), hi = $('cHi');
+  lo.hidden = hi.hidden = !tb;
+  if(tb){ lo.textContent = tb[0] + ' W'; hi.textContent = tb[1] + ' W'; lo.style.left = gx(tb[0]) + '%'; hi.style.left = gx(tb[1]) + '%'; }
   $('cMark').style.left = gx(p) + '%';
   const cue = CUE[C.cue] || CUE.libero, el = $('cCue'); el.textContent = cue[0]; el.dataset.k = cue[1];
   $('cNext').textContent = (next ? 'Poi: ' + next.label + ', ' + fmtTime(next.dur) : 'Ultima fase') + ' · mancano ' + fmtTime(Math.ceil(total));
