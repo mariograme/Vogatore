@@ -24,6 +24,7 @@
   --water:#1b7f8c; --water-soft:rgba(27,127,140,.16); --wood:#a8651c; --on-wood:#ffffff; --wood-soft:rgba(168,101,28,.13);
   --ok:#1f8a4c; --warn:#a86a10; --bad:#c0392b;
   --z1:#f0cbc6; --z2:#e59a90; --z3:#d5695c; --z4:#bd3e32; --z5:#8a1f18;
+  --zt1:#0e2a30; --zt2:#0e2a30; --zt3:#ffffff; --zt4:#ffffff; --zt5:#ffffff;
   --shadow:0 1px 2px rgba(14,42,48,.05),0 6px 18px rgba(14,42,48,.06);
   --num:"Barlow Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif;
   --txt:"Barlow","Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -34,6 +35,7 @@
     --water:#4fc3cf; --water-soft:rgba(79,195,207,.18); --wood:#f0b469; --on-wood:#1c1206; --wood-soft:rgba(240,180,105,.16);
     --ok:#5fd08a; --warn:#f0c160; --bad:#ff8a7a;
     --z1:#5c2c29; --z2:#8d3c34; --z3:#c55340; --z4:#ef7862; --z5:#ffac9a;
+    --zt1:#eaf4f2; --zt2:#eaf4f2; --zt3:#ffffff; --zt4:#1c0e0c; --zt5:#1c0e0c;
     --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.22);
     color-scheme:dark;
   }
@@ -43,6 +45,7 @@
   --water:#4fc3cf; --water-soft:rgba(79,195,207,.18); --wood:#f0b469; --on-wood:#1c1206; --wood-soft:rgba(240,180,105,.16);
   --ok:#5fd08a; --warn:#f0c160; --bad:#ff8a7a;
   --z1:#5c2c29; --z2:#8d3c34; --z3:#c55340; --z4:#ef7862; --z5:#ffac9a;
+  --zt1:#eaf4f2; --zt2:#eaf4f2; --zt3:#ffffff; --zt4:#1c0e0c; --zt5:#1c0e0c;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 18px rgba(0,0,0,.22);
   color-scheme:dark;
 }
@@ -292,54 +295,70 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
 .wrap.video .tile .v{font-size:28px}
 .wrap.video .tile .v small{display:none}
 .wrap.video .tile .s,.wrap.video .zbar,.wrap.video .chartbox{display:none}
-/* Comandi dentro la vista video orizzontale (al posto della barra in basso). */
-.vctrl{display:none;gap:6px}
-.vctrl .btn{flex:1;min-height:40px;padding:6px 8px;font-family:var(--num);font-weight:700;font-size:16px;letter-spacing:.04em;text-transform:uppercase}
-.vctrl .btn.ico{flex:0 0 46px;padding:0;display:grid;place-items:center}
+/* Zona cardiaca: etichetta colorata accanto ai battiti e anello sulla zona obiettivo del coach. */
+.zbadge{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:6px;font-family:var(--num);font-weight:700;font-size:.5em;line-height:1.3;vertical-align:.35em;background:var(--surface-2);color:var(--muted)}
+.zbadge[data-z="1"]{background:var(--z1);color:var(--zt1)} .zbadge[data-z="2"]{background:var(--z2);color:var(--zt2)}
+.zbadge[data-z="3"]{background:var(--z3);color:var(--zt3)} .zbadge[data-z="4"]{background:var(--z4);color:var(--zt4)}
+.zbadge[data-z="5"]{background:var(--z5);color:var(--zt5)}
+.zbar i.tgt{box-shadow:0 0 0 1.5px var(--surface),0 0 0 3px var(--ink);opacity:1}
+/* Lampeggio del coach a ogni cambio di fase, per quando la voce è spenta. */
+@keyframes cflash{0%,100%{background:var(--surface)}50%{background:var(--water-soft)}}
+.coach.flash{animation:cflash .5s ease-in-out 4}
+@media (prefers-reduced-motion:reduce){.coach.flash{animation:none}}
+/* Colonna dei dati: trasparente fuori dalla vista video orizzontale. */
+.vside{display:contents}
+.vctrl{display:none;gap:5px}
+.vctrl .btn{min-height:38px;padding:4px 8px;font-family:var(--num);font-weight:700;font-size:16px;letter-spacing:.04em;text-transform:uppercase;min-width:0}
+.vctrl .btn.ico{display:grid;place-items:center}
 .vctrl .btn.ico svg{width:20px;height:20px}
 /* Telefono in orizzontale col video: una sola schermata senza scorrere.
-   Video a sinistra; a destra coach, potenza, sei valori principali e comandi. */
+   Video grande a sinistra con il coach sotto; a destra potenza, sei valori (FC per prima) e comandi. */
 @media (orientation:landscape) and (max-height:520px){
   body.video{overflow-y:auto;min-height:calc(100% + 90px)}
   body.video::after{content:"";display:block;height:calc(100vh + 90px)}
   body.video .bar{display:none}
   .wrap.video{position:fixed;inset:0;max-width:none;margin:0;gap:0;
-    display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);
-    grid-template-rows:auto auto minmax(0,1fr) auto;
-    grid-template-areas:"video coach" "video hero" "video grid" "video ctrl";
-    column-gap:10px;row-gap:5px;
-    padding:max(6px,env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(6px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
+    display:grid;grid-template-columns:minmax(0,1fr) clamp(196px,30vw,280px);
+    grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"video side" "coach side";
+    column-gap:8px;row-gap:5px;
+    padding:6px 8px max(6px,env(safe-area-inset-bottom,0px)) 8px}
+  /* margini per la tacca solo se la pagina arriva davvero ai bordi dello schermo */
+  .edge .wrap.video{padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px))}
   .wrap.video > *{display:none}
   .wrap.video > .videobox{display:block;grid-area:video;align-self:center;position:static;width:100%;max-height:100%;aspect-ratio:16/9;border-radius:10px}
-  .wrap.video > .coach{display:flex;grid-area:coach;padding:5px 10px 6px;gap:3px;border-width:1.5px;border-radius:12px}
-  .wrap.video > .hero{display:flex;grid-area:hero;flex-direction:row;align-items:center;justify-content:space-between;gap:8px;padding:2px 12px;border-radius:12px}
-  .wrap.video > .grid{display:grid;grid-area:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:5px;min-height:0}
-  .wrap.video > .vctrl{display:flex;grid-area:ctrl}
-  /* coach compatto */
-  .wrap.video .coach .chead{align-items:center}
-  .wrap.video .coach .lab{font-size:11px;letter-spacing:.06em}
-  .wrap.video .coach .cclock{font-size:clamp(20px,7vh,30px)}
-  .wrap.video .coach .ctarget{font-size:12.5px;line-height:1.2}
-  .wrap.video .ccue{font-size:13.5px;line-height:1.2}
-  .wrap.video .ccue::before{width:8px;height:8px}
+  .wrap.video > .vside{display:flex;grid-area:side;flex-direction:column;gap:5px;min-height:0;min-width:0}
+  /* coach largo sotto il video, orologio a destra */
+  .wrap.video > .coach{display:grid;grid-area:coach;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;row-gap:3px;padding:5px 10px 6px;border-width:1.5px;border-radius:12px}
+  .wrap.video .coach .chead{display:contents}
+  .wrap.video .coach .lab{grid-column:1;font-size:11px;letter-spacing:.06em;align-self:center}
+  .wrap.video .coach .cclock{grid-column:2;grid-row:1 / span 2;align-self:center;font-size:clamp(24px,9vh,40px)}
+  .wrap.video .coach .ctarget{grid-column:1;font-size:13px;line-height:1.2}
+  .wrap.video .ctip,.wrap.video .gwrap,.wrap.video .ccue{grid-column:1 / -1}
   .wrap.video .ctip{font-size:12.5px;padding:1px 6px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .wrap.video .gauge{height:9px;border-radius:5px}
   .wrap.video .gauge .mark{top:0;bottom:0;width:6px;margin-left:-3px}
-  /* potenza in riga */
-  .wrap.video .hero > div:first-child{display:flex;align-items:baseline;gap:8px}
-  .wrap.video .hero .lab{font-size:11px}
-  .wrap.video .hero .big{font-size:clamp(28px,12vh,58px);line-height:1}
-  .wrap.video .hero .unit{font-size:16px;margin-left:2px}
-  .wrap.video .hero .side{border-top:0;padding-top:0;flex-wrap:nowrap;gap:4px 6px}
-  .wrap.video .hero .side span{font-size:10.5px}
-  .wrap.video .hero .side b{font-size:clamp(16px,6vh,24px);margin-right:4px}
-  .wrap.video .state{display:none}
-  /* sei valori principali */
-  .wrap.video .grid .tile:nth-child(n+7){display:none}
-  .wrap.video .tile{padding:2px 8px;justify-content:center;gap:0;border-radius:10px;min-height:0;overflow:hidden}
-  .wrap.video .tile .lab{font-size:9.5px;line-height:1.2}
-  .wrap.video .tile .v{font-size:clamp(16px,7vh,34px);line-height:1.05}
-  .wrap.video .zbar{display:grid;height:4px;margin-top:2px}
+  .wrap.video .ccue{font-size:14px;line-height:1.2}
+  .wrap.video .ccue::before{width:8px;height:8px}
+  /* potenza: numero a sinistra, media e max impilati a destra */
+  .wrap.video .vside > .hero{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:0 8px;padding:3px 10px;border-radius:12px;min-width:0;overflow:hidden}
+  .wrap.video .vside > .hero > div:first-child{display:flex;flex-direction:column;min-width:0}
+  .wrap.video .vside .hero .lab{font-size:10px}
+  .wrap.video .vside .hero .big{font-size:clamp(28px,12vh,54px);line-height:1}
+  .wrap.video .vside .hero .unit{font-size:15px;margin-left:2px}
+  .wrap.video .vside .hero .side{display:grid;grid-template-columns:auto auto;justify-content:end;align-items:baseline;gap:0 6px;border-top:0;padding-top:0;min-width:0}
+  .wrap.video .vside .hero .side span{font-size:10px}
+  .wrap.video .vside .hero .side b{font-size:clamp(15px,5.5vh,22px);margin-right:0}
+  .wrap.video .vside .state{display:none}
+  /* sei valori in due colonne, frequenza cardiaca per prima */
+  .wrap.video .vside > .grid{display:grid;flex:1;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:5px;min-height:0}
+  .wrap.video .vside .grid .tile:nth-child(n+7){display:none}
+  .wrap.video .vside .grid .tile.hr{order:-1}
+  .wrap.video .vside .tile{padding:2px 8px;justify-content:center;gap:0;border-radius:10px;min-height:0;min-width:0;overflow:hidden}
+  .wrap.video .vside .tile .lab{font-size:9.5px;line-height:1.2}
+  .wrap.video .vside .tile .v{font-size:clamp(16px,7.5vh,34px);line-height:1.05}
+  .wrap.video .vside .zbar{display:grid;height:6px;margin-top:3px}
+  .wrap.video .vside > .vctrl{display:flex;flex-wrap:wrap}
+  .wrap.video .vside .vctrl .btn{flex:1 1 calc(50% - 3px)}
   .toast{bottom:calc(8px + env(safe-area-inset-bottom,0px))}
 }
 </style>
@@ -420,6 +439,7 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
     </div>
   </section>
 
+  <div class="vside" id="vSide">
   <section class="hero" aria-label="Potenza">
     <div>
       <div class="lab">Potenza <span class="tag" id="powerTag" hidden>stima dal passo</span></div>
@@ -437,7 +457,7 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
     <div class="tile"><div class="lab" data-short="Colpi/min">Colpi/min</div><div class="v" id="vSpm">–</div><div class="s" id="sSpm"></div></div>
     <div class="tile"><div class="lab" data-short="Tempo">Tempo</div><div class="v" id="vTime">0:00</div><div class="s" id="sTime"></div></div>
     <div class="tile"><div class="lab" data-short="Metri">Distanza</div><div class="v"><span id="vDist">0</span><small>m</small></div><div class="s" id="sDist"></div></div>
-    <div class="tile"><div class="lab" data-short="FC">Frequenza cardiaca</div><div class="v"><span id="vHr">–</span><small>bpm</small></div><div class="s" id="sHr"></div><div class="zbar" id="hrZones" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></div>
+    <div class="tile hr"><div class="lab" data-short="FC">Frequenza cardiaca</div><div class="v"><span id="vHr">–</span><small>bpm</small><b class="zbadge" id="vZone" hidden></b></div><div class="s" id="sHr"></div><div class="zbar" id="hrZones" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></div>
     <div class="tile"><div class="lab" data-short="Kcal">Calorie</div><div class="v"><span id="vKcal">0</span><small>kcal</small></div><div class="s" id="sKcal"></div></div>
     <div class="tile"><div class="lab" data-short="Kcal/h">Consumo kcal/h</div><div class="v" id="vKcalH">–</div><div class="s" id="sKcalH"></div></div>
     <div class="tile"><div class="lab" data-short="Colpi">Colpi totali</div><div class="v" id="vStrokes">0</div><div class="s" id="sStrokes"></div></div>
@@ -448,6 +468,7 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
     <button class="btn danger" id="btnVStop" type="button" hidden>Termina</button>
     <button class="btn ico" id="btnVFull" type="button" aria-label="Schermo intero"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
     <button class="btn ico" id="btnVClose" type="button" aria-label="Chiudi video"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
   </div>
 
   <section class="chartbox" aria-label="Potenza negli ultimi 5 minuti">
@@ -515,6 +536,8 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
       <div class="set">
         <div class="row"><label for="inAuto">Avvia da solo al primo colpo</label><input id="inAuto" type="checkbox"></div>
         <div class="row"><label for="inVoice">Voce e segnali acustici del coach</label><input id="inVoice" type="checkbox"></div>
+        <div class="row"><label for="inVoiceVideo">Voce anche con il video aperto</label><input id="inVoiceVideo" type="checkbox"></div>
+        <p class="hint">Su iPhone la voce mette in pausa il video. Se la attivi, l'app prova a farlo ripartire appena la voce finisce. Senza voce restano i segnali acustici e i messaggi a schermo, che lampeggiano a ogni cambio di fase.</p>
       </div>
       <div class="set">
         <div class="row"><label for="inHrMax">Frequenza cardiaca massima (bpm)</label><input id="inHrMax" type="number" inputmode="numeric" min="120" max="230" step="1"></div>
@@ -641,7 +664,7 @@ const store = {
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const hex = (dv) => { let s = ''; for(let i = 0; i < dv.byteLength; i++) s += dv.getUint8(i).toString(16).padStart(2, '0') + ' '; return s.trim(); };
 
-const APP_VERSION = 9;
+const APP_VERSION = 10;
 // UUID sempre per esteso: alcuni browser (Bluefy) non accettano gli alias numerici a 16 bit.
 const u16 = (n) => '0000' + n.toString(16).padStart(4, '0') + '-0000-1000-8000-00805f9b34fb';
 const FTMS = u16(0x1826), ROWER = u16(0x2ad1), HRS = u16(0x180d), HRM = u16(0x2a37);
@@ -652,7 +675,7 @@ let framed = true; try{ framed = window.self !== window.top; }catch(e){ framed =
 let policyOk = true; try{ if(document.featurePolicy && document.featurePolicy.allowsFeature) policyOk = document.featurePolicy.allowsFeature('bluetooth'); }catch(e){}
 const btUsable = !!navigator.bluetooth && policyOk;
 
-const cfg = Object.assign({ weight: 80, autoStart: true, voice: true, hrMax: 182, hrRest: 60, ref: 0, refAt: 0, planOn: true }, store.get('vg.cfg', {}));
+const cfg = Object.assign({ weight: 80, autoStart: true, voice: true, hrMax: 182, hrRest: 60, ref: 0, refAt: 0, planOn: true, voiceVideo: false }, store.get('vg.cfg', {}));
 let history = store.get('vg.hist', []); if(!Array.isArray(history)) history = [];
 
 const L = { power: null, spm: null, pace: null, dist: null, kcal: null, kcalH: null, hr: null, strokes: null };
@@ -1094,7 +1117,11 @@ function render(d){
   $('sHr').textContent = d.hr ? ((zoneOf(d.hr) ? zoneOf(d.hr) + ' · ' : '') + d.hrSrc + (s && s.nHr ? ' · media ' + int(s.sumHr / s.nHr) : '')) : (S.hrDev ? 'cardio collegato, in attesa' : (btUsable ? 'tocca per collegare il cardio' : 'nessun sensore'));
   $('vHr').closest('.tile').classList.toggle('tap', !S.hrDev && btUsable);
   const zi = d.hr ? zoneIdx(d.hr) : 0, zs = $('hrZones').children;
-  for(let i = 0; i < zs.length; i++) zs[i].classList.toggle('on', i + 1 === zi);
+  const cph = C.plan && S.session ? C.plan[C.idx] : null;
+  const tz = cph && cph.hrz && cph.dur >= 120 && cph.kind === 'work' ? cph.hrz : 0;
+  for(let i = 0; i < zs.length; i++){ zs[i].classList.toggle('on', i + 1 === zi); zs[i].classList.toggle('tgt', i + 1 === tz); }
+  const zb = $('vZone'); zb.hidden = !(d.hr && cfg.hrMax > 0);
+  if(!zb.hidden){ zb.dataset.z = zi ? String(zi) : '0'; zb.textContent = zi ? 'Z' + zi : '<Z1'; }
   $('vStrokes').textContent = int(s ? total(s, 'strokes', 10) : 0);
   $('sStrokes').textContent = s && s.moving > 0 && dist > 0 && total(s, 'strokes', 10) > 0 ? (dist / total(s, 'strokes', 10)).toFixed(1).replace('.', ',') + ' m per colpo' : '';
 
@@ -1482,12 +1509,31 @@ function band(ph){
 }
 function say(text){
   if(!cfg.voice || C.speed > 1) return;
+  if(S.video && !cfg.voiceVideo) return; // su iPhone la sintesi vocale mette in pausa il video
   try{
     if(!('speechSynthesis' in window)) return;
     const u = new SpeechSynthesisUtterance(text); u.lang = 'it-IT'; u.rate = 1.05;
+    if(S.video){
+      const was = YT.state === 1;
+      const resume = () => { if(was && S.video) setTimeout(ytPlay, 300); };
+      u.onend = resume; u.onerror = resume;
+    }
     window.speechSynthesis.speak(u);
   }catch(e){}
 }
+// Stato del video YouTube (1 = in riproduzione), letto dai messaggi del lettore.
+const YT = { state: -1 };
+function ytPost(obj){ try{ $('ytFrame').contentWindow.postMessage(JSON.stringify(obj), '*'); }catch(e){} }
+function ytPlay(){ ytPost({ event: 'command', func: 'playVideo', args: [] }); }
+window.addEventListener('message', (ev) => {
+  let host = ''; try{ host = new URL(ev.origin).hostname; }catch(e){ return; }
+  if(!/(^|\.)youtube(-nocookie)?\.com$/.test(host)) return;
+  let m = ev.data; if(typeof m === 'string'){ try{ m = JSON.parse(m); }catch(e){ return; } }
+  if(!m || typeof m !== 'object') return;
+  if(m.event === 'onStateChange' && typeof m.info === 'number') YT.state = m.info;
+  else if(m.event === 'infoDelivery' && m.info && typeof m.info.playerState === 'number') YT.state = m.info.playerState;
+});
+function flashCoach(){ const b = $('coachBox'); b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash'); }
 function beep(freq, dur){
   if(!cfg.voice || !C.audio || C.speed > 1) return;
   try{
@@ -1503,7 +1549,7 @@ const minWords = (sec) => {
 };
 function announcePhase(){
   const ph = C.plan[C.idx], b = band(ph);
-  beep(660, 0.4);
+  beep(660, 0.4); flashCoach();
   // Fasi brevi (30/30, allunghi): una parola sola, altrimenti la voce si accavalla.
   if(ph.dur < 45) say(ph.kind === 'work' || ph.kind === 'test' ? 'Via.' : 'Recupero.');
   else say(ph.label + ', ' + minWords(ph.dur) + (b && ph.kind === 'work' ? ', da ' + b[0] + ' a ' + b[1] + ' watt' : '') + '.' + (ph.say && ph.tip ? ' ' + ph.tip.replace(/^[^:]*:\s*/, '') + '.' : ''));
@@ -1809,7 +1855,7 @@ function ytEmbed(url){
   let list = u.searchParams.get('list'); if(list && !/^[\w-]+$/.test(list)) list = null;
   if(!id && !list) return null;
   const t = u.searchParams.get('t') || u.searchParams.get('start');
-  return 'https://www.youtube-nocookie.com/embed/' + (id || 'videoseries') + '?playsinline=1&rel=0' + (list ? '&list=' + list : '') + (t && /^\d+s?$/.test(t) ? '&start=' + parseInt(t, 10) : '');
+  return 'https://www.youtube-nocookie.com/embed/' + (id || 'videoseries') + '?playsinline=1&rel=0&enablejsapi=1' + (location.origin && location.origin.startsWith('http') ? '&origin=' + encodeURIComponent(location.origin) : '') + (list ? '&list=' + list : '') + (t && /^\d+s?$/.test(t) ? '&start=' + parseInt(t, 10) : '');
 }
 /*YT-END*/
 function setVideo(on, src){
@@ -1869,6 +1915,12 @@ $('btnCopyLog').addEventListener('click', async () => {
 $('inWeight').value = cfg.weight; $('inAuto').checked = !!cfg.autoStart;
 $('inWeight').addEventListener('change', () => { const v = parseFloat(String($('inWeight').value).replace(',', '.')); if(v >= 35 && v <= 200){ cfg.weight = v; store.set('vg.cfg', cfg); } else { $('inWeight').value = cfg.weight; toast('Inserisci un peso tra 35 e 200 kg.'); } });
 $('inAuto').addEventListener('change', () => { cfg.autoStart = $('inAuto').checked; store.set('vg.cfg', cfg); });
+$('ytFrame').addEventListener('load', () => { YT.state = -1; ytPost({ event: 'listening', id: 'vogatore', channel: 'widget' }); });
+$('inVoiceVideo').checked = !!cfg.voiceVideo;
+$('inVoiceVideo').addEventListener('change', () => { cfg.voiceVideo = $('inVoiceVideo').checked; store.set('vg.cfg', cfg); });
+// La pagina arriva ai bordi dello schermo? Solo allora servono i margini per la tacca.
+function updEdge(){ const long = Math.max(screen.width || 0, screen.height || 0); document.documentElement.classList.toggle('edge', !!long && innerWidth >= long - 4); }
+updEdge(); window.addEventListener('resize', updEdge); window.addEventListener('orientationchange', () => setTimeout(updEdge, 300));
 $('inVoice').checked = !!cfg.voice;
 $('inVoice').addEventListener('change', () => { cfg.voice = $('inVoice').checked; store.set('vg.cfg', cfg); });
 function bindNum(id, key, min, max){
