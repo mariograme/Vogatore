@@ -286,17 +286,54 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
 .wrap.video .tile .v{font-size:28px}
 .wrap.video .tile .v small{display:none}
 .wrap.video .tile .s,.wrap.video .zbar,.wrap.video .chartbox{display:none}
+/* Comandi dentro la vista video orizzontale (al posto della barra in basso). */
+.vctrl{display:none;gap:6px}
+.vctrl .btn{flex:1;min-height:40px;padding:6px 8px;font-family:var(--num);font-weight:700;font-size:16px;letter-spacing:.04em;text-transform:uppercase}
+.vctrl .btn.ico{flex:0 0 46px;padding:0;display:grid;place-items:center}
+.vctrl .btn.ico svg{width:20px;height:20px}
+/* Telefono in orizzontale col video: una sola schermata senza scorrere.
+   Video a sinistra; a destra coach, potenza, sei valori principali e comandi. */
 @media (orientation:landscape) and (max-height:520px){
-  .wrap.video{max-width:none;display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);column-gap:12px;align-items:start}
-  .wrap.video > *{grid-column:2}
-  .wrap.video > .videobox{grid-column:1;grid-row:1 / span 8;top:calc(env(safe-area-inset-top,0px) + 8px)}
-  .wrap.video .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .wrap.video{padding-block:8px 84px}
-  .wrap.video .hero .big{font-size:46px}
-  .wrap.video .tile .v{font-size:24px}
-  .wrap.video .top .btn{min-height:36px;padding:4px 10px;font-size:14px}
-  .bar{padding-top:6px}
-  .bar .btn{min-height:40px;font-size:16px}
+  body.video{overflow:hidden}
+  body.video .bar{display:none}
+  .wrap.video{position:fixed;inset:0;max-width:none;margin:0;gap:0;
+    display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);
+    grid-template-rows:auto auto minmax(0,1fr) auto;
+    grid-template-areas:"video coach" "video hero" "video grid" "video ctrl";
+    column-gap:10px;row-gap:5px;
+    padding:max(6px,env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(6px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
+  .wrap.video > *{display:none}
+  .wrap.video > .videobox{display:block;grid-area:video;align-self:center;position:static;width:100%;max-height:100%;aspect-ratio:16/9;border-radius:10px}
+  .wrap.video > .coach{display:flex;grid-area:coach;padding:5px 10px 6px;gap:3px;border-width:1.5px;border-radius:12px}
+  .wrap.video > .hero{display:flex;grid-area:hero;flex-direction:row;align-items:center;justify-content:space-between;gap:8px;padding:2px 12px;border-radius:12px}
+  .wrap.video > .grid{display:grid;grid-area:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:5px;min-height:0}
+  .wrap.video > .vctrl{display:flex;grid-area:ctrl}
+  /* coach compatto */
+  .wrap.video .coach .chead{align-items:center}
+  .wrap.video .coach .lab{font-size:11px;letter-spacing:.06em}
+  .wrap.video .coach .cclock{font-size:clamp(20px,7vh,30px)}
+  .wrap.video .coach .ctarget{font-size:12.5px;line-height:1.2}
+  .wrap.video .ccue{font-size:13.5px;line-height:1.2}
+  .wrap.video .ccue::before{width:8px;height:8px}
+  .wrap.video .ctip{font-size:12.5px;padding:1px 6px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .wrap.video .gauge{height:9px;border-radius:5px}
+  .wrap.video .gauge .mark{top:0;bottom:0;width:6px;margin-left:-3px}
+  /* potenza in riga */
+  .wrap.video .hero > div:first-child{display:flex;align-items:baseline;gap:8px}
+  .wrap.video .hero .lab{font-size:11px}
+  .wrap.video .hero .big{font-size:clamp(28px,12vh,58px);line-height:1}
+  .wrap.video .hero .unit{font-size:16px;margin-left:2px}
+  .wrap.video .hero .side{border-top:0;padding-top:0;flex-wrap:nowrap;gap:4px 6px}
+  .wrap.video .hero .side span{font-size:10.5px}
+  .wrap.video .hero .side b{font-size:clamp(16px,6vh,24px);margin-right:4px}
+  .wrap.video .state{display:none}
+  /* sei valori principali */
+  .wrap.video .grid .tile:nth-child(n+7){display:none}
+  .wrap.video .tile{padding:2px 8px;justify-content:center;gap:0;border-radius:10px;min-height:0;overflow:hidden}
+  .wrap.video .tile .lab{font-size:9.5px;line-height:1.2}
+  .wrap.video .tile .v{font-size:clamp(16px,7vh,34px);line-height:1.05}
+  .wrap.video .zbar{display:grid;height:4px;margin-top:2px}
+  .toast{bottom:calc(8px + env(safe-area-inset-bottom,0px))}
 }
 </style>
 </head>
@@ -398,6 +435,13 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
     <div class="tile"><div class="lab" data-short="Kcal/h">Consumo kcal/h</div><div class="v" id="vKcalH">–</div><div class="s" id="sKcalH"></div></div>
     <div class="tile"><div class="lab" data-short="Colpi">Colpi totali</div><div class="v" id="vStrokes">0</div><div class="s" id="sStrokes"></div></div>
   </section>
+
+  <div class="vctrl" id="vCtrl">
+    <button class="btn primary" id="btnVMain" type="button">Inizia</button>
+    <button class="btn danger" id="btnVStop" type="button" hidden>Termina</button>
+    <button class="btn ico" id="btnVFull" type="button" aria-label="Schermo intero"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    <button class="btn ico" id="btnVClose" type="button" aria-label="Chiudi video"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
 
   <section class="chartbox" aria-label="Potenza negli ultimi 5 minuti">
     <div class="chead2">
@@ -590,7 +634,7 @@ const store = {
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const hex = (dv) => { let s = ''; for(let i = 0; i < dv.byteLength; i++) s += dv.getUint8(i).toString(16).padStart(2, '0') + ' '; return s.trim(); };
 
-const APP_VERSION = 7;
+const APP_VERSION = 8;
 // UUID sempre per esteso: alcuni browser (Bluefy) non accettano gli alias numerici a 16 bit.
 const u16 = (n) => '0000' + n.toString(16).padStart(4, '0') + '-0000-1000-8000-00805f9b34fb';
 const FTMS = u16(0x1826), ROWER = u16(0x2ad1), HRS = u16(0x180d), HRM = u16(0x2a37);
@@ -1050,6 +1094,7 @@ function render(d){
   const main = $('btnMain'), stop = $('btnStop');
   main.textContent = !s ? 'Inizia' : s.state === 'running' ? 'Pausa' : 'Riprendi';
   stop.hidden = !s; stop.textContent = stopArmed ? 'Conferma fine' : 'Termina';
+  $('btnVMain').textContent = main.textContent; $('btnVStop').hidden = stop.hidden; $('btnVStop').textContent = stopArmed ? 'Conferma' : 'Termina';
 
   $('gName').textContent = G.name;
   $('gSvc').textContent = G.services.length ? G.services.join(', ') : '–';
@@ -1764,10 +1809,23 @@ function setVideo(on, src){
   const box = $('videoBox'), fr = $('ytFrame');
   if(on){ fr.src = src; box.hidden = false; } else { box.hidden = true; fr.src = 'about:blank'; }
   document.querySelector('.wrap').classList.toggle('video', on);
+  document.body.classList.toggle('video', on);
+  if(!on) exitFull();
   document.querySelectorAll('.tile .lab').forEach(l => { if(!l.dataset.full) l.dataset.full = l.textContent; l.textContent = on ? (l.dataset.short || l.dataset.full) : l.dataset.full; });
   $('btnVideo').textContent = on ? 'Chiudi video' : 'Apri video'; S.video = on;
   if(on){ $('dVideo').open = false; window.scrollTo(0, 0); }
   queueRender();
+}
+
+// Schermo intero: su iPhone una pagina web di solito non può nascondere le barre del browser; in quel caso si indica la modalità di Bluefy.
+function isFull(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+function exitFull(){ try{ if(isFull()) (document.exitFullscreen || document.webkitExitFullscreen).call(document); }catch(e){} }
+function fullTip(){ toast('Da qui il telefono non permette lo schermo intero. Attivalo dal menu di Bluefy (modalità a schermo intero) e tieni il telefono in orizzontale.', 8000); }
+function toggleFull(){
+  if(isFull()){ exitFull(); return; }
+  const el = document.documentElement, f = el.requestFullscreen || el.webkitRequestFullscreen;
+  if(!f){ fullTip(); return; }
+  try{ const r = f.call(el); if(r && typeof r.catch === 'function') r.catch(() => fullTip()); }catch(e){ fullTip(); }
 }
 
 /* ---------- eventi ---------- */
@@ -1788,8 +1846,14 @@ $('btnHrAll').addEventListener('click', () => connectHr(true));
 // Toccare la scheda della frequenza cardiaca quando non c'è sensore avvia il collegamento del cardio.
 $('vHr').closest('.tile').addEventListener('click', () => { if(!S.hrDev && btUsable) connectHr(false); });
 $('btnDemo').addEventListener('click', () => { if(S.conn === 'demo') stopDemo(); else startDemo(); });
-$('btnMain').addEventListener('click', () => { if(!S.session) startSession(false); else togglePause(); });
-$('btnStop').addEventListener('click', () => { if(stopArmed && Date.now() < stopArmed) stopSession(); else { stopArmed = Date.now() + 3000; queueRender(); } });
+function mainAction(){ if(!S.session) startSession(false); else togglePause(); }
+function stopAction(){ if(stopArmed && Date.now() < stopArmed) stopSession(); else { stopArmed = Date.now() + 3000; queueRender(); } }
+$('btnMain').addEventListener('click', mainAction);
+$('btnStop').addEventListener('click', stopAction);
+$('btnVMain').addEventListener('click', mainAction);
+$('btnVStop').addEventListener('click', stopAction);
+$('btnVClose').addEventListener('click', () => setVideo(false));
+$('btnVFull').addEventListener('click', toggleFull);
 $('btnCopyLog').addEventListener('click', async () => {
   const txt = 'Dispositivo: ' + G.name + '\nServizi: ' + G.services.join(', ') + '\nPacchetti: ' + G.count + '\nUltimo: ' + G.lastHex + '\nCampi: ' + Array.from(G.fields).join(', ') + '\n\n' + logLines.join('\n');
   try{ await navigator.clipboard.writeText(txt); toast('Registro copiato.'); }
