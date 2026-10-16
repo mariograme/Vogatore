@@ -1442,12 +1442,12 @@ function buildPlan(id, size, sid){
     out.push(P('cool', 'Defaticamento', 3, [0.35, 0.50], [16, 20]));
   } else if(id === 'intervalli'){
     const n = [4, 6, 8][size];
-    out.push(P('warm', 'Riscaldamento', 6, [0.45, 0.65], [18, 22]));
+    out.push(P('warm', 'Riscaldamento', 5, [0.45, 0.65], [18, 22]));
     for(let i = 0; i < n; i++){ out.push(P('work', 'Ripetuta ' + (i + 1) + ' di ' + n, 2, [1.05, 1.18], [26, 30])); if(i < n - 1) out.push(P('rec', 'Recupero', 2, [0.30, 0.50], null)); }
     out.push(P('cool', 'Defaticamento', 4, [0.35, 0.50], [16, 20]));
   } else if(id === 'cadenza'){
     const steps = [[18, 20, 22, 24], [18, 20, 22, 24, 22, 20], [18, 20, 22, 24, 26, 24, 22, 20]][size];
-    out.push(P('warm', 'Riscaldamento', 3, [0.45, 0.60], [18, 20]));
+    out.push(P('warm', 'Riscaldamento', 4, [0.45, 0.60], [18, 20]));
     steps.forEach(r => out.push(P('work', 'Frequenza ' + r + ' colpi al minuto', 3, [0.55, 0.85], [r - 1, r + 1])));
     out.push(P('cool', 'Defaticamento', 2, [0.35, 0.50], [16, 20]));
   }
@@ -1643,10 +1643,10 @@ function coachTick(d){
   const pNow = d.stale ? null : (d.active ? (d.power || 0) : 0);
   if(pNow != null){ const a = 1 - Math.exp(-Math.max(dt, 0.2) / 6); C.p10 = C.p10 == null ? pNow : C.p10 + a * (pNow - C.p10); }
   let ph = C.plan[C.idx]; const b = band(ph), p = C.p10 || 0;
-  // Nelle fasi costanti in zona 2–3 comanda il cuore: dopo 2 minuti e mezzo (il tempo che la FC si assesti)
+  // Nelle fasi costanti in zona 2–3 comanda il cuore: dopo 2 minuti (col riscaldamento di 4–5 minuti la FC è già avviata e si assesta in fretta)
   // l'obiettivo di potenza si sposta verso i watt che tengono davvero la FC in zona, nei due sensi.
   const hz = steady(ph) && cfg.hrMax > 0 && hrAt(0.5) ? ph.hrz : 0, zl = hz ? hrAt(ZF[hz][0]) : 0, zh = hz ? hrAt(ZF[hz][1]) : 0;
-  const settled = !!(hz && d.hr && d.active && C.tIn >= 150), inZone = settled && d.hr >= zl && d.hr <= zh;
+  const settled = !!(hz && d.hr && d.active && C.tIn >= 120), inZone = settled && d.hr >= zl && d.hr <= zh;
   if(ph.kind === 'work' && b){ C.workSecs += dt; if(inZone || (!settled && p >= b[0] * 0.97 && p <= b[1] * 1.03)) C.inBand += dt; C.repSum += p * dt; C.repN += dt; }
   if(ph.kind === 'test' && pNow != null){ C.testSum += pNow * dt; C.testN += dt; }
   if(settled && b){
