@@ -154,6 +154,69 @@ button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visi
 .reft{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--muted);background:var(--surface-2);border-radius:8px;padding:4px 8px;align-self:flex-start;font-variant-numeric:tabular-nums}
 select{font:inherit;padding:9px 10px;border:1.5px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);min-width:0;width:100%;min-height:44px}
 
+/* Obiettivo della seduta */
+.aim{display:flex;flex-direction:column;gap:4px;background:var(--water-soft);border-radius:10px;padding:8px 10px}
+.aim:empty{display:none}
+.aimh{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 8px}
+.aimh .lab{color:var(--water)}
+.aimh b{font-family:var(--num);font-size:21px;font-weight:600;line-height:1.1}
+.aimalso{font-size:13.5px;color:var(--muted)}
+.aimw{margin:0;font-size:14.5px}
+.pbody .aim{background:var(--surface-2)}
+
+/* Resoconto */
+.report{background:var(--surface);border:2px solid var(--wood);border-radius:16px;padding:12px 14px 14px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow);scroll-margin-top:12px}
+.rhead{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.rhead .lab{color:var(--wood)}
+.rbody{display:flex;flex-direction:column;gap:14px}
+.rbody h2{margin:0;font-family:var(--num);font-size:26px;line-height:1.08;font-weight:600;text-wrap:balance}
+.rsub{font-size:14px;color:var(--muted);margin-top:-10px;font-variant-numeric:tabular-nums}
+.rverd{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;border-left:4px solid var(--muted);padding:2px 0 2px 10px}
+.rverd b{font-family:var(--num);font-size:21px;font-weight:600}
+.rverd .vk{font-weight:600}
+.rverd[data-k="ok"]{border-color:var(--ok)} .rverd[data-k="ok"] .vk{color:var(--ok)}
+.rverd[data-k="warn"]{border-color:var(--warn)} .rverd[data-k="warn"] .vk{color:var(--warn)}
+.rverd[data-k="bad"]{border-color:var(--bad)} .rverd[data-k="bad"] .vk{color:var(--bad)}
+.rsec{display:flex;flex-direction:column;gap:7px}
+.rsec h3{margin:0;font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.rchart{position:relative}
+.rchart svg{display:block;width:100%;height:auto;touch-action:pan-y}
+.rchart text{font-family:var(--txt);font-size:10px;fill:var(--muted)}
+.rread{font-size:13.5px;color:var(--muted);min-height:19px;font-variant-numeric:tabular-nums}
+.ztime{display:flex;gap:2px;height:24px}
+.ztime i{display:flex;align-items:center;justify-content:center;font-style:normal;font-family:var(--num);font-weight:600;font-size:13px;min-width:3px;overflow:hidden;white-space:nowrap}
+.ztime i:first-child{border-radius:4px 0 0 4px} .ztime i:last-child{border-radius:0 4px 4px 0} .ztime i:only-child{border-radius:4px}
+.ztime .z0{background:var(--line);color:var(--ink)}
+.ztime .z1{background:var(--z1);color:var(--zt1)} .ztime .z2{background:var(--z2);color:var(--zt2)} .ztime .z3{background:var(--z3);color:var(--zt3)}
+.ztime .z4{background:var(--z4);color:var(--zt4)} .ztime .z5{background:var(--z5);color:var(--zt5)}
+.zleg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.zleg span{display:inline-flex;align-items:center;gap:5px}
+.zleg .zs.z0{background:var(--line)}
+.trained{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.trained li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:center}
+.trained b{font-weight:600;font-size:16px}
+.trained p{grid-column:1 / -1;margin:0;font-size:14px;color:var(--muted)}
+.lvl{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)}
+.lvl i{width:14px;height:6px;border-radius:3px;background:var(--line)}
+.lvl i.on{background:var(--water)}
+.ins{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.ins li{display:grid;grid-template-columns:10px minmax(0,1fr);gap:9px;font-size:15px;align-items:baseline}
+.ins li::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--water);transform:translateY(-1px)}
+.ins li[data-k="ok"]::before{background:var(--ok)}
+.ins li[data-k="warn"]::before{background:var(--warn)}
+.rnext{margin:0;font-size:14.5px;border-top:1px solid var(--line);padding-top:10px}
+.wrap.video .report{display:none}
+
+/* Zone: cuore e watt */
+.ztab{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:15px}
+.ztab td{padding:6px 4px;border-bottom:1px solid var(--line);vertical-align:baseline}
+.ztab tr:last-child td{border-bottom:0}
+.ztab td:first-child{white-space:nowrap}
+.ztab td.n{text-align:right;font-family:var(--num);font-weight:600;font-size:17px;white-space:nowrap}
+.ztab small{display:block;font-size:12px;color:var(--muted);font-family:var(--txt);font-weight:400}
+.zplot svg{display:block;width:100%;height:auto}
+.zplot text{font-family:var(--txt);font-size:10px;fill:var(--muted)}
+
 /* Piano */
 .pbox,.abox{display:flex;flex-direction:column;gap:10px}
 .pweeks{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:4px}
@@ -399,6 +462,11 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
     <div class="cfoot"><span class="hint" id="cNext"></span><span class="acts"><button class="btn small" id="btnSkip" type="button">Salta fase</button><button class="btn small" id="btnCoachOff" type="button">Chiudi coach</button></span></div>
   </section>
 
+  <section class="report" id="report" aria-label="Resoconto dell'allenamento" hidden>
+    <div class="rhead"><div class="lab" id="rLab">Resoconto</div><button class="btn small" id="btnRepClose" type="button">Chiudi</button></div>
+    <div class="rbody" id="rBody"></div>
+  </section>
+
   <section class="coachcard" id="coachCard" aria-label="Coach">
     <div class="pbox" id="planBox" hidden>
       <div class="lab" id="pLab">Piano 8 settimane</div>
@@ -406,6 +474,7 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
       <h2 id="pTitle"></h2>
       <div class="pmeta" id="pMeta"></div>
       <p class="hint" id="pGoal"></p>
+      <div class="aim" id="pAim"></div>
       <div id="pProf"></div>
       <p class="padvice"><b>Consiglio</b><span id="pAdvice"></span></p>
       <p class="pwarn" id="pWarn" hidden></p>
@@ -423,6 +492,7 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
     <div class="lab">Coach</div>
     <h2 id="cRecTitle"></h2>
     <p class="hint" id="cRecWhy"></p>
+    <div class="aim" id="cRecAim"></div>
     <span class="reft" id="cRecRef"></span>
     <div class="sel">
       <select id="selWorkout" aria-label="Allenamento">
@@ -528,6 +598,17 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
     </div>
   </details>
 
+  <details id="dZones">
+    <summary>Zone: cuore e watt</summary>
+    <div class="sec">
+      <p class="hint" id="zSrc"></p>
+      <p class="pwarn" id="zWarn" hidden></p>
+      <table class="ztab" id="zTab"></table>
+      <div id="zPlot"></div>
+      <p class="hint">A regime la FC sale in modo lineare con i watt: la retta è tua, stimata dalle sedute col cardio (ultimi 60 giorni, le più recenti contano di più). Le zone 1–3 prendono i watt dalla retta, puntando alla parte centrale della zona; le zone 4–5 partono dalla soglia e la retta le riallinea. Durante la seduta il coach confronta la FC con la retta, tenendo conto dei circa 45 secondi con cui il cuore risponde ai watt, e se oggi il cuore va più alto o più basso del solito sposta i watt di conseguenza.</p>
+    </div>
+  </details>
+
   <details id="dSet">
     <summary>Impostazioni</summary>
     <div class="sec">
@@ -548,7 +629,7 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
       <div class="set">
         <div class="row"><label for="inHrMax">Frequenza cardiaca massima (bpm)</label><input id="inHrMax" type="number" inputmode="numeric" min="120" max="230" step="1"></div>
         <div class="row"><label for="inHrRest">Frequenza cardiaca a riposo (bpm)</label><input id="inHrRest" type="number" inputmode="numeric" min="30" max="110" step="1"></div>
-        <p class="hint">Le zone sono calcolate sulla riserva cardiaca (Karvonen). La massima preimpostata è una stima per età (208 − 0,7 × età): sostituiscila con il tuo valore reale se lo conosci. I watt li decide il coach in base alla FC: nel fondo sposta l'obiettivo finché la FC resta in zona e lo ricorda per le sedute successive; nei blocchi di soglia e nelle ripetute guarda la FC a fine blocco e alza o abbassa i successivi; il riscaldamento lo chiude tra 4 e 5 minuti, appena la FC arriva alle porte della zona 2.</p>
+        <p class="hint">Le zone sono calcolate sulla riserva cardiaca (Karvonen). La massima preimpostata è una stima per età (208 − 0,7 × età): sostituiscila con il tuo valore reale se lo conosci. I watt di ogni zona vengono dalla tua curva cuore-potenza (vedi Zone: cuore e watt) e il coach li corregge durante la seduta su come risponde il cuore quel giorno; nei blocchi di soglia e nelle ripetute guarda anche la FC a fine blocco e alza o abbassa i successivi; il riscaldamento lo chiude tra 4 e 5 minuti, appena la FC arriva alle porte della zona 2.</p>
       </div>
       <div class="set">
         <div class="row"><label for="inRef">Potenza di soglia (W)</label><input id="inRef" type="number" inputmode="numeric" min="0" max="600" step="1" placeholder="auto"></div>
@@ -670,7 +751,7 @@ const store = {
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const hex = (dv) => { let s = ''; for(let i = 0; i < dv.byteLength; i++) s += dv.getUint8(i).toString(16).padStart(2, '0') + ' '; return s.trim(); };
 
-const APP_VERSION = 10;
+const APP_VERSION = 12;
 // UUID sempre per esteso: alcuni browser (Bluefy) non accettano gli alias numerici a 16 bit.
 const u16 = (n) => '0000' + n.toString(16).padStart(4, '0') + '-0000-1000-8000-00805f9b34fb';
 const FTMS = u16(0x1826), ROWER = u16(0x2ad1), HRS = u16(0x180d), HRM = u16(0x2a37);
@@ -681,7 +762,8 @@ let framed = true; try{ framed = window.self !== window.top; }catch(e){ framed =
 let policyOk = true; try{ if(document.featurePolicy && document.featurePolicy.allowsFeature) policyOk = document.featurePolicy.allowsFeature('bluetooth'); }catch(e){}
 const btUsable = !!navigator.bluetooth && policyOk;
 
-const cfg = Object.assign({ weight: 80, autoStart: true, voice: true, hrMax: 182, hrRest: 60, ref: 0, refAt: 0, hrK: 0, planOn: true, voiceVideo: false }, store.get('vg.cfg', {}));
+const cfg = Object.assign({ weight: 80, autoStart: true, voice: true, hrMax: 182, hrRest: 60, ref: 0, refAt: 0, planOn: true, voiceVideo: false }, store.get('vg.cfg', {}));
+delete cfg.hrK; // fattore della versione 11, sostituito dalla curva cuore-potenza
 let history = store.get('vg.hist', []); if(!Array.isArray(history)) history = [];
 
 const L = { power: null, spm: null, pace: null, dist: null, kcal: null, kcalH: null, hr: null, strokes: null };
@@ -801,6 +883,7 @@ function tick(){
 
 /* ---------- sessione ---------- */
 function startSession(auto){
+  $('report').hidden = true;
   S.session = newSession(); stopArmed = 0; S.autoHold = false; S.quietSince = 0; requestWake();
   log('Allenamento avviato' + (auto ? ' (automatico)' : ''));
   queueRender();
@@ -815,31 +898,41 @@ function stopSession(){
   const s = S.session; if(!s) return;
   S.session = null; stopArmed = 0; S.autoHold = true; S.quietSince = 0; releaseWake();
   const cres = coachFinish(s);
-  if(s.demo){ toast('Allenamento demo terminato: non viene salvato.' + (cres ? ' ' + cres.note : ''), cres ? 9000 : 3500); queueRender(); return; }
   if(s.moving < 10){ toast('Meno di 10 secondi di voga: non salvato.'); queueRender(); return; }
   const dist = total(s, 'dist', 30), kcal = total(s, 'kcal', 5);
   const step = Math.max(1, Math.ceil(s.samples.length / 720));
   const rec = { id: s.startedAt, dur: Math.round(s.moving), dist: Math.round(dist), kcal: Math.round(kcal), kcalSrc: fromMachine(s, 'kcal', 5) ? 'vogatore' : 'stima',
     avgP: s.nP ? Math.round(s.sumP / s.nP) : null, maxP: Math.round(s.maxP) || null, avgSpm: s.nSpm ? Math.round(s.sumSpm / s.nSpm * 10) / 10 : null,
     avgPace: dist > 0 ? Math.round(500 * s.moving / dist) : null, avgHr: s.nHr ? Math.round(s.sumHr / s.nHr) : null,
-    strokes: Math.round(total(s, 'strokes', 10)), coach: cres, samples: s.samples.filter((_, i) => i % step === 0) };
+    strokes: Math.round(total(s, 'strokes', 10)), coach: cres, hz: hzCfg(), samples: s.samples.filter((_, i) => i % step === 0) };
+  const extra = [];
+  if(cres && cres.refNote) extra.push({ k: 'info', t: cres.refNote, pre: true });
+  if(s.demo){
+    toast('Allenamento demo terminato: non viene salvato.', 4000);
+    showReport(rec, history, extra, true); queueRender(); return;
+  }
+  const z2was = zoneWatts(2);
   history.unshift(rec); if(history.length > 50) history.length = 50;
   if(!store.set('vg.hist', history)) toast('Allenamento concluso, ma il telefono non ha permesso di salvarlo nello storico.', 6000);
   else {
-    let extra = cres ? ' ' + cres.note : '';
+    let msg = '';
     if(cres && cres.sid){
-      if(cres.done){ planMark(cres.sid, 'coach'); extra += ' Seduta del piano segnata come fatta.'; }
-      else extra += ' Seduta del piano non completata: resta da fare, oppure segnala fatta dal piano.';
+      if(cres.done){ planMark(cres.sid, 'coach'); msg += ' Seduta del piano segnata come fatta.'; }
+      else msg += ' Seduta del piano non completata: resta da fare, oppure segnala fatta dal piano.';
     }
-    if(cres && cres.hrK){ cfg.hrK = cres.hrK; store.set('vg.cfg', cfg); C.hrkCache = undefined; }
     if(cres && cres.newRef) applyRef(cres.newRef);
-    C.refCache = undefined; C.hrkCache = undefined;
+    dropModel();
     const est = estimateRef(history, Date.now());
-    if(est && cfg.ref > 0 && est > cfg.ref && !(cres && cres.newRef && cres.newRef < cres.ref)){ applyRef(est); extra += ' Dallo storico risulti più forte: soglia a ' + est + ' W.'; }
-    toast('Allenamento salvato.' + extra, cres ? 10000 : 3500);
+    if(est && cfg.ref > 0 && est > cfg.ref && !(cres && cres.newRef && cres.newRef < cres.ref)){ applyRef(est); extra.push({ k: 'ok', t: 'Dallo storico risulti più forte: soglia portata a ' + est + ' W.' }); }
+    const z2 = zoneWatts(2);
+    if(z2 && hrPairs(rec.samples, rec.hz).length >= 30){
+      extra.push({ k: 'info', t: 'Curva cuore-potenza aggiornata con questa seduta: per stare in zona 2 (' + hrAt(0.6) + '–' + hrAt(0.7) + ' bpm) ora ti servono ' + z2[0] + '–' + z2[1] + ' W' + (z2was && (z2was[0] !== z2[0] || z2was[1] !== z2[1]) ? ', prima ' + z2was[0] + '–' + z2was[1] + ' W.' : '.') });
+    }
+    toast('Allenamento salvato.' + msg + (S.video ? ' Il resoconto è pronto: chiudi il video per vederlo.' : ''), msg || S.video ? 6000 : 3000);
+    showReport(rec, history.slice(1), extra, false);
   }
   log('Allenamento concluso: ' + fmtTime(rec.dur) + ', ' + rec.dist + ' m, ' + rec.kcal + ' kcal');
-  renderHistory(); renderPlanCard(false); queueRender();
+  renderHistory(); renderPlanCard(false); renderZones(); queueRender();
 }
 async function requestWake(){ try{ if('wakeLock' in navigator && !wake){ wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => { wake = null; }); } }catch(e){ wake = null; } }
 function releaseWake(){ try{ if(wake) wake.release(); }catch(e){} wake = null; }
@@ -1061,7 +1154,8 @@ function simStep(dt){
   D.spm = 23 + 2.2 * Math.sin(ph + 0.6) + (Math.random() - 0.5) * 0.8;
   D.pace = 500 * Math.cbrt(2.8 / D.power); D.dist += 500 / D.pace * dt;
   D.kcalH = 3.4416 * D.power + 300; D.kcal += D.kcalH / 3600 * dt; D.strokes += D.spm / 60 * dt;
-  D.hr = Math.min(156, 118 + D.t / 25) + 2 * Math.sin(D.t / 11);
+  // cuore simulato: FC a regime 64 + 0,42 × watt con un po' di deriva, raggiunta con costante di tempo di 40 s
+  D.hr += (1 - Math.exp(-dt / 40)) * (64 + 0.42 * D.power + D.t / 150 - D.hr) + (Math.random() - 0.5) * 0.6;
 }
 function startDemo(){
   if(S.conn === 'connected' || S.conn === 'raw' || S.conn === 'connecting' || S.conn === 'reconnecting') disconnect();
@@ -1266,16 +1360,162 @@ function renderHistory(){
       });
       acts.append(bDl);
     }
+    const bRep = document.createElement('button'); bRep.type = 'button'; bRep.className = 'btn small'; bRep.textContent = 'Resoconto';
+    bRep.addEventListener('click', () => showReport(rec, history.filter(x => x.id < rec.id), [], false, true));
+    acts.prepend(bRep);
     const bDel = document.createElement('button'); bDel.type = 'button'; bDel.className = 'btn small danger'; bDel.textContent = 'Elimina';
     let armed = 0;
     bDel.addEventListener('click', () => {
-      if(Date.now() < armed){ history = history.filter(x => x.id !== rec.id); store.set('vg.hist', history); C.refCache = undefined; C.hrkCache = undefined; renderHistory(); return; }
+      if(Date.now() < armed){ history = history.filter(x => x.id !== rec.id); store.set('vg.hist', history); dropModel(); renderHistory(); renderZones(); return; }
       armed = Date.now() + 3000; bDel.textContent = 'Conferma'; setTimeout(() => { bDel.textContent = 'Elimina'; }, 3000);
     });
     acts.append(bDel);
     li.append(acts);
     ul.append(li);
   }
+}
+
+/* ---------- obiettivo, resoconto, zone ---------- */
+function aimHTML(keys, short){
+  if(!keys || !keys.length || !AIMS[keys[0]]) return '';
+  const a = AIMS[keys[0]], also = keys.slice(1).filter(k => AIMS[k]).map(k => AIMS[k].name);
+  return '<div class="aimh"><span class="lab">Obiettivo</span><b>' + escH(a.name) + '</b>' + (also.length ? '<span class="aimalso">allena anche: ' + escH(also.join(', ')) + '</span>' : '') + '</div>' +
+    (short ? '' : '<p class="aimw">' + escH(a.what) + '</p>');
+}
+const niceTop = (v) => { for(const st of [50, 100, 150, 200, 250, 300, 400, 500, 600, 800, 1000]) if(st >= v) return st; return Math.ceil(v / 100) * 100; };
+// Potenza sopra e FC sotto, stesso asse del tempo, con le fasce delle zone dietro la FC. I valori si leggono toccando il grafico.
+function sessChart(sm, hz){
+  if(!sm || sm.length < 10) return null;
+  const N = Math.min(170, sm.length), t0 = sm[0][0], t1 = sm[sm.length - 1][0], span = Math.max(1, t1 - t0), B = [];
+  for(let i = 0; i < N; i++) B.push({ t: t0 + (i + 0.5) / N * span, p: 0, pn: 0, h: 0, hn: 0 });
+  for(const x of sm){ const k = Math.min(N - 1, Math.floor((x[0] - t0) / span * N)), b = B[k]; b.p += x[1]; b.pn++; if(x[6] > 0){ b.h += x[6]; b.hn++; } }
+  B.forEach(b => { b.p = b.pn ? b.p / b.pn : null; b.h = b.hn ? b.h / b.hn : null; });
+  const W = 340, x0 = 24, x1 = W - 4, pT = 4, pH = 46, hT = pT + pH + 10, hH = 92, base = hT + hH, H = base + 16;
+  const X = (t) => x0 + (t - t0) / span * (x1 - x0);
+  let mx = 50; for(const b of B) if(b.p > mx) mx = b.p;
+  const top = niceTop(mx), Yp = (v) => pT + pH - Math.max(0, Math.min(v, top)) / top * pH;
+  let pl = '', first = true;
+  B.forEach(b => { if(b.p == null) return; pl += (first ? 'M' : 'L') + X(b.t).toFixed(1) + ' ' + Yp(b.p).toFixed(1); first = false; });
+  let out = '<rect x="' + x0 + '" y="' + pT + '" width="' + (x1 - x0) + '" height="' + pH + '" fill="var(--surface-2)" rx="4"/>';
+  if(pl){ out += '<path d="' + pl + 'L' + X(B[N - 1].t).toFixed(1) + ' ' + (pT + pH) + 'L' + X(B[0].t).toFixed(1) + ' ' + (pT + pH) + 'Z" fill="var(--water-soft)"/>' +
+    '<path d="' + pl + '" fill="none" stroke="var(--water)" stroke-width="1.6" stroke-linejoin="round"/>'; }
+  out += '<text x="' + (x0 - 3) + '" y="' + (pT + 8) + '" text-anchor="end">' + top + '</text><text x="' + (x0 - 3) + '" y="' + (pT + pH) + '" text-anchor="end">W</text>';
+  const hs = B.map(b => b.h).filter(v => v != null), hasHr = hs.length >= 5 && hrFr(0.5, hz) != null;
+  if(hasHr){
+    const lo = Math.min(Math.min.apply(null, hs), hrFr(0.5, hz)) - 4, hi = Math.max(Math.max.apply(null, hs), hrFr(0.8, hz)) + 4, Yh = (v) => hT + hH - (v - lo) / (hi - lo) * hH;
+    for(let z = 1; z <= 5; z++){
+      const a = Math.max(lo, hrFr(ZF[z][0], hz)), c = Math.min(hi, hrFr(ZF[z][1], hz)); if(c <= a) continue;
+      const y0 = Yh(c), y1 = Yh(a);
+      out += '<rect class="z' + z + '" x="' + x0 + '" y="' + y0.toFixed(1) + '" width="' + (x1 - x0) + '" height="' + Math.max(0, y1 - y0 - 1).toFixed(1) + '" fill="var(--z' + z + ')" opacity=".45"/>';
+      if(y1 - y0 >= 10) out += '<text x="' + (x0 - 3) + '" y="' + ((y0 + y1) / 2 + 3.5).toFixed(1) + '" text-anchor="end">Z' + z + '</text>';
+    }
+    let hl = '', gap = true;
+    B.forEach(b => { if(b.h == null){ gap = true; return; } hl += (gap ? 'M' : 'L') + X(b.t).toFixed(1) + ' ' + Yh(b.h).toFixed(1); gap = false; });
+    out += '<path d="' + hl + '" fill="none" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round"/>';
+  } else out += '<text x="' + ((x0 + x1) / 2) + '" y="' + (hT + hH / 2) + '" text-anchor="middle">Nessun dato del cardio</text>';
+  out += '<text x="' + x0 + '" y="' + (H - 3) + '">' + fmtTime(t0) + '</text><text x="' + ((x0 + x1) / 2) + '" y="' + (H - 3) + '" text-anchor="middle">' + fmtTime(t0 + span / 2) + '</text><text x="' + x1 + '" y="' + (H - 3) + '" text-anchor="end">' + fmtTime(t1) + '</text>';
+  out += '<line class="cx" x1="0" x2="0" y1="' + pT + '" y2="' + base + '" stroke="var(--ink)" stroke-width="1" stroke-dasharray="3 3" visibility="hidden"/>';
+  return { svg: '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Potenza e frequenza cardiaca durante l\'allenamento">' + out + '</svg>', B, X, x0, x1, W };
+}
+function attachRead(wrap, ch, hz){
+  const svg = wrap.querySelector('svg'), line = svg.querySelector('.cx'), rd = wrap.querySelector('.rread');
+  const show = (ev) => {
+    const r = svg.getBoundingClientRect(); if(!r.width) return;
+    const vx = (ev.clientX - r.left) / r.width * ch.W; if(vx < ch.x0 || vx > ch.x1){ line.setAttribute('visibility', 'hidden'); return; }
+    let best = ch.B[0], bd = Infinity; for(const b of ch.B){ const dd = Math.abs(ch.X(b.t) - vx); if(dd < bd){ bd = dd; best = b; } }
+    const x = ch.X(best.t).toFixed(1); line.setAttribute('x1', x); line.setAttribute('x2', x); line.setAttribute('visibility', 'visible');
+    const z = best.h ? hrZone(best.h, hz) : 0;
+    rd.textContent = fmtTime(best.t) + ' · ' + (best.p != null ? Math.round(best.p) + ' W' : '–') + (best.h ? ' · ' + Math.round(best.h) + ' bpm' + (z ? ' (Z' + z + ')' : '') : '');
+  };
+  svg.addEventListener('pointermove', show); svg.addEventListener('pointerdown', show);
+  svg.addEventListener('pointerleave', () => { line.setAttribute('visibility', 'hidden'); });
+}
+const LVL = ['', 'stimolo lieve', 'stimolo buono', 'stimolo forte'];
+// past = resoconto riaperto dallo storico: niente consiglio sulla prossima seduta.
+function showReport(rec, older, extra, demo, past){
+  const box = $('report'), body = $('rBody'), hz = rec.hz && rec.hz.max > 0 ? rec.hz : hzCfg(), m = curModel();
+  let an; try{ an = analyze(rec, older, m, hz); }catch(e){ log('Resoconto non calcolabile: ' + e.message); toast('Non riesco a calcolare il resoconto di questo allenamento.'); return; }
+  const dt = new Date(rec.id), co = rec.coach;
+  let h = '<h2>' + escH(co && co.name ? co.name : 'Allenamento libero') + '</h2><div class="rsub">' + escH(dt.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }) + ', ' + dt.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }) + ' · ' + fmtTime(rec.dur) + ' · ' + (rec.dist || 0).toLocaleString('it-IT') + ' m' + (demo ? ' · demo, non salvato' : '')) + '</div>';
+  if(an.verdict && an.aims){
+    const also = an.aims.slice(1).map(k => AIMS[k] && AIMS[k].name).filter(Boolean);
+    h += '<div class="rverd" data-k="' + an.verdict[0] + '"><span class="lab">Obiettivo</span><b>' + escH(AIMS[an.aims[0]].name) + '</b><span class="vk">' + escH(an.verdict[1]) + '</span>' + (also.length ? '<span class="aimalso">anche: ' + escH(also.join(', ')) + '</span>' : '') + '</div>';
+  } else if(an.trained.length) h += '<div class="rverd"><span class="lab">Hai allenato soprattutto</span><b>' + escH(AIMS[an.trained[0].k].name) + '</b></div>';
+  const st = document.createElement('div'); st.className = 'hstats';
+  st.append(statCell('Potenza media', rec.avgP != null ? String(rec.avgP) : '–', ' W'), statCell('FC media', rec.avgHr ? String(rec.avgHr) : '–', ' bpm'),
+    statCell('FC massima', an.st.peak ? String(Math.round(an.st.peak)) : '–', ' bpm'), statCell(rec.kcalSrc === 'stima' ? 'Kcal (stima)' : 'Kcal', rec.kcal != null ? String(rec.kcal) : '–'),
+    statCell('Colpi/min', rec.avgSpm ? nIt(rec.avgSpm, 1) : '–'), statCell('Carico (TRIMP)', an.hasHr ? String(an.st.trimp) : '–'));
+  h += st.outerHTML;
+  const ch = sessChart(rec.samples, hz);
+  if(ch) h += '<div class="rsec"><h3>Potenza e frequenza cardiaca</h3><div class="rchart">' + ch.svg + '<div class="rread">Tocca il grafico per leggere i valori.</div></div></div>';
+  if(an.hasHr){
+    const tot = an.st.zt.reduce((a, v) => a + v, 0), segs = [], leg = [];
+    an.st.zt.forEach((sec, z) => {
+      if(sec < 5) return; const pc = sec / tot * 100, lab = (z ? 'Z' + z : '<Z1');
+      segs.push('<i class="z' + z + '" style="flex:' + sec.toFixed(0) + ' 1 0" title="' + lab + ' ' + fmtTime(sec) + '">' + (pc >= 12 ? Math.round(sec / 60) + '′' : '') + '</i>');
+      leg.push('<span><i class="zs z' + z + '"></i>' + escH(lab) + ' ' + fmtTime(sec) + '</span>');
+    });
+    h += '<div class="rsec"><h3>Tempo nelle zone cardiache</h3><div class="ztime" role="img" aria-label="Tempo per zona: ' + escH(leg.map(x => x.replace(/<[^>]+>/g, '')).join(', ')) + '">' + segs.join('') + '</div><div class="zleg">' + leg.join('') + '</div></div>';
+  }
+  h += '<div class="rsec"><h3>Cosa hai allenato</h3>';
+  if(an.trained.length) h += '<ul class="trained">' + an.trained.map(x => '<li><b>' + escH(AIMS[x.k].name) + '</b><span class="lvl">' + LVL[x.lvl] + ' <span style="display:inline-flex;gap:3px">' + [1, 2, 3].map(i => '<i class="' + (i <= x.lvl ? 'on' : '') + '"></i>').join('') + '</span></span><p>' + escH(AIMS[x.k].what) + '</p></li>').join('') + '</ul>';
+  else h += '<p class="hint">Seduta troppo breve o troppo leggera per dare uno stimolo allenante misurabile.</p>';
+  h += '</div>';
+  const mis = !past && cfg.ref > 0 ? refMismatch(m, curRef(), hzCfg()) : null;
+  const ins = (extra || []).filter(x => x.pre).concat(an.ins, (extra || []).filter(x => !x.pre), mis ? [{ k: 'warn', t: mis }] : []);
+  if(ins.length) h += '<div class="rsec"><h3>Commenti del coach</h3><ul class="ins">' + ins.map(x => '<li data-k="' + x.k + '">' + escH(x.t) + '</li>').join('') + '</ul></div>';
+  if(!past && !demo){
+    const nx = cfg.planOn ? planNext() : null;
+    const hard = co && co.hard;
+    if(nx) h += '<p class="rnext"><b>Prossima seduta del piano:</b> settimana ' + nx.w + ', ' + escH(nx.title) + ' (' + nx.min + '′, obiettivo ' + escH(lc1(AIMS[aimsOf('piano', nx)[0]].name)) + ')' + (hard && planIsHard(nx) ? '. Dopo un lavoro intenso lascia 36–48 ore prima della prossima seduta dura.' : '.') + '</p>';
+    else { const rc = recommend(history, curRef(), cfg.refAt || 0, Date.now() + 864e5); h += '<p class="rnext"><b>Prossima volta:</b> ' + escH(WORKOUTS[rc.id].name) + '. ' + escH(rc.why) + '</p>'; }
+  }
+  if(an.hrMaxNew) h += '<div class="acts"><button class="btn small" type="button" id="btnHrMaxNew">Usa ' + an.hrMaxNew + ' bpm come FC massima</button></div>';
+  body.innerHTML = h;
+  $('rLab').textContent = past ? 'Resoconto dallo storico' : 'Resoconto';
+  if(ch) attachRead(body.querySelector('.rchart'), ch, hz);
+  const bm = $('btnHrMaxNew');
+  if(bm) bm.addEventListener('click', () => { cfg.hrMax = an.hrMaxNew; store.set('vg.cfg', cfg); $('inHrMax').value = cfg.hrMax; dropModel(); renderPlanAll(); renderZones(); bm.disabled = true; toast('FC massima impostata a ' + cfg.hrMax + ' bpm: zone ricalcolate.'); });
+  box.hidden = false;
+  setTimeout(() => box.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+}
+// Tabella delle zone con bpm e watt, e il grafico dei dati da cui viene la curva.
+function renderZones(){
+  const m = curModel(), hz = hzCfg(), ref = curRef(), tab = $('zTab'), plot = $('zPlot');
+  if(!(cfg.hrMax > 0)){ $('zSrc').textContent = 'Imposta la FC massima per calcolare le zone.'; $('zWarn').hidden = true; tab.innerHTML = ''; plot.innerHTML = ''; return; }
+  const k4 = hiK(m, ref, hz, 0, cfg.ref > 0), mis = cfg.ref > 0 ? refMismatch(m, ref, hz) : null;
+  $('zWarn').hidden = !mis; $('zWarn').textContent = mis || '';
+  $('zSrc').textContent = !m ? (ref ? 'Watt dalle fasce classiche sulla soglia di ' + ref + ' W.' : 'Per i watt mi serve la potenza di soglia (test di taratura) o qualche seduta salvata. Intanto il coach ti guida sulla FC.')
+    : m.n < 5 ? 'Stima iniziale ricavata dalla soglia di ' + ref + ' W: si affina da sola con le sedute fatte col cardio (finora ' + nIt(m.n, 1) + ' minuti di dati utili).'
+    : 'Curva calcolata su ' + Math.round(m.n) + ' minuti di dati degli ultimi 60 giorni: FC ≈ ' + Math.round(m.hc - m.b * m.pc) + ' + ' + nIt(m.b * 10, 1) + ' bpm ogni 10 W.' + (Math.abs(k4 - 1) >= 0.03 ? ' Zone 4–5 riallineate alla curva (' + sgn((k4 - 1) * 100) + '% sulla soglia).' : '');
+  let h = '';
+  for(let z = 1; z <= 5; z++){
+    const w = zoneWatts(z);
+    h += '<tr><td><i class="zs z' + z + '"></i> <b>Z' + z + '</b> ' + ZNAME[z] + '<small>' + (z <= 3 ? (m ? 'watt dalla tua curva' : 'watt dalla soglia') : 'watt dalla soglia' + (Math.abs(k4 - 1) >= 0.03 ? ' e dalla curva' : '')) + '</small></td>' +
+      '<td class="n">' + hrFr(ZF[z][0], hz) + '–' + hrFr(ZF[z][1], hz) + '<small>bpm</small></td><td class="n">' + (w ? w[0] + '–' + w[1] : '–') + '<small>W</small></td></tr>';
+  }
+  tab.innerHTML = h;
+  plot.innerHTML = m && m.n >= 1 ? zonePlot(m, hz) : '';
+}
+function zonePlot(m, hz){
+  const pts = [], now = Date.now();
+  for(const r of history){ if(now - r.id > 60 * 864e5 || !r.samples) continue; for(const x of hrPairs(r.samples, hz)) pts.push(x); }
+  if(!pts.length) return '';
+  const step = Math.max(1, Math.ceil(pts.length / 300)), W = 340, H = 190, x0 = 30, x1 = W - 6, y0 = 6, y1 = H - 18;
+  const z3 = zoneW(m, 3, hz, 0), pmax = Math.max(m.pmax || 0, z3 ? z3[1] : 0) + 15, pmin = Math.max(0, Math.min(m.pmin || 0, zoneW(m, 1, hz, 0)[0]) - 15);
+  // asse verticale sui dati (almeno dalla zona 1 alla zona 3): nessun punto schiacciato sul bordo
+  let dmin = Infinity, dmax = 0; for(const x of pts){ if(x[1] < dmin) dmin = x[1]; if(x[1] > dmax) dmax = x[1]; }
+  const hl = Math.min(hrFr(0.5, hz), dmin) - 3, hh = Math.max(hrFr(0.8, hz), dmax) + 3, X = (p) => x0 + (p - pmin) / (pmax - pmin) * (x1 - x0), Y = (v) => y1 - (v - hl) / (hh - hl) * (y1 - y0);
+  let o = '';
+  for(let z = 1; z <= 5; z++){ const a = Math.max(hl, hrFr(ZF[z][0], hz)), c = Math.min(hh, hrFr(ZF[z][1], hz)); if(c <= a) continue; o += '<rect x="' + x0 + '" y="' + Y(c).toFixed(1) + '" width="' + (x1 - x0) + '" height="' + Math.max(0, Y(a) - Y(c) - 1).toFixed(1) + '" fill="var(--z' + z + ')" opacity=".4"/><text x="' + (x0 - 3) + '" y="' + ((Y(a) + Y(c)) / 2 + 3.5).toFixed(1) + '" text-anchor="end">Z' + z + '</text>'; }
+  for(let i = 0; i < pts.length; i += step) o += '<circle cx="' + X(pts[i][0]).toFixed(1) + '" cy="' + Y(pts[i][1]).toFixed(1) + '" r="2.2" fill="var(--water)" opacity=".5"/>';
+  // retta ritagliata dove esce dall'asse verticale, così resta con la sua pendenza vera
+  const L = (p) => m.hc + m.b * (p - m.pc), pa = Math.max(pmin, m.pc + (hl - m.hc) / m.b), pb = Math.min(pmax, m.pc + (hh - m.hc) / m.b);
+  if(pb > pa) o += '<line x1="' + X(pa).toFixed(1) + '" y1="' + Y(L(pa)).toFixed(1) + '" x2="' + X(pb).toFixed(1) + '" y2="' + Y(L(pb)).toFixed(1) + '" stroke="var(--wood)" stroke-width="2.2" stroke-linecap="round"/>';
+  const tk = []; const st = (pmax - pmin) > 160 ? 50 : 25; for(let v = Math.ceil(pmin / st) * st; v <= pmax; v += st) tk.push(v);
+  o += tk.map(v => '<text x="' + X(v).toFixed(1) + '" y="' + (H - 4) + '" text-anchor="middle">' + v + '</text>').join('') + '<text x="' + x1 + '" y="' + (H - 4) + '" text-anchor="end">W</text>';
+  return '<div class="zplot"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Frequenza cardiaca in funzione dei watt nelle tue sedute, con la retta stimata">' + o + '</svg></div>' +
+    '<div class="legend"><span><i style="border:0;width:8px;height:8px;border-radius:50%;background:var(--water);opacity:.6"></i>dati delle sedute, ogni 10 s</span><span><i style="border-top-color:var(--wood);border-top-width:2px"></i>la tua curva</span></div>';
 }
 
 /* ---------- coach ---------- */
@@ -1448,7 +1688,7 @@ function buildPlan(id, size, sid){
   } else if(id === 'cadenza'){
     const steps = [[18, 20, 22, 24], [18, 20, 22, 24, 22, 20], [18, 20, 22, 24, 26, 24, 22, 20]][size];
     out.push(P('warm', 'Riscaldamento', 4, [0.45, 0.60], [18, 20]));
-    steps.forEach(r => out.push(P('work', 'Frequenza ' + r + ' colpi al minuto', 3, [0.55, 0.85], [r - 1, r + 1])));
+    steps.forEach(r => out.push(Object.assign(P('work', 'Frequenza ' + r + ' colpi al minuto', 3, [0.55, 0.85], [r - 1, r + 1]), { hrz: 2 })));
     out.push(P('cool', 'Defaticamento', 2, [0.35, 0.50], [16, 20]));
   }
   return out;
@@ -1481,30 +1721,82 @@ function estimateRef(hist, now){
   }
   return best == null ? null : Math.round(best);
 }
-// Watt che tengono davvero la FC in zona 2, in rapporto all'obiettivo teorico (centro di ZPOW[2] × soglia).
-// Usa finestre di 2 minuti con FC stabile in zona 2 e potenza regolare, dopo i primi 5 minuti di ogni allenamento.
-function estimateHrK(hist, ref, now){
-  if(!(ref > 0) || !(cfg.hrMax > 0)) return null;
-  const zl = hrAt(ZF[2][0]) - 2, zh = hrAt(ZF[2][1]) + 2, mid = (ZPOW[2][0] + ZPOW[2][1]) / 2 * ref, ks = [];
-  for(const r of hist || []){
-    const sm = r.samples;
-    if(now - r.id > 60 * 864e5 || !sm || sm.length < 120) continue;
-    const ok = []; let j = 0, okT = 0;
-    for(let i = 0; i < sm.length; i++){
-      const t = sm[i][0]; if(t < 300) continue;
-      while(sm[j][0] < t - 120) j++;
-      if(i - j < 10) continue;
-      let n = 0, sum = 0, sq = 0, good = true;
-      for(let k = j; k <= i; k++){ const x = sm[k]; if(!x[6] || x[6] < zl || x[6] > zh || !(x[1] > 0)){ good = false; break; } n++; sum += x[1]; sq += x[1] * x[1]; }
-      if(!good) continue;
-      const m = sum / n, sd = Math.sqrt(Math.max(0, sq / n - m * m));
-      if(sd / m < 0.15){ ok.push(m); okT += Math.min(10, t - sm[i - 1][0]); }
-    }
-    if(okT >= 300){ ok.sort((a, b) => a - b); ks.push(ok[ok.length >> 1] / mid); }
+// ---------- Curva cuore-potenza ----------
+// A regime la FC cresce in modo lineare con i watt: FC = hc + b × (W − pc). La retta è personale e si stima dalle sedute con il cardio
+// (regressione bayesiana: si parte da una stima ricavata dalla soglia e i dati la correggono). I watt delle zone 1–3 si ottengono
+// invertendo la retta, così la potenza consigliata è quella che porta davvero la FC nella zona; quelli delle zone 4–5 partono dalla
+// soglia e la retta li riallinea. La FC risponde ai watt con circa 45 s di ritardo: si confronta con la potenza filtrata con la stessa costante.
+const HR_TAU = 45;
+// Stima iniziale: frazione di riserva cardiaca = 0,14 + 0,75 × W/soglia, che riproduce le fasce classiche (zona 2 = 61–75% della soglia).
+const HR_PRIOR = { i: 0.14, s: 0.75 };
+// FC alla frazione fr della riserva (Karvonen); hz = { max, rest }. Senza FC a riposo: frazione della massima + 10%.
+function hrRaw(fr, hz){ if(!hz || !(hz.max > 0)) return null; return hz.rest > 0 ? hz.rest + fr * (hz.max - hz.rest) : (fr + 0.10) * hz.max; }
+function hrFr(fr, hz){ const v = hrRaw(fr, hz); return v == null ? null : Math.round(v); }
+function hrZone(h, hz){ if(!h || hrFr(0.5, hz) == null) return 0; let z = 0; for(const fr of [0.5, 0.6, 0.7, 0.8, 0.9]) if(h >= hrFr(fr, hz)) z++; return z; }
+function hrPrior(ref, hz){
+  if(!(ref > 0) || hrRaw(0, hz) == null) return null;
+  const lo = hrRaw(0, hz), R = hrRaw(1, hz) - lo, pc = 0.7 * ref;
+  return { pc, hc: lo + R * (HR_PRIOR.i + HR_PRIOR.s * 0.7), b: R * HR_PRIOR.s / ref };
+}
+// Coppie [watt filtrati, FC, tempo] ogni 10 s, dopo i primi 2'30" e sotto l'88% della riserva (oltre la FC non è più a regime).
+function hrPairs(sm, hz){
+  const out = [], top = hrRaw(0.88, hz); if(!sm || sm.length < 30 || top == null) return out;
+  let pl = null, prevT = null, last = -1e9;
+  for(const x of sm){
+    const t = x[0], p = x[1], h = x[6];
+    if(p > 0){ if(pl == null) pl = p; else { const dt = Math.max(0, Math.min(15, t - prevT)); pl += (1 - Math.exp(-dt / HR_TAU)) * (p - pl); } }
+    prevT = t;
+    if(t < 150 || !(h >= 50) || h > top || pl == null || pl < 20 || t - last < 10) continue;
+    out.push([pl, h, t]); last = t;
   }
-  if(!ks.length) return null;
-  ks.sort((a, b) => a - b);
-  return Math.round(Math.max(0.6, Math.min(1.6, ks[ks.length >> 1])) * 100) / 100;
+  return out;
+}
+// Retta personale dagli ultimi 60 giorni (peso dimezzato ogni 21 giorni), con un secondo passaggio che scarta i valori anomali del sensore.
+// n = minuti di dati equivalenti; senza dati resta la stima iniziale.
+function fitHr(hist, prior, hz, now){
+  if(!prior) return null;
+  const sh = 15, sb = Math.max(0.08, prior.b * 0.5), s2 = 36, sets = [];
+  for(const r of hist || []){
+    const age = (now - r.id) / 864e5; if(age > 60 || age < -1 || !r.samples) continue;
+    const pr = hrPairs(r.samples, hz); if(pr.length) sets.push([Math.pow(0.5, Math.max(0, age) / 21) / s2, pr]);
+  }
+  let fit = null;
+  for(let pass = 0; pass < 2; pass++){
+    let A = 1 / (sh * sh), B = 0, D = 1 / (sb * sb), u = prior.hc / (sh * sh), v = prior.b / (sb * sb), n = 0, hmax = 0, pmin = Infinity, pmax = 0;
+    for(const [w, pr] of sets) for(const [p, h] of pr){
+      const x = p - prior.pc;
+      if(fit && Math.abs(h - fit.hc - fit.b * x) > 15) continue;
+      A += w; B += w * x; D += w * x * x; u += w * h; v += w * h * x;
+      n += w * s2 / 6; if(h > hmax) hmax = h; if(p < pmin) pmin = p; if(p > pmax) pmax = p;
+    }
+    const det = A * D - B * B; if(!(det > 0)) return fit;
+    fit = { pc: prior.pc, hc: (D * u - B * v) / det, b: Math.max(0.12, Math.min(1.5, (A * v - B * u) / det)), n: Math.round(n * 10) / 10, hmax, pmin: n ? pmin : null, pmax: n ? pmax : null };
+  }
+  return fit;
+}
+// Watt che a regime portano la FC nella parte centrale (60%) della zona z; dA = scarto di oggi in bpm rispetto alla retta.
+function zoneW(m, z, hz, dA){
+  if(!m || !ZF[z] || hrRaw(0, hz) == null) return null;
+  const lo = hrRaw(ZF[z][0], hz), hi = hrRaw(ZF[z][1], hz), w = hi - lo, P = (h) => m.pc + (h - m.hc - (dA || 0)) / m.b;
+  const a = Math.max(10, Math.round(P(lo + 0.2 * w) / 5) * 5);
+  return [a, Math.max(a + 5, Math.round(P(hi - 0.2 * w) / 5) * 5)];
+}
+// Fattore dei blocchi in zona 4–5: li sposta dove la retta dice che la FC entra in zona 4 (80% della riserva). Con la sola stima iniziale
+// vale 1 per costruzione; con i dati segue la retta, che pesa già da sé quanto fidarsi dei dati. Se la soglia è misurata (test) il fattore
+// resta entro ±15%: una distanza maggiore indica zone cardiache sbagliate (di solito la FC massima), non watt sbagliati, e va segnalata.
+// Se la soglia è solo stimata dallo storico (una stima prudente, per difetto) prevale la curva.
+function hiKraw(m, ref, hz, dA){
+  if(!m || !(ref > 0) || hrRaw(0.8, hz) == null) return 1;
+  return (m.pc + (hrRaw(0.80, hz) - m.hc - (dA || 0)) / m.b) / (ZPOW[4][0] * ref);
+}
+function hiK(m, ref, hz, dA, measured){ const k = hiKraw(m, ref, hz, dA); return measured ? Math.max(0.85, Math.min(1.15, k)) : Math.max(0.7, Math.min(2, k)); }
+// Avviso quando curva e soglia misurata non tornano: servono dati fino almeno a metà zona 3.
+function refMismatch(m, ref, hz){
+  if(!m || !(ref > 0) || m.n < 15 || m.hmax < hrRaw(0.65, hz)) return null;
+  const k = hiKraw(m, ref, hz, 0), p80 = Math.round(k * ZPOW[4][0] * ref / 5) * 5;
+  if(k > 1.15) return 'Per portare la FC in zona 4 (' + hrFr(0.8, hz) + ' bpm) ti servirebbero circa ' + p80 + ' W, molto sopra la soglia misurata (' + ref + ' W). O la FC massima impostata (' + hz.max + ') è più alta della tua reale, o la soglia è salita: rifai il test di taratura o correggi la FC massima. Intanto le zone 4–5 restano vicine alla soglia.';
+  if(k < 0.85) return 'Arrivi in zona 4 (' + hrFr(0.8, hz) + ' bpm) già a circa ' + p80 + ' W, sotto la soglia misurata (' + ref + ' W): probabilmente la tua FC massima reale è più alta di quella impostata (' + hz.max + '). Correggila, o rifai il test. Intanto le zone 4–5 restano vicine alla soglia.';
+  return null;
 }
 function recommend(hist, ref, refAt, now){
   if(!ref) return { id: 'test', size: 1, why: 'Non conosco ancora la tua potenza di soglia. Con 18 minuti di test taro tutti gli allenamenti su di te.' };
@@ -1521,30 +1813,217 @@ function recommend(hist, ref, refAt, now){
   if(hist.filter(r => now - r.id < 21 * 864e5 && r.coach && r.coach.id === 'cadenza').length === 0 && hist.length >= 4 && hist.length % 4 === 0) return { id: 'cadenza', size, why: 'È da un po\' che non lavori sulla tecnica: oggi scala di frequenza.' };
   return { id: 'soglia', size, why: 'Sei recuperato: oggi blocchi di soglia, il lavoro che alza di più il ritmo che riesci a tenere a lungo.' };
 }
+// ---------- Obiettivi della seduta e resoconto ----------
+const AIMS = {
+  base: { name: 'Resistenza aerobica', what: 'Più mitocondri e capillari nei muscoli, più grassi usati come carburante, FC più bassa a parità di watt. È la base che regge tutto il resto e consuma molte calorie senza lasciarti stanco.' },
+  ritmo: { name: 'Cambi di ritmo', what: 'Abitua cuore e muscoli a salire e scendere di intensità senza perdere la passata: prepara al lavoro di soglia.' },
+  soglia: { name: 'Soglia', what: 'Alza la potenza che tieni a lungo prima che il lattato si accumuli: cresce il ritmo che sostieni per 20–60 minuti.' },
+  vo2: { name: 'VO2max', what: 'Stimolo centrale su gittata sistolica e volume plasmatico. Conta il tempo passato sopra il 90% circa della FC massima, che gli intervalli di 3–4 minuti accumulano meglio di quelli brevi.' },
+  potenza: { name: 'Forza e potenza', what: 'Recluta le fibre rapide di gambe e tronco e rende la spinta più esplosiva. Mantiene la massa muscolare, ma per farla crescere servono carichi pesanti: il vogatore da solo non basta.' },
+  tecnica: { name: 'Tecnica', what: 'Coordinazione di gambe, busto e braccia ed economia del colpo: più metri per colpo a parità di fatica.' },
+  misura: { name: 'Misurazione', what: 'Misura la potenza di soglia, su cui il coach tara i watt di tutte le sedute.' }
+};
+// Obiettivo principale per primo, poi quelli secondari.
+function aimsOf(id, sess){
+  if(id === 'piano' && sess){
+    const short = sess.steps.some(st => st.rep && st.steps.some(x => x.z >= 4 && x.t <= 30));
+    const by = { tecnica: ['tecnica', 'base'], fondo: short ? ['base', 'potenza'] : ['base'], medio: ['ritmo', 'base'], soglia: ['soglia', 'base'], vo2: short ? ['vo2', 'potenza'] : ['vo2', 'soglia'], test: ['misura'] };
+    return by[sess.type] || ['base'];
+  }
+  return ({ test: ['misura'], fondo: ['base'], soglia: ['soglia', 'base'], intervalli: ['vo2', 'soglia'], cadenza: ['tecnica', 'base'] })[id] || ['base'];
+}
+const lc1 = (t) => /^[A-Z][a-zà-ù]/.test(t) ? t[0].toLowerCase() + t.slice(1) : t; // "Soglia" → "soglia", "VO2max" resta com'è
+const nIt = (v, d) => String(Math.round(v * Math.pow(10, d || 0)) / Math.pow(10, d || 0)).replace('.', ',');
+const sgn = (v, d) => (v > 0 ? '+' : v < 0 ? '−' : '') + nIt(Math.abs(v), d);
+const agoTxt = (days) => days >= 13 ? Math.round(days / 7) + ' settimane prima' : days >= 1.5 ? Math.round(days) + ' giorni prima' : 'la seduta precedente';
+// Valori ricavati dai soli campioni: tempo per zona, carico, FC massima sostenuta, watt alla FC di riferimento (centro della zona 2).
+function recStats(rec, m, hz){
+  const sm = rec.samples || [], zt = [0, 0, 0, 0, 0, 0], h85 = hrRaw(0.85, hz); let peak = 0, pAt = null, t85 = 0;
+  for(let i = 1; i < sm.length; i++){ const h = sm[i][6]; if(h > 0){ const dt = Math.max(0, Math.min(30, sm[i][0] - sm[i - 1][0])); zt[hrZone(h, hz)] += dt; if(h85 != null && h >= h85) t85 += dt; } }
+  // il più alto dei minimi su 5 campioni di fila: scarta i picchi isolati del sensore
+  for(let i = 4; i < sm.length; i++){ let mn = Infinity; for(let k = i - 4; k <= i; k++) mn = Math.min(mn, sm[k][6] || 0); if(mn > peak) peak = mn; }
+  const href = hrRaw(0.65, hz);
+  if(m && href != null){
+    const lo = hrRaw(0.5, hz), hi = hrRaw(0.85, hz), pr = hrPairs(sm, hz).filter(x => x[2] >= 300 && x[1] >= lo && x[1] <= hi);
+    if(pr.length >= 30) pAt = Math.round(pr.reduce((a, x) => a + x[0] + (href - x[1]) / m.b, 0) / pr.length);
+  }
+  return { zt, t85, peak, pAt, href: href == null ? null : Math.round(href), trimp: Math.round(zt.reduce((a, s, z) => a + z * s / 60, 0)),
+    mps: rec.strokes > 0 && rec.dist > 0 ? rec.dist / rec.strokes : null };
+}
+// Tratto costante su cui misurare la deriva cardiaca: la fase di fondo più lunga senza i primi 2 minuti,
+// oppure, senza coach, l'allenamento senza i primi 5 e gli ultimi 2 minuti se la potenza minuto per minuto è stata regolare.
+function steadySpan(rec){
+  const ph = rec.coach && rec.coach.ph, sm = rec.samples || [];
+  if(ph && ph.length){
+    let best = null; for(const x of ph) if(x.k === 'work' && x.z >= 1 && x.z <= 3 && x.t1 - x.t0 >= 720 && (!best || x.t1 - x.t0 > best.t1 - best.t0)) best = x;
+    return best ? [best.t0 + 120, best.t1] : null;
+  }
+  if(sm.length < 60) return null;
+  const t0 = 300, t1 = sm[sm.length - 1][0] - 120; if(t1 - t0 < 600) return null;
+  const mins = {}; for(const x of sm) if(x[0] >= t0 && x[0] <= t1 && x[1] > 0){ const k = Math.floor(x[0] / 60); (mins[k] = mins[k] || []).push(x[1]); }
+  const mv = Object.values(mins).map(a => a.reduce((s, v) => s + v, 0) / a.length); if(mv.length < 8) return null;
+  const mu = mv.reduce((s, v) => s + v, 0) / mv.length, sd = Math.sqrt(mv.reduce((s, v) => s + (v - mu) * (v - mu), 0) / mv.length);
+  return sd / mu < 0.12 ? [t0, t1] : null;
+}
+// Deriva cardiaca (Pa:HR): calo dell'efficienza watt/battito tra la prima e la seconda metà del tratto costante.
+function decoupling(sm, span){
+  if(!span || span[1] - span[0] < 600) return null;
+  const mid = (span[0] + span[1]) / 2, acc = [[0, 0, 0], [0, 0, 0]];
+  for(let i = 1; i < sm.length; i++){
+    const t = sm[i][0]; if(t < span[0] || t > span[1] || !(sm[i][6] > 0) || !(sm[i][1] > 0)) continue;
+    const dt = Math.max(0, Math.min(30, t - sm[i - 1][0])), a = acc[t < mid ? 0 : 1]; a[0] += sm[i][1] * dt; a[1] += sm[i][6] * dt; a[2] += dt;
+  }
+  if(acc[0][2] < 240 || acc[1][2] < 240) return null;
+  const e1 = acc[0][0] / acc[0][1], e2 = acc[1][0] / acc[1][1];
+  return { pct: Math.round((e1 - e2) / e1 * 1000) / 10, min: Math.round((span[1] - span[0]) / 60), p1: acc[0][0] / acc[0][2], p2: acc[1][0] / acc[1][2], h1: acc[0][1] / acc[0][2], h2: acc[1][1] / acc[1][2] };
+}
+function spanAvg(sm, t0, t1, col){ let s = 0, n = 0; for(let i = 1; i < sm.length; i++){ const t = sm[i][0]; if(t <= t0 || t > t1 || !(sm[i][col] > 0)) continue; const dt = Math.max(0, Math.min(30, t - sm[i - 1][0])); s += sm[i][col] * dt; n += dt; } return n > 0 ? s / n : null; }
+// Resoconto di una seduta: cosa hai allenato, se l'obiettivo è centrato, commenti. older = sedute precedenti (la più recente per prima).
+function analyze(rec, older, m, hz){
+  const st = recStats(rec, m, hz), co = rec.coach || null, ph = (co && co.ph) || [], sm = rec.samples || [], ins = [];
+  const add = (k, t) => ins.push({ k, t }), hasHr = st.zt.reduce((a, v) => a + v, 0) >= 120;
+  const prev = (older || []).filter(o => o.id < rec.id && rec.id - o.id < 60 * 864e5);
+  // minuti per zona: dalla FC, oppure senza cardio dalle zone previste dalle fasi del coach
+  // stimolo VO2max: minuti sopra l'85% della riserva (circa il 90% della massima, il riferimento del 4 × 4)
+  let mn = st.zt.map(s => s / 60), m85 = st.t85 / 60;
+  if(!hasHr && ph.length){ mn = [0, 0, 0, 0, 0, 0]; m85 = 0; for(const x of ph){ const z = x.k === 'test' ? 4 : x.k === 'work' ? x.z || 1 : 1; mn[z] += (x.t1 - x.t0) / 60; if(z === 5) m85 += (x.t1 - x.t0) / 120; } }
+  let shortN = ph.filter(x => x.k === 'work' && x.z >= 4 && x.t1 - x.t0 >= 10 && x.t1 - x.t0 < 60).length;
+  if(!ph.length && sm.length > 60){
+    // senza coach: spinte di almeno 8 s sopra il 130% della potenza mediana
+    const ps = sm.map(x => x[1]).filter(p => p > 0).sort((a, b) => a - b), med = ps.length ? ps[ps.length >> 1] : 0; let run = 0;
+    for(let i = 1; i < sm.length; i++){ if(med && sm[i][1] >= med * 1.3) run += sm[i][0] - sm[i - 1][0]; else { if(run >= 8) shortN++; run = 0; } }
+  }
+  const lv = (v, a, b, c) => v >= c ? 3 : v >= b ? 2 : v >= a ? 1 : 0;
+  const aims = (co && co.aims) || null;
+  const lev = { base: lv(mn[1] * 0.5 + mn[2] + mn[3] * 0.75, 5, 12, 25), soglia: lv(mn[4] + mn[3] * 0.25, 3, 8, 15), vo2: lv(m85, 1.5, 4, 8), potenza: lv(shortN, 2, 4, 8),
+    tecnica: aims && aims.indexOf('tecnica') >= 0 && rec.dur >= 600 ? 2 : 0 };
+  lev.ritmo = 0;
+  const trained = Object.keys(lev).filter(k => lev[k] > 0).sort((a, b) => lev[b] - lev[a] || (aims ? (aims.indexOf(b) >= 0) - (aims.indexOf(a) >= 0) : 0)).slice(0, 4).map(k => ({ k, lvl: lev[k] }));
+  let verdict = null;
+  if(aims && aims.length){
+    const a = aims[0];
+    if(a === 'misura') verdict = co.newRef ? ['ok', 'misura eseguita'] : ['warn', 'test non completato'];
+    else if(a === 'tecnica') verdict = co.done ? ['ok', 'seduta completata'] : ['warn', 'seduta interrotta'];
+    else { const l = lev[a === 'ritmo' ? 'base' : a]; verdict = l >= 2 ? ['ok', 'centrato'] : l === 1 ? ['warn', 'centrato in parte'] : ['bad', 'non raggiunto']; }
+  }
+  // 1. FC nella zona prevista durante le fasi costanti guidate dal cuore
+  const zph = ph.filter(x => x.k === 'work' && x.z >= 2 && x.z <= 3 && x.t1 - x.t0 >= 180);
+  let zhit = null;
+  if(hasHr && zph.length && hrFr(0.5, hz) != null){
+    let tin = 0, tot = 0, up = 0;
+    for(const x of zph){ const lo = hrFr(ZF[x.z][0], hz), hi = hrFr(ZF[x.z][1], hz);
+      for(let i = 1; i < sm.length; i++){ const t = sm[i][0], h = sm[i][6]; if(t <= x.t0 + 120 || t > x.t1 || !(h > 0)) continue; const dt = Math.max(0, Math.min(30, t - sm[i - 1][0])); tot += dt; if(h >= lo && h <= hi) tin += dt; else if(h > hi) up += dt; } }
+    if(tot >= 120){ zhit = Math.round(tin / tot * 100);
+      add(zhit >= 75 ? 'ok' : zhit >= 50 ? 'info' : 'warn', 'FC nella zona prevista per il ' + zhit + '% del lavoro costante (esclusi i primi 2 minuti di ogni fase)' + (zhit < 75 ? (up > (tot - tin) / 2 ? ': fuori zona sei stato soprattutto sopra.' : ': fuori zona sei stato soprattutto sotto.') : '.')); }
+  }
+  if(zhit == null && co && co.comp != null) add(co.comp >= 80 ? 'ok' : co.comp >= 50 ? 'info' : 'warn', 'In obiettivo per il ' + co.comp + '% del lavoro.');
+  // 2. Scarto di oggi rispetto alla curva personale
+  // (lo scarto dei primi minuti: quello di fine seduta contiene anche la normale deriva cardiaca, che si valuta a parte)
+  const dd = co ? co.dDay : null;
+  if(dd != null && Math.abs(dd) >= 5){
+    if(dd > 0) add('warn', 'Già nei primi minuti il cuore batteva circa ' + Math.round(dd) + ' bpm più del solito a parità di watt: stanchezza, caldo, poco sonno, disidratazione o caffeina. Il coach ha abbassato i watt per tenerti in zona.');
+    else add('ok', 'Già nei primi minuti il cuore batteva circa ' + Math.round(-dd) + ' bpm meno del solito a parità di watt: giornata buona, il coach ha alzato i watt.');
+  }
+  // 3. Deriva cardiaca nel tratto costante
+  const dec = hasHr ? decoupling(sm, steadySpan(rec)) : null;
+  if(dec){
+    const how = dec.h2 - dec.h1 >= 2 ? 'la FC è salita da ' + Math.round(dec.h1) + ' a ' + Math.round(dec.h2) + ' bpm' + (Math.abs(dec.p2 - dec.p1) >= 3 ? ' con watt da ' + Math.round(dec.p1) + ' a ' + Math.round(dec.p2) : ' a watt costanti')
+      : 'i watt sono passati da ' + Math.round(dec.p1) + ' a ' + Math.round(dec.p2) + ' a FC stabile';
+    if(dec.pct < 5) add('ok', 'Deriva cardiaca ' + nIt(dec.pct, 1) + '% su ' + dec.min + ' minuti (' + how + '): sotto il 5%, la base aerobica regge bene questa durata.');
+    else if(dec.pct < 10) add('info', 'Deriva cardiaca ' + nIt(dec.pct, 1) + '% su ' + dec.min + ' minuti (' + how + '): la base aerobica non regge ancora del tutto questa durata, serve altro volume in zona 2.');
+    else add('warn', 'Deriva cardiaca ' + nIt(dec.pct, 1) + '% su ' + dec.min + ' minuti (' + how + '): intensità sopra la tua zona aerobica, oppure caldo e disidratazione. Bevi e resta nella parte bassa della zona.');
+  }
+  // 4. Efficienza aerobica: watt alla FC di riferimento, confrontati con 2–6 settimane prima
+  if(st.pAt != null){
+    const ps = prev.map(o => ({ d: (rec.id - o.id) / 864e5, p: recStats(o, m, hz).pAt })).filter(x => x.p != null);
+    const win = ps.filter(x => x.d >= 14 && x.d <= 42).sort((a, b) => a.p - b.p), base = win.length ? win[win.length >> 1] : ps.filter(x => x.d >= 4).sort((a, b) => b.d - a.d)[0] || ps[0];
+    if(base){
+      const dw = st.pAt - base.p, pc = dw / base.p * 100;
+      if(Math.abs(pc) < 2) add('info', 'A ' + st.href + ' bpm spingi ' + st.pAt + ' W, come ' + agoTxt(base.d) + ': efficienza aerobica stabile.');
+      else if(dw > 0) add('ok', 'A ' + st.href + ' bpm spingi ' + st.pAt + ' W: ' + sgn(dw) + ' W (' + sgn(pc) + '%) rispetto a ' + agoTxt(base.d) + '. È il segno più diretto che la base aerobica cresce.');
+      else add('info', 'A ' + st.href + ' bpm oggi spingi ' + st.pAt + ' W, ' + Math.round(-dw) + ' W meno di ' + agoTxt(base.d) + ': una seduta sola non fa tendenza, guardiamo le prossime.');
+    } else add('info', 'Riferimento di efficienza aerobica: a ' + st.href + ' bpm spingi ' + st.pAt + ' W. Lo confronto con le prossime sedute.');
+  }
+  // 5. Blocchi e ripetute
+  const reps = ph.filter(x => (x.k === 'work' && x.z >= 4 && x.t1 - x.t0 >= 60) && x.p > 0);
+  if(reps.length >= 2){
+    const f = reps[0], l = reps[reps.length - 1], fade = (l.p - f.p) / f.p * 100, hz0 = reps[0].z;
+    let t = reps.length + ' blocchi intensi: ' + (Math.abs(fade) <= 5 ? 'regolari, da ' + Math.round(f.p) + ' a ' + Math.round(l.p) + ' W.' : fade < 0 ? 'calo del ' + nIt(-fade) + '% tra il primo (' + Math.round(f.p) + ' W) e l\'ultimo (' + Math.round(l.p) + ' W), la prossima volta parti più piano.' : 'l\'ultimo più forte del primo (' + Math.round(f.p) + ' → ' + Math.round(l.p) + ' W), gestione giusta e c\'è margine per alzare.');
+    const he = reps.map(x => x.he).filter(v => v > 0);
+    if(he.length >= 2 && hrFr(0.5, hz) != null){ const zin = reps.filter(x => x.he >= hrFr(ZF[hz0][0], hz)).length; t += ' FC a fine blocco ' + he.map(Math.round).join(', ') + ' bpm: in zona ' + hz0 + ' ' + (zin === reps.length ? 'in tutti.' : 'in ' + zin + ' su ' + reps.length + '.'); }
+    add(fade < -5 ? 'warn' : 'ok', t);
+  }
+  const shorts = ph.filter(x => x.k === 'work' && x.z >= 4 && x.t1 - x.t0 >= 10 && x.t1 - x.t0 < 60 && x.p > 0);
+  if(shorts.length >= 6){
+    const a = (xs) => xs.reduce((s, x) => s + x.p, 0) / xs.length, p1 = a(shorts.slice(0, 3)), p2 = a(shorts.slice(-3)), dd = (p2 - p1) / p1 * 100;
+    add(dd < -10 ? 'warn' : 'ok', 'Ripetute brevi: prime tre ' + Math.round(p1) + ' W, ultime tre ' + Math.round(p2) + ' W (' + sgn(dd) + '%)' + (dd < -10 ? ': partenza troppo forte.' : ': ritmo tenuto.'));
+  }
+  // 6. Recupero della FC nel minuto dopo i blocchi intensi
+  const hrr = (co && co.hrr) || [];
+  if(hrr.length){
+    const drop = hrr.reduce((s, x) => s + x[0] - x[1], 0) / hrr.length, pr = prev.find(o => o.coach && o.coach.hrr && o.coach.hrr.length);
+    const pd = pr ? pr.coach.hrr.reduce((s, x) => s + x[0] - x[1], 0) / pr.coach.hrr.length : null;
+    add('info', 'Recupero della FC dopo i blocchi intensi: −' + Math.round(drop) + ' bpm in 60 secondi, continuando a vogare piano' + (pd != null ? ' (la volta precedente −' + Math.round(pd) + ').' : '.') + ' A parità di carico, più scende e meglio recuperi.');
+  }
+  // 7. Test: distribuzione dello sforzo
+  const tp = ph.find(x => x.k === 'test' && x.t1 - x.t0 >= 300);
+  if(tp){
+    const mid = (tp.t0 + tp.t1) / 2, a1 = spanAvg(sm, tp.t0, mid, 1), a2 = spanAvg(sm, mid, tp.t1, 1);
+    if(a1 && a2){ const r = a2 / a1; add(r < 0.95 ? 'warn' : 'ok', 'Test: prima metà ' + Math.round(a1) + ' W, seconda ' + Math.round(a2) + ' W. ' + (r < 0.95 ? 'Partenza troppo forte: al prossimo test parti più piano e chiudi in crescendo.' : r > 1.05 ? 'Partenza prudente: c\'era margine, il valore reale è probabilmente un po\' più alto.' : 'Sforzo ben distribuito, la misura è affidabile.')); }
+  }
+  // 8. FC massima osservata oltre quella impostata
+  let hrMaxNew = null;
+  if(hz && hz.max > 0 && st.peak > hz.max){ hrMaxNew = Math.round(st.peak); add('warn', 'Hai toccato ' + hrMaxNew + ' bpm, sopra la FC massima impostata (' + hz.max + '): le zone sono calcolate su un valore troppo basso. Aggiornala per spostarle in alto.'); }
+  // 9. Metri per colpo e carico rispetto alle sedute precedenti
+  if(st.mps){
+    const mp = prev.slice(0, 5).map(o => o.strokes > 0 && o.dist > 0 ? o.dist / o.strokes : null).filter(v => v);
+    if(mp.length >= 2){ const avg = mp.reduce((s, v) => s + v, 0) / mp.length, d = st.mps - avg; if(Math.abs(d) >= 0.3) add(d > 0 ? 'ok' : 'info', nIt(st.mps, 1) + ' metri per colpo, ' + sgn(d, 1) + ' rispetto alla media delle ultime sedute: ' + (d > 0 ? 'passata più lunga ed efficace.' : 'colpi più corti, controlla che gambe e busto finiscano la spinta.')); }
+  }
+  if(hasHr){
+    const tl = prev.filter(o => rec.id - o.id < 28 * 864e5).map(o => recStats(o, null, hz)).filter(x => x.zt.reduce((a, v) => a + v, 0) >= 120).map(x => x.trimp);
+    if(tl.length >= 2){ const avg = tl.reduce((s, v) => s + v, 0) / tl.length, r = st.trimp / avg; add('info', 'Carico della seduta (TRIMP di Edwards, minuti × zona): ' + st.trimp + ', ' + (r > 1.25 ? 'più alto' : r < 0.75 ? 'più basso' : 'in linea con') + (r > 1.25 || r < 0.75 ? ' della' : ' la') + ' media delle ultime 4 settimane (' + Math.round(avg) + ').'); }
+  } else add('info', 'Senza cardio collegato le zone sono quelle previste dal programma, non quelle misurate.');
+  return { st, mn, trained, verdict, aims, ins, dec, hrMaxNew, hasHr };
+}
 /*COACH-END*/
 
-const C = { plan: null, id: null, sid: null, hard: false, advice: '', size: 1, idx: 0, tIn: 0, lastMs: 0, started: false, done: false, adj: 1, hrk: 1, hrk0: 1, hrkAt: 0, hrSecs: 0, zSum: 0, zN: 0, ref: null, p10: null,
-  cue: 'pronto', cueSince: 0, lastVoice: 0, over: 0, under: 0, hot: 0, lastHot: 0, inBand: 0, workSecs: 0, repSum: 0, repN: 0,
-  testSum: 0, testN: 0, testDone: false, half: false, lastBeep: -1, audio: null, refCache: undefined, speed: location.hash === '#veloce' ? 60 : 1 };
+const C = { plan: null, id: null, sid: null, hard: false, advice: '', aims: null, size: 1, idx: 0, tIn: 0, lastMs: 0, started: false, done: false, adj: 1, ref: null, p10: null,
+  model: null, dA: 0, dUse: 0, dN: 0, dDay: null, plag: null, annB: null, annAt: 0, phLog: [], ph0: 0, phP: 0, phPn: 0, phH: 0, phHn: 0, hrNow: 0, hrr: [], hrrPend: null,
+  cue: 'pronto', cueSince: 0, lastVoice: 0, hot: 0, lastHot: 0, inBand: 0, workSecs: 0, repSum: 0, repN: 0, hrEnd: 0, hrBlocks: 0, heRel: 0,
+  testSum: 0, testN: 0, testDone: false, half: false, lastBeep: -1, audio: null, refCache: undefined, modelCache: undefined, speed: location.hash === '#veloce' ? 60 : 1 };
 function curRef(){
   if(cfg.ref > 0) return cfg.ref;
   if(C.refCache === undefined) C.refCache = estimateRef(history, Date.now());
   return C.refCache;
 }
-// Fattore personale che allinea i watt delle zone 1–3 alla tua FC: imparato nelle sedute, o stimato dallo storico finché non c'è.
-function curHrK(){
-  if(cfg.hrK > 0) return cfg.hrK;
-  if(C.hrkCache === undefined) C.hrkCache = estimateHrK(history, curRef(), Date.now());
-  return C.hrkCache || 1;
+function hzCfg(){ return { max: cfg.hrMax, rest: cfg.hrRest }; }
+// Curva cuore-potenza personale dallo storico (ricalcolata quando cambiano storico, soglia o zone).
+function curModel(){
+  if(C.modelCache === undefined) C.modelCache = fitHr(history, hrPrior(curRef(), hzCfg()), hzCfg(), Date.now());
+  return C.modelCache;
 }
+function dropModel(){ C.refCache = undefined; C.modelCache = undefined; }
 // Fasi a ritmo costante in zona 2–3: qui comanda il cuore, la potenza si adatta.
 function steady(ph){ return !!ph && ph.kind === 'work' && (ph.hrz === 2 || ph.hrz === 3) && ph.dur >= 180; }
-function hrAt(fr){ if(!(cfg.hrMax > 0)) return null; return Math.round(cfg.hrRest > 0 ? cfg.hrRest + fr * (cfg.hrMax - cfg.hrRest) : (fr + 0.10) * cfg.hrMax); }
-function zoneIdx(hr){ if(!hr || !(cfg.hrMax > 0)) return 0; let z = 0; for(const fr of [0.5, 0.6, 0.7, 0.8, 0.9]) if(hr >= hrAt(fr)) z++; return z; }
+function hrAt(fr){ return hrFr(fr, hzCfg()); }
+function zoneIdx(hr){ return hrZone(hr, hzCfg()); }
 function zoneOf(hr){ if(!hr || !(cfg.hrMax > 0)) return ''; const z = zoneIdx(hr); return z ? 'Z' + z : 'sotto Z1'; }
+// Watt di una zona fuori dal coach (piano, impostazioni): zone 1–3 dalla curva, 4–5 dalla soglia riallineata alla curva.
+function zoneWatts(z){
+  const m = curModel(), ref = curRef(), hz = hzCfg();
+  if(z <= 3 && m) return zoneW(m, z, hz, 0);
+  if(!ref) return null;
+  const k = z >= 4 ? hiK(m, ref, hz, 0, cfg.ref > 0) : 1;
+  return [Math.round(ZPOW[z][0] * ref * k / 5) * 5, Math.round(ZPOW[z][1] * ref * k / 5) * 5];
+}
+// Fascia di potenza della fase: nelle zone 1–3 (e in riscaldamento, recuperi, defaticamento) sono i watt che portano la FC in zona
+// secondo la tua curva, corretta con lo scarto di oggi; nelle zone 4–5 la soglia, riallineata alla curva e ritoccata dalla FC di fine blocco.
 function band(ph){
-  if(!ph || !ph.f || !C.ref) return null;
-  const m = ph.kind !== 'work' || ph.hrz <= 3 ? C.hrk : C.adj;
+  if(!ph || ph.kind === 'test') return null;
+  const z = ph.hrz || 1, work = ph.kind === 'work';
+  if((z <= 3 || !work) && C.model) return zoneW(C.model, Math.min(3, z), hzCfg(), C.dUse);
+  if(!ph.f || !C.ref) return null;
+  const m = work && z >= 4 ? C.adj * hiK(C.model, C.ref, hzCfg(), C.dUse, cfg.ref > 0) : 1;
   return [Math.round(ph.f[0] * C.ref * m / 5) * 5, Math.round(ph.f[1] * C.ref * m / 5) * 5];
 }
 function say(text){
@@ -1589,6 +2068,7 @@ const minWords = (sec) => {
 };
 function announcePhase(){
   const ph = C.plan[C.idx], b = band(ph);
+  C.annB = b; C.annAt = Date.now(); C.ph0 = S.session ? S.session.moving : 0;
   beep(660, 0.4); flashCoach();
   // Fasi brevi (30/30, allunghi): una parola sola, altrimenti la voce si accavalla.
   if(ph.dur < 45) say(ph.kind === 'work' || ph.kind === 'test' ? 'Via.' : 'Recupero.');
@@ -1600,15 +2080,16 @@ function coachArm(id, size, sid){
   if(id === 'piano' && !sess){ toast('Seduta del piano non trovata.'); return; }
   if(id !== 'test' && id !== 'piano' && !ref){ toast('Per questo allenamento mi serve la tua potenza di soglia: fai prima il test di taratura, o inseriscila in Impostazioni.', 7000); return; }
   try{ C.audio = C.audio || new (window.AudioContext || window.webkitAudioContext)(); if(C.audio.resume) C.audio.resume(); }catch(e){ C.audio = null; }
-  Object.assign(C, { plan: buildPlan(id, size, sid), id, size, sid: sess ? sess.id : null, hard: sess ? planIsHard(sess) : !!WORKOUTS[id].hard, advice: sess ? sess.cue : '', idx: 0, tIn: 0, lastMs: 0, started: false, done: false, adj: 1, ref, p10: null, cue: 'pronto', cueSince: Date.now(), hrk: curHrK(), hrkAt: 0, hrSecs: 0, zSum: 0, zN: 0, hrEnd: 0, hrBlocks: 0,
-    lastVoice: 0, over: 0, under: 0, hot: 0, inBand: 0, workSecs: 0, repSum: 0, repN: 0, testSum: 0, testN: 0, testDone: false, half: false, lastBeep: -1 });
-  C.hrk0 = C.hrk;
+  Object.assign(C, { plan: buildPlan(id, size, sid), id, size, sid: sess ? sess.id : null, hard: sess ? planIsHard(sess) : !!WORKOUTS[id].hard, advice: sess ? sess.cue : '', aims: aimsOf(id, sess), idx: 0, tIn: 0, lastMs: 0, started: false, done: false, adj: 1, ref, p10: null, cue: 'pronto', cueSince: Date.now(), hrEnd: 0, hrBlocks: 0, heRel: 0,
+    model: curModel(), dA: 0, dUse: 0, dN: 0, dDay: null, plag: null, annB: null, annAt: 0, phLog: [], ph0: 0, phP: 0, phPn: 0, phH: 0, phHn: 0, hrNow: 0, hrr: [], hrrPend: null,
+    lastVoice: 0, hot: 0, inBand: 0, workSecs: 0, repSum: 0, repN: 0, testSum: 0, testN: 0, testDone: false, half: false, lastBeep: -1 });
   // Riscaldamento iniziale: lo chiude il coach tra 4 e 5 minuti, appena la FC arriva alle porte della zona 2.
   const w0 = C.plan[0]; if(w0 && w0.kind === 'warm' && w0.dur >= 180 && w0.dur <= 360){ w0.dur = 300; w0.flex = true; }
   const pr = $('cProg'); pr.textContent = '';
   C.plan.forEach(p => { const i = document.createElement('i'); i.className = p.kind; i.style.flex = p.dur + ' 1 0'; pr.append(i); });
-  say('Coach pronto. ' + (sess ? sess.title + '. ' + sess.cue : WORKOUTS[id].name + '.') + (S.session ? '' : ' Parto al tuo primo colpo.'));
-  log('Coach attivato: ' + planTitle(id, size, sid) + (ref ? ', soglia ' + ref + ' W' : '') + (C.hrk !== 1 ? ', fattore FC ' + C.hrk : ''));
+  say('Coach pronto. ' + (sess ? sess.title + '. ' : WORKOUTS[id].name + '. ') + 'Obiettivo: ' + lc1(AIMS[C.aims[0]].name) + '.' + (sess ? ' ' + sess.cue : '') + (S.session ? '' : ' Parto al tuo primo colpo.'));
+  const m = C.model;
+  log('Coach attivato: ' + planTitle(id, size, sid) + (ref ? ', soglia ' + ref + ' W' : '') + (m ? ', curva FC = ' + Math.round(m.hc - m.b * m.pc) + ' + ' + m.b.toFixed(2) + '×W (' + m.n + ' min di dati)' : ''));
   window.scrollTo(0, 0); queueRender();
 }
 function coachOff(){ if(!C.plan) return; C.plan = null; toast('Coach chiuso.' + (S.session ? ' L\'allenamento continua senza guida.' : '')); queueRender(); }
@@ -1631,7 +2112,7 @@ function endPhase(ph){
     const b = band(ph), avg = C.repSum / C.repN;
     // Con il cardio decide la FC di fine blocco: se non arriva nella zona prevista i prossimi blocchi salgono, se la supera scendono.
     const zl = ph.hrz >= 4 && cfg.hrMax > 0 && C.hrEnd ? hrAt(ZF[ph.hrz][0]) : 0, zh = zl ? hrAt(ZF[ph.hrz][1]) : 0;
-    if(zl) C.hrBlocks++;
+    if(zl){ C.hrBlocks++; C.heRel += (C.hrEnd - zl) / Math.max(1, zh - zl); }
     if(zl && C.hrEnd < zl - 2 && b && avg >= b[0] * 0.97 && C.hot === 0 && C.adj < 1.12){
       C.adj = Math.min(1.12, C.adj + (zl - C.hrEnd > 8 ? 0.04 : 0.02)); say('A fine blocco il cuore era a ' + Math.round(C.hrEnd) + ', sotto la zona ' + ph.hrz + '. Alzo i prossimi.'); log('Coach: FC fine blocco ' + Math.round(C.hrEnd) + ' < ' + zl + ', fattore ' + C.adj.toFixed(2));
     } else if(zl && C.hrEnd > zh + 2 && C.adj > 0.84){
@@ -1640,7 +2121,17 @@ function endPhase(ph){
     else if(!zl && b && avg > b[1] * 1.03 && C.hot === 0 && C.adj < 1.12){ C.adj += 0.03; say('Sei andato sopra obiettivo. Alzo i prossimi.'); log('Coach: media ' + Math.round(avg) + ' W sopra obiettivo, aumento del 3%'); }
   }
   if(ph.kind === 'test') C.testDone = true;
-  C.repSum = 0; C.repN = 0; C.half = false; C.lastBeep = -1; C.over = 0; C.under = 0; C.zSum = 0; C.zN = 0; C.hrEnd = 0;
+  logPhase(ph);
+  // recupero della FC: si misura 60 secondi dopo la fine di un blocco intenso, se segue un recupero
+  const nx = C.plan[C.idx + 1];
+  if(ph.kind === 'work' && ph.hrz >= 4 && ph.dur >= 90 && C.hrNow && nx && nx.kind !== 'work' && nx.dur >= 60) C.hrrPend = { h0: C.hrNow, at: Date.now() };
+  C.repSum = 0; C.repN = 0; C.half = false; C.lastBeep = -1; C.hrEnd = 0;
+}
+// Registro delle fasi per il resoconto: tempi in tempo di voga (come i campioni), watt e FC medi, FC di fine fase.
+function logPhase(ph, sess){
+  const ss = sess || S.session, t1 = ss ? ss.moving : C.ph0;
+  if(t1 - C.ph0 >= 5) C.phLog.push({ l: ph.label, k: ph.kind, z: ph.hrz || 0, t0: Math.round(C.ph0), t1: Math.round(t1), p: C.phPn ? Math.round(C.phP / C.phPn) : 0, h: C.phHn ? Math.round(C.phH / C.phHn) : 0, he: Math.round(C.hrEnd) || 0 });
+  C.ph0 = t1; C.phP = 0; C.phPn = 0; C.phH = 0; C.phHn = 0;
 }
 function coachTick(d){
   if(!C.plan || C.done) return;
@@ -1651,36 +2142,34 @@ function coachTick(d){
   if(!C.started){ C.started = true; announcePhase(); }
   const pNow = d.stale ? null : (d.active ? (d.power || 0) : 0);
   if(pNow != null){ const a = 1 - Math.exp(-Math.max(dt, 0.2) / 6); C.p10 = C.p10 == null ? pNow : C.p10 + a * (pNow - C.p10); }
+  // Scarto di oggi tra la FC e la curva personale: watt filtrati con la costante di risposta del cuore (45 s), media mobile su 90 s.
+  // Si aggiorna in tutte le fasi finché la FC resta sotto l'88% della riserva; i watt delle zone 1–3 lo seguono a passi di 2 bpm.
+  C.hrNow = d.hr || 0;
+  if(pNow > 0){
+    C.plag = C.plag == null ? pNow : C.plag + (1 - Math.exp(-real / HR_TAU)) * (pNow - C.plag);
+    const m = C.model, top = hrAt(0.88);
+    if(m && d.hr && top && d.hr <= top && s.moving >= 150 && C.plag >= 20){
+      const r = d.hr - (m.hc + m.b * (C.plag - m.pc));
+      C.dA = Math.max(-25, Math.min(25, C.dA + Math.min(1, real / 90) * (r - C.dA))); C.dN += real;
+      if(C.dDay == null && C.dN >= 300) C.dDay = C.dA; // scarto della giornata, prima che pesi la deriva cardiaca della seduta
+      if(Math.abs(C.dA - C.dUse) >= 2) C.dUse = Math.round(C.dA);
+    }
+  }
+  if(pNow != null){ C.phP += pNow * dt; C.phPn += dt; }
+  if(d.hr){ C.phH += d.hr * dt; C.phHn += dt; }
+  if(C.hrrPend && now - C.hrrPend.at >= 60000 / C.speed){ if(d.hr) C.hrr.push([Math.round(C.hrrPend.h0), Math.round(d.hr)]); C.hrrPend = null; }
   let ph = C.plan[C.idx]; const b = band(ph), p = C.p10 || 0;
-  // Nelle fasi costanti in zona 2–3 comanda il cuore: dopo 2 minuti (col riscaldamento di 4–5 minuti la FC è già avviata e si assesta in fretta)
-  // l'obiettivo di potenza si sposta verso i watt che tengono davvero la FC in zona, nei due sensi.
+  // Nelle fasi costanti in zona 2–3 comanda il cuore: dopo 2 minuti (col riscaldamento di 4–5 minuti la FC è già avviata)
+  // il messaggio segue la FC, e la fascia di watt è quella che secondo la curva la tiene in zona oggi.
   const hz = steady(ph) && cfg.hrMax > 0 && hrAt(0.5) ? ph.hrz : 0, zl = hz ? hrAt(ZF[hz][0]) : 0, zh = hz ? hrAt(ZF[hz][1]) : 0;
   const settled = !!(hz && d.hr && d.active && C.tIn >= 120), inZone = settled && d.hr >= zl && d.hr <= zh;
   if(ph.kind === 'work' && b){ C.workSecs += dt; if(inZone || (!settled && p >= b[0] * 0.97 && p <= b[1] * 1.03)) C.inBand += dt; C.repSum += p * dt; C.repN += dt; }
   if(ph.kind === 'test' && pNow != null){ C.testSum += pNow * dt; C.testN += dt; }
-  if(settled && b){
-    C.hrSecs += dt;
-    if(d.hr > zh){ C.over += dt; C.under = 0; C.zSum = 0; C.zN = 0; }
-    else if(d.hr < zl){ C.under += dt; C.over = 0; C.zSum = 0; C.zN = 0; }
-    else { C.over = Math.max(0, C.over - dt); C.under = Math.max(0, C.under - dt); C.zSum += p * dt; C.zN += dt; }
-    // il cuore risponde con 1–2 minuti di ritardo: una correzione ogni 90 secondi al massimo
-    if(now - C.hrkAt > 90000 / C.speed){
-      let k = 0, why = '';
-      // fuori zona: correzione proporzionale alla distanza dal centro della zona (FC sopra il riposo ~ potenza), al massimo 8% per volta
-      const rest = cfg.hrRest > 0 ? cfg.hrRest : 60, need = Math.max(0.92, Math.min(1.08, ((zl + zh) / 2 - rest) / Math.max(1, d.hr - rest)));
-      if(C.over >= 45 && p <= b[1] * 1.03){ k = Math.min(0.97, need); why = 'Frequenza sopra la zona ' + hz; }
-      else if(C.under >= 60 && p >= b[0] * 0.97){ k = Math.max(1.03, need); why = 'Il cuore è sotto la zona ' + hz; }
-      else if(C.zN >= 60){
-        const avg = C.zSum / C.zN, mid = (b[0] + b[1]) / 2;
-        if(avg > b[1] * 1.03 || avg < b[0] * 0.97){ k = Math.max(0.92, Math.min(1.08, avg / mid)); why = 'Sei in zona ' + hz + ' a ' + Math.round(avg) + ' watt'; }
-        C.zSum = 0; C.zN = 0;
-      }
-      const nk = Math.round(Math.max(0.6, Math.min(1.6, C.hrk * k)) * 100) / 100;
-      if(k && nk !== C.hrk){
-        C.hrk = nk; C.hrkAt = now; C.over = 0; C.under = 0;
-        const nb = band(ph); say(why + '. Obiettivo da ' + nb[0] + ' a ' + nb[1] + ' watt.'); log('Coach: ' + why + ', obiettivo ' + nb[0] + '-' + nb[1] + ' W (fattore FC ' + nk + ')');
-      }
-    }
+  // obiettivo spostato dallo scarto di oggi: lo si dice a voce al massimo ogni 90 secondi e solo se cambia di almeno 10 W
+  if(hz && b && C.annB && C.tIn >= 120 && Math.abs(b[0] - C.annB[0]) >= 10 && now - C.annAt > 90000 / C.speed){
+    const up = b[0] > C.annB[0]; C.annB = b; C.annAt = now;
+    say((up ? 'Il cuore oggi sta più basso del solito, alzo i watt' : 'Il cuore oggi sale più del solito, abbasso i watt') + '. Obiettivo da ' + b[0] + ' a ' + b[1] + ' watt.');
+    log('Coach: scarto FC ' + sgn(C.dUse) + ' bpm sulla curva, obiettivo ' + b[0] + '-' + b[1] + ' W');
   }
   if(d.hr && cfg.hrMax > 0 && d.hr >= cfg.hrMax - 3){ C.hot += real; if(C.hot >= 15 && now - C.lastHot > 60000){ say('Frequenza cardiaca molto alta. Rallenta.'); C.lastHot = now; } } else C.hot = 0;
   let key = 'libero';
@@ -1702,7 +2191,7 @@ function coachTick(d){
   if(key !== C.cue){ C.cue = key; C.cueSince = now; }
   const left = ph.dur - C.tIn;
   if(CUE[key][2] && now - C.cueSince > 12000 && now - C.lastVoice > 30000 && C.tIn > 15 && left > 12){ say(CUE[key][2]); C.lastVoice = now; }
-  if(ph.kind === 'work' && d.hr && ph.dur - C.tIn <= 30) C.hrEnd = Math.max(C.hrEnd, d.hr);
+  if((ph.kind === 'work' || ph.kind === 'test') && d.hr && ph.dur - C.tIn <= 30) C.hrEnd = Math.max(C.hrEnd, d.hr);
   if(ph.flex && d.hr && cfg.hrMax > 0 && C.tIn >= 240 && d.hr >= hrAt(0.6) - 5 && ph.dur > C.tIn + dt){ ph.dur = C.tIn + dt; log('Coach: riscaldamento chiuso a ' + fmtTime(ph.dur) + ', FC ' + Math.round(d.hr)); }
   C.tIn += dt;
   if(!C.half && ph.dur >= 240 && (ph.kind === 'work' || ph.kind === 'test') && C.tIn >= ph.dur / 2){ C.half = true; say('Metà. ' + (ph.kind === 'test' ? 'Tieni il ritmo.' : 'Continua così.')); }
@@ -1725,35 +2214,29 @@ function coachFinish(s){
   } else if(!C.ref){ note = completed ? 'Seduta completata.' : 'Seduta interrotta.';
   } else if(logic === 'soglia' || logic === 'intervalli'){
     if(completed && C.hrBlocks >= 2 && Math.abs(C.adj - 1) >= 0.02){ newRef = Math.round(C.ref * (1 + 0.6 * (C.adj - 1))); note = 'Soglia tarata sulla FC a fine blocco: ' + (newRef > C.ref ? 'alzo' : 'abbasso') + ' a ' + newRef + ' W.'; }
+    // si alza solo se il cuore lo conferma: con la FC di fine blocco nella metà alta della zona la soglia resta dov'è
+    else if(completed && comp != null && comp >= 0.8 && C.adj >= 1 && C.hrBlocks >= 2 && C.heRel / C.hrBlocks > 0.5){ note = 'Lavoro completato in obiettivo, con la FC a fine blocco nella parte alta della zona: soglia confermata a ' + C.ref + ' W.'; }
     else if(completed && comp != null && comp >= 0.8 && C.adj >= 1){ newRef = Math.round(C.ref * 1.02); note = 'Lavoro completato in obiettivo: alzo la soglia del 2%, a ' + newRef + ' W.'; }
     else if(C.adj <= 0.93 || (completed && comp != null && comp < 0.5)){ newRef = Math.round(C.ref * 0.98); note = 'Obiettivi troppo alti oggi: abbasso la soglia del 2%, a ' + newRef + ' W.'; }
     else note = completed ? 'Lavoro completato. Soglia confermata a ' + C.ref + ' W.' : 'Allenamento interrotto: soglia invariata.';
   } else if(logic === 'fondo'){
     note = completed ? 'Fondo completato.' : 'Fondo interrotto.';
-    if(C.hrk <= C.hrk0 * 0.9) note += ' Il cuore oggi saliva presto: può essere stanchezza, caldo o poco recupero.';
   } else note = completed ? (sess ? 'Seduta completata.' : 'Scala completata.') : (sess ? 'Seduta interrotta.' : 'Scala interrotta.');
+  // la parte sulla soglia va anche nel resoconto
+  const refNote = logic === 'test' || ((logic === 'soglia' || logic === 'intervalli') && C.ref) ? note : '';
   if(comp != null && logic !== 'test') note += ' In obiettivo per il ' + Math.round(comp * 100) + '% del lavoro.';
-  // Dopo almeno 5 minuti guidati dal cuore il fattore FC si aggiorna per le prossime sedute, per tre quarti, per non inseguire del tutto una giornata storta.
-  let hrK = null;
-  if(C.ref && C.hrSecs >= 300){
-    hrK = Math.round(Math.max(0.6, Math.min(1.6, C.hrk0 + 0.75 * (C.hrk - C.hrk0))) * 100) / 100;
-    const lo = Math.round(ZPOW[2][0] * C.ref * hrK / 5) * 5, hi = Math.round(ZPOW[2][1] * C.ref * hrK / 5) * 5;
-    note += ' Zona 2 tarata sul tuo cuore: ' + lo + '–' + hi + ' W.';
-  }
-  const res = { id: C.id, size: C.size, sid: sess ? sess.id : null, hard: sess ? planIsHard(sess) : !!WORKOUTS[C.id].hard,
-    name: sess ? 'Piano S' + sess.w + '.' + sess.n + ', ' + sess.title : WORKOUTS[C.id].name, ref: C.ref, adj: Math.round(C.adj * 100) / 100, comp: comp == null ? null : Math.round(comp * 100), done: completed, note, newRef, hrK };
+  // fase in corso al momento di Termina: entra nel registro se è durata almeno mezzo minuto
+  if(!C.done && C.tIn >= 30) logPhase(C.plan[C.idx], s);
+  const res = { id: C.id, size: C.size, sid: sess ? sess.id : null, hard: sess ? planIsHard(sess) : !!WORKOUTS[C.id].hard, aims: C.aims,
+    name: sess ? 'Piano S' + sess.w + '.' + sess.n + ', ' + sess.title : WORKOUTS[C.id].name, ref: C.ref, adj: Math.round(C.adj * 100) / 100, comp: comp == null ? null : Math.round(comp * 100), done: completed, note, newRef,
+    refNote, ph: C.phLog, hrr: C.hrr, dA: Math.round(C.dA * 10) / 10, dN: Math.round(C.dN), dDay: C.dDay == null ? null : Math.round(C.dDay * 10) / 10 };
   C.plan = null;
   return res;
 }
-// Il fattore FC è relativo alla soglia: quando la soglia cambia lo riscalo, così i watt di zona 2 già imparati restano gli stessi.
-function rescaleHrK(oldRef, newRef){
-  if(cfg.hrK > 0 && oldRef > 0 && newRef > 0) cfg.hrK = Math.round(Math.max(0.6, Math.min(1.6, cfg.hrK * oldRef / newRef)) * 100) / 100;
-  C.hrkCache = undefined;
-}
+// La curva cuore-potenza è in watt e battiti: cambiare la soglia sposta solo la stima iniziale, i dati raccolti restano validi.
 function applyRef(newRef){
   if(!(newRef > 0)) return;
-  rescaleHrK(curRef(), newRef);
-  cfg.ref = newRef; cfg.refAt = Date.now(); store.set('vg.cfg', cfg); $('inRef').value = newRef;
+  cfg.ref = newRef; cfg.refAt = Date.now(); store.set('vg.cfg', cfg); $('inRef').value = newRef; dropModel();
 }
 function coachChoice(){
   const rec = recommend(history, curRef(), cfg.refAt || 0, Date.now());
@@ -1770,7 +2253,9 @@ function renderCoach(d){
     const ch = coachChoice(), ref = curRef();
     $('cRecTitle').textContent = (ch.auto ? 'Oggi ti propongo: ' : 'Hai scelto: ') + planTitle(ch.id, ch.size);
     $('cRecWhy').textContent = ch.why;
-    $('cRecRef').textContent = ref ? 'Potenza di soglia ' + (cfg.ref > 0 ? '' : 'stimata dallo storico ') + ref + ' W' + (cfg.hrMax > 0 && hrAt(0.7) ? ' · zona 2 ' + hrAt(0.6) + '–' + hrAt(0.7) + ' bpm' + (curHrK() !== 1 ? ' = ' + Math.round(ZPOW[2][0] * ref * curHrK() / 5) * 5 + '–' + Math.round(ZPOW[2][1] * ref * curHrK() / 5) * 5 + ' W' : '') : '') : 'Potenza di soglia non ancora nota';
+    const zw = zoneWatts(2);
+    $('cRecRef').textContent = ref ? 'Potenza di soglia ' + (cfg.ref > 0 ? '' : 'stimata dallo storico ') + ref + ' W' + (cfg.hrMax > 0 && hrAt(0.7) ? ' · zona 2 ' + hrAt(0.6) + '–' + hrAt(0.7) + ' bpm' + (zw ? ' ≈ ' + zw[0] + '–' + zw[1] + ' W' : '') : '') : 'Potenza di soglia non ancora nota';
+    const ah = aimHTML(aimsOf(ch.id)), ae = $('cRecAim'); if(ae.dataset.h !== ah){ ae.dataset.h = ah; ae.innerHTML = ah; }
     return;
   }
   const ph = C.plan[C.idx], b = band(ph), next = C.plan[C.idx + 1], left = Math.max(0, ph.dur - C.tIn);
@@ -1813,9 +2298,8 @@ const fmtDur = (sec) => { const m = Math.floor(sec / 60), r = sec % 60; return !
 function zoneTxt(z){
   const parts = [];
   if(cfg.hrMax > 0 && hrAt(ZF[z][0])) parts.push(hrAt(ZF[z][0]) + '–' + hrAt(ZF[z][1]) + ' bpm');
-  const ref = curRef();
-  const k = z <= 3 ? curHrK() : 1;
-  if(ref) parts.push(Math.round(ZPOW[z][0] * ref * k / 5) * 5 + '–' + Math.round(ZPOW[z][1] * ref * k / 5) * 5 + ' W');
+  const w = zoneWatts(z);
+  if(w) parts.push(w[0] + '–' + w[1] + ' W');
   return parts.join(' · ');
 }
 function planProfile(s){
@@ -1875,6 +2359,7 @@ function renderPlanCard(keepSel){
   $('pTitle').textContent = 'Settimana ' + s.w + ', seduta ' + s.n + ': ' + s.title;
   $('pMeta').textContent = s.min + ' minuti · ' + PTYPE[s.type] + (d ? ' · ' + planStatus(cur) : (nx && nx.id === cur ? ' · è la prossima' : ''));
   $('pGoal').textContent = s.goal;
+  $('pAim').innerHTML = aimHTML(aimsOf('piano', s));
   $('pProf').innerHTML = planProfile(s);
   $('pSteps').innerHTML = planStepsHTML(s);
   $('pAdvice').textContent = s.cue;
@@ -1900,7 +2385,7 @@ function renderPlanList(){
         h += '<div class="psess" data-st="' + st + '"><details data-sid="' + s.id + '"' + (open.has(s.id) ? ' open' : '') + '><summary>' +
           '<span class="pchk" aria-hidden="true"></span><span class="pst"><b>' + s.n + '. ' + escH(s.title) + (nx && nx.id === s.id ? ' <span class="badge">prossima</span>' : '') + '</b>' +
           '<small>' + s.min + '′ · ' + PTYPE[s.type] + (d ? ' · ' + escH(planStatus(s.id)) : '') + '</small></span><span class="pmini">' + planProfile(s) + '</span></summary>' +
-          '<div class="pbody"><p class="hint">' + escH(s.goal) + '</p>' + planStepsHTML(s) +
+          '<div class="pbody"><p class="hint">' + escH(s.goal) + '</p><div class="aim">' + aimHTML(aimsOf('piano', s)) + '</div>' + planStepsHTML(s) +
           '<p class="padvice"><b>Consiglio</b>' + escH(s.cue) + '</p>' +
           '<div class="acts"><button class="btn small primary" type="button" data-pact="go" data-sid="' + s.id + '">Fai questa seduta</button>' +
           (d && d.how !== 'saltata' ? '<button class="btn small" type="button" data-pact="undo" data-sid="' + s.id + '">Segna da fare</button>'
@@ -2016,12 +2501,11 @@ function bindNum(id, key, min, max){
   const el = $(id); el.value = cfg[key] > 0 ? cfg[key] : '';
   el.addEventListener('change', () => {
     const raw = String(el.value).trim().replace(',', '.');
-    const before = key === 'ref' ? curRef() : 0;
     if(raw === '') cfg[key] = 0;
     else { const v = parseFloat(raw); if(!(v >= min && v <= max)){ el.value = cfg[key] > 0 ? cfg[key] : ''; toast('Valore non valido: inserisci un numero tra ' + min + ' e ' + max + ', o lascia vuoto.'); return; } cfg[key] = Math.round(v); }
-    if(key === 'ref'){ cfg.refAt = cfg.ref > 0 ? Date.now() : 0; C.refCache = undefined; rescaleHrK(before, curRef()); }
-    // zone cardiache diverse: il fattore imparato sulle vecchie non vale più, si ristima dallo storico
-    if(key === 'hrMax' || key === 'hrRest'){ cfg.hrK = 0; C.hrkCache = undefined; }
+    if(key === 'ref') cfg.refAt = cfg.ref > 0 ? Date.now() : 0;
+    // soglia o zone diverse: cambia la stima iniziale della curva cuore-potenza, i dati raccolti restano
+    dropModel();
     store.set('vg.cfg', cfg); queueRender();
   });
 }
@@ -2051,14 +2535,15 @@ $('btnPlanReset').addEventListener('click', () => {
   if(Date.now() < planResetArmed){ planSt = { done: {} }; planSave(); renderPlanAll(); planResetArmed = 0; b.textContent = 'Ricomincia il piano'; toast('Piano azzerato: si riparte dalla settimana 1.'); return; }
   planResetArmed = Date.now() + 3000; b.textContent = 'Conferma'; setTimeout(() => { b.textContent = 'Ricomincia il piano'; }, 3000);
 });
-['inHrMax', 'inHrRest', 'inRef'].forEach(id => $(id).addEventListener('change', () => renderPlanAll()));
+['inHrMax', 'inHrRest', 'inRef'].forEach(id => $(id).addEventListener('change', () => { renderPlanAll(); renderZones(); }));
 $('btnCoachOff').addEventListener('click', coachOff);
+$('btnRepClose').addEventListener('click', () => { $('report').hidden = true; });
 $('btnSkip').addEventListener('click', () => { if(C.plan && !C.done && S.session && S.session.state === 'running') C.tIn = C.plan[C.idx].dur; else toast('Si può saltare una fase solo ad allenamento in corso.'); });
 $('selWorkout').addEventListener('change', queueRender); $('selSize').addEventListener('change', queueRender);
 window.addEventListener('resize', queueRender);
 
 renderHistory();
-renderPlanCard(false); renderPlanList();
+renderPlanCard(false); renderPlanList(); renderZones();
 $('gVer').textContent = String(APP_VERSION);
 log('Versione app ' + APP_VERSION);
 log('Bluetooth web: ' + (navigator.bluetooth ? (policyOk ? 'disponibile' : 'presente ma bloccato in questa finestra') : 'assente in questo browser'));
