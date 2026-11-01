@@ -670,7 +670,7 @@ const store = {
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const hex = (dv) => { let s = ''; for(let i = 0; i < dv.byteLength; i++) s += dv.getUint8(i).toString(16).padStart(2, '0') + ' '; return s.trim(); };
 
-const APP_VERSION = 10;
+const APP_VERSION = 12;
 // UUID sempre per esteso: alcuni browser (Bluefy) non accettano gli alias numerici a 16 bit.
 const u16 = (n) => '0000' + n.toString(16).padStart(4, '0') + '-0000-1000-8000-00805f9b34fb';
 const FTMS = u16(0x1826), ROWER = u16(0x2ad1), HRS = u16(0x180d), HRM = u16(0x2a37);
@@ -714,7 +714,10 @@ function onRowerEvt(ev){ onRowerData(ev.target.value); }
 function onHrEvt(ev){
   const v = ev.target.value; if(!v || v.byteLength < 2) return;
   const hr = (v.getUint8(0) & 1) ? (v.byteLength >= 3 ? v.getUint16(1, true) : 0) : v.getUint8(1);
-  if(hr > 0){ if(!S.hrExt) log('Prima frequenza ricevuta dal cardio: ' + hr + ' bpm'); S.hrExt = hr; S.hrExtAt = performance.now(); queueRender(); }
+  if(!(hr > 0)) return;
+  if(!S.hrExt) log('Prima frequenza ricevuta dal cardio: ' + hr + ' bpm');
+  if(H.lostAt){ log('Cardio: battiti ripresi dopo ' + Math.round((performance.now() - H.lostAt) / 1000) + ' s'); H.lostAt = 0; if(S.hrDev) hrUi(S.hrDev.name || 'cardio'); }
+  H.fix = 0; S.hrExt = hr; S.hrExtAt = performance.now(); queueRender();
 }
 function onRowerData(dv){
   let o; try{ o = parseRower(dv); }catch(e){ log('Pacchetto illeggibile: ' + e.message); return; }
@@ -885,6 +888,7 @@ async function openGatt(dev, quiet){
     // Alla riconnessione il browser può restituire lo stesso oggetto: si toglie l'ascoltatore prima di rimetterlo, altrimenti ogni pacchetto arriva due volte.
     ch.removeEventListener('characteristicvaluechanged', onRowerEvt);
     ch.addEventListener('characteristicvaluechanged', onRowerEvt);
+    S.rowCh = ch; // riferimento tenuto: senza, il browser può liberarla e i dati smettono di arrivare
     log('Attivo le notifiche dei dati');
     await ch.startNotifications();
     log('Notifiche attive, in attesa dei dati');
@@ -977,17 +981,99 @@ async function autoConnect(){
   }catch(e){ log('Collegamento automatico non disponibile: ' + btError(e)); }
 }
 // Cardio: fascia Bluetooth o orologio Garmin con "Trasmetti frequenza cardiaca" attivo (l'iPhone non ha ANT+, serve il Bluetooth).
-function hrCleanup(dev){
+// Il cardio è sorvegliato: se il collegamento resta "aperto" ma i battiti smettono di arrivare (succede con i Garmin), prima si
+// riattivano le notifiche, poi si chiude e si riapre il collegamento, e si continua a riprovare finché il cardio resta quello scelto.
+const HR_SILENCE = 8000;
+const H = { token: 0, dev: null, ch: null, ok: false, busy: false, armedAt: 0, fix: 0, looping: false, lastWarn: 0, lostAt: 0 };
+function hrDetach(dev){
   try{ if(S.hrDisc) dev.removeEventListener('gattserverdisconnected', S.hrDisc); }catch(e){}
+  S.hrDisc = null;
+}
+function hrCleanup(dev){
+  hrDetach(dev);
+  try{ if(H.ch) H.ch.removeEventListener('characteristicvaluechanged', onHrEvt); }catch(e){}
   try{ if(dev.gatt.connected) dev.gatt.disconnect(); }catch(e){}
-  if(S.hrDev === dev){ S.hrDev = null; S.hrDisc = null; }
+  if(S.hrDev === dev){ S.hrDev = null; H.dev = null; H.ch = null; H.ok = false; H.token++; }
   hrUi(null);
 }
-function hrUi(name){
-  $('btnHr').textContent = name ? 'Cambia cardio' : 'Collega cardio';
-  $('hrName').textContent = name ? '· collegato: ' + name : '';
+function hrUi(name, note){
+  $('btnHr').textContent = (name || S.hrDev) ? 'Cambia cardio' : 'Collega cardio';
+  $('hrName').textContent = note ? '· ' + note : name ? '· collegato: ' + name : '';
   queueRender();
 }
+function hrWarn(msg){ const now = performance.now(); if(now - H.lastWarn < 60000) return; H.lastWarn = now; toast(msg, 7000); }
+// Apre (o riapre) il collegamento GATT e le notifiche. Il riferimento alla caratteristica resta in H.ch: se il browser
+// la liberasse dalla memoria, l'ascoltatore sparirebbe con lei e i battiti smetterebbero di arrivare senza nessun errore.
+async function hrOpen(dev, token, onStage){
+  const stage = (s) => { if(onStage) onStage(s); };
+  stage('collegamento');
+  const srv = await withTimeout(dev.gatt.connect(), 15000, dev);
+  if(token !== H.token) throw new Error('superato');
+  stage('servizio frequenza cardiaca');
+  let svc;
+  try{ svc = await srv.getPrimaryService(HRS); }
+  catch(e){
+    let list = ''; try{ list = (await srv.getPrimaryServices()).map(x => x.uuid.slice(4, 8)).join(', '); }catch(x){}
+    log('Il dispositivo non espone il servizio cardio. Servizi visti: ' + (list || 'nessuno leggibile'));
+    const err = new Error('Collegato a ' + (dev.name || 'dispositivo') + ', ma non sta trasmettendo la frequenza cardiaca. Sull\'orologio avvia "Trasmetti frequenza cardiaca" e riprova.');
+    err.hrNoService = true; throw err;
+  }
+  const ch = await svc.getCharacteristic(HRM);
+  if(H.ch && H.ch !== ch){ try{ H.ch.removeEventListener('characteristicvaluechanged', onHrEvt); }catch(e){} }
+  ch.removeEventListener('characteristicvaluechanged', onHrEvt);
+  ch.addEventListener('characteristicvaluechanged', onHrEvt);
+  H.ch = ch;
+  stage('attivazione notifiche');
+  await ch.startNotifications();
+  if(token !== H.token) throw new Error('superato');
+  H.ok = true; H.armedAt = performance.now();
+  log('Cardio collegato: ' + (dev.name || 'senza nome'));
+  hrUi(dev.name || 'cardio');
+}
+// Riconnessione senza limite di tentativi finché il cardio resta quello scelto: un orologio che torna a trasmettere viene ripreso da solo.
+async function hrReconnect(dev, token, why){
+  if(H.looping || token !== H.token) return; H.looping = true; H.ok = false;
+  if(!H.lostAt) H.lostAt = performance.now();
+  log('Cardio: ' + why + ', ricollego');
+  try{
+    for(let n = 1; token === H.token; n++){
+      hrUi(null, 'riconnessione…');
+      try{ if(dev.gatt.connected) dev.gatt.disconnect(); }catch(e){}
+      await sleep(Math.min(10000, 1000 * n));
+      if(token !== H.token) return;
+      try{ await hrOpen(dev, token); log('Cardio ricollegato al tentativo ' + n); return; }
+      catch(e){
+        if(token !== H.token) return;
+        if(n === 1 || n % 10 === 0) log('Cardio, tentativo ' + n + ' fallito: ' + (e && e.hrNoService ? 'servizio cardio assente' : btError(e)));
+        if(n === 6) hrWarn('Cardio non raggiungibile: controlla che l\'orologio stia ancora trasmettendo. Continuo a riprovare.');
+      }
+    }
+  } finally { H.looping = false; }
+}
+// Sorveglianza ogni 2 s: silenzio oltre 8 s → si riattivano le notifiche; se il silenzio continua → si riapre il collegamento.
+function hrWatch(){
+  const dev = S.hrDev; if(!dev || dev !== H.dev || H.busy || H.looping || !H.ok) return;
+  const now = performance.now();
+  if(now - Math.max(S.hrExtAt, H.armedAt) < HR_SILENCE) return;
+  const token = H.token;
+  if(!dev.gatt.connected){ hrReconnect(dev, token, 'collegamento caduto senza avviso'); return; }
+  if(!H.lostAt) H.lostAt = now;
+  if(H.fix === 0){
+    H.fix = 1; H.busy = true;
+    log('Cardio: nessun battito da ' + Math.round((now - Math.max(S.hrExtAt, H.armedAt)) / 1000) + ' s, riattivo le notifiche');
+    hrUi(null, 'collegato, nessun battito: riprovo…');
+    (async () => {
+      try{ try{ await H.ch.stopNotifications(); }catch(e){} await H.ch.startNotifications(); if(token === H.token) H.armedAt = performance.now(); }
+      catch(e){ log('Cardio: notifiche non riattivabili (' + btError(e) + ')'); if(token === H.token){ H.fix = 0; H.busy = false; hrReconnect(dev, token, 'notifiche bloccate'); return; } }
+      H.busy = false;
+    })();
+  } else {
+    H.fix = 0;
+    hrWarn('Il cardio è collegato ma non arrivano battiti: sull\'orologio controlla che la trasmissione sia attiva. Sto riprovando.');
+    hrReconnect(dev, token, 'ancora nessun battito');
+  }
+}
+setInterval(hrWatch, 2000);
 async function connectHr(all){
   if(!btUsable){ toast('Qui il Bluetooth non è disponibile.'); return; }
   let dev = null, stage = 'scelta del dispositivo';
@@ -1006,42 +1092,17 @@ async function connectHr(all){
     }
     log('Cardio scelto: ' + (dev.name || '(senza nome)'));
     if(S.hrDev && S.hrDev !== dev) hrCleanup(S.hrDev);
-    else if(S.hrDev && S.hrDisc){ try{ S.hrDev.removeEventListener('gattserverdisconnected', S.hrDisc); }catch(e){} }
-    S.hrDev = dev;
-    const open = async () => {
-      stage = 'collegamento';
-      const srv = await withTimeout(dev.gatt.connect(), 15000, dev);
-      stage = 'servizio frequenza cardiaca';
-      let svc;
-      try{ svc = await srv.getPrimaryService(HRS); }
-      catch(e){
-        let list = ''; try{ list = (await srv.getPrimaryServices()).map(x => x.uuid.slice(4, 8)).join(', '); }catch(x){}
-        log('Il dispositivo non espone il servizio cardio. Servizi visti: ' + (list || 'nessuno leggibile'));
-        const err = new Error('Collegato a ' + (dev.name || 'dispositivo') + ', ma non sta trasmettendo la frequenza cardiaca. Sull\'orologio avvia "Trasmetti frequenza cardiaca" e riprova.');
-        err.hrNoService = true; throw err;
-      }
-      const ch = await svc.getCharacteristic(HRM);
-      ch.removeEventListener('characteristicvaluechanged', onHrEvt);
-      ch.addEventListener('characteristicvaluechanged', onHrEvt);
-      stage = 'attivazione notifiche';
-      await ch.startNotifications();
-      log('Cardio collegato: ' + (dev.name || 'senza nome'));
-      hrUi(dev.name || 'cardio');
-    };
-    let looping = false;
-    S.hrDisc = async () => {
-      log('Cardio scollegato');
-      if(looping || S.hrDev !== dev) return; looping = true;
-      hrUi(null); $('hrName').textContent = '· riconnessione…';
-      for(let n = 0; n < 10 && S.hrDev === dev; n++){ await sleep(3000); if(S.hrDev !== dev) break; try{ await open(); looping = false; return; }catch(e){} }
-      looping = false;
-      if(S.hrDev === dev){ hrCleanup(dev); toast('Cardio non più raggiungibile: controlla che l\'orologio stia ancora trasmettendo.', 6000); }
-    };
+    else if(S.hrDev) hrDetach(S.hrDev);
+    // Un nuovo token ferma qualunque riconnessione o sorveglianza ancora legata alla scelta precedente.
+    const token = ++H.token;
+    S.hrDev = dev; H.dev = dev; H.ok = false; H.fix = 0; H.busy = false; H.lostAt = 0;
+    S.hrDisc = () => { log('Cardio scollegato'); if(token === H.token) hrReconnect(dev, token, 'collegamento perso'); };
     dev.addEventListener('gattserverdisconnected', S.hrDisc);
-    await open(); toast('Cardiofrequenzimetro collegato.');
+    await hrOpen(dev, token, (s) => { stage = s; });
+    toast('Cardiofrequenzimetro collegato.');
     // Se entro 10 secondi non arriva nessun battito, lo si dice: di solito la trasmissione sull'orologio si è fermata.
     const t0 = performance.now();
-    setTimeout(() => { if(S.hrDev === dev && !(S.hrExtAt > t0)) toast('Collegato, ma non arriva la frequenza: controlla che sull\'orologio la trasmissione sia ancora attiva.', 7000); }, 10000);
+    setTimeout(() => { if(token === H.token && !(S.hrExtAt > t0)) toast('Collegato, ma non arriva la frequenza: controlla che sull\'orologio la trasmissione sia ancora attiva.', 7000); }, 10000);
   }catch(e){
     const m = e && e.hrNoService ? e.message : btError(e);
     log('Cardio, errore nella fase "' + stage + '": ' + m + ' [' + errKind(e) + ']');
@@ -1121,7 +1182,7 @@ function render(d){
   $('vKcalH').textContent = d.active ? int(machH ? L.kcalH : (d.power != null ? kcalRate(d.power) : null)) : '–';
   $('sKcalH').textContent = d.active ? (machH ? 'dal vogatore' : 'stima dalla potenza') : '';
   $('vHr').textContent = d.hr ? int(d.hr) : '–';
-  $('sHr').textContent = d.hr ? ((zoneOf(d.hr) ? zoneOf(d.hr) + ' · ' : '') + d.hrSrc + (s && s.nHr ? ' · media ' + int(s.sumHr / s.nHr) : '')) : (S.hrDev ? 'cardio collegato, in attesa' : (btUsable ? 'tocca per collegare il cardio' : 'nessun sensore'));
+  $('sHr').textContent = d.hr ? ((zoneOf(d.hr) ? zoneOf(d.hr) + ' · ' : '') + d.hrSrc + (s && s.nHr ? ' · media ' + int(s.sumHr / s.nHr) : '')) : (S.hrDev ? (H.looping ? 'cardio: riconnessione…' : H.lostAt ? 'cardio collegato, nessun battito: riprovo' : 'cardio collegato, in attesa') : (btUsable ? 'tocca per collegare il cardio' : 'nessun sensore'));
   $('vHr').closest('.tile').classList.toggle('tap', !S.hrDev && btUsable);
   const zi = d.hr ? zoneIdx(d.hr) : 0, zs = $('hrZones').children;
   const cph = C.plan && S.session ? C.plan[C.idx] : null;
