@@ -269,6 +269,38 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
 .bar .btn.danger{border-color:var(--bad)}
 .toast{position:fixed;left:16px;right:16px;bottom:calc(94px + env(safe-area-inset-bottom,0px));margin:0 auto;max-width:520px;background:var(--ink);color:var(--bg);border-radius:12px;padding:10px 14px;font-size:15px;z-index:6;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.2)}
 
+/* Fine seduta: resoconto, fatica percepita, azioni */
+.endcard{background:var(--surface);border:2px solid var(--wood);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
+.endcard .chead{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.endcard .lab{color:var(--wood)}
+.endcard h2{margin:0;font-family:var(--num);font-size:26px;line-height:1.08;font-weight:600;text-wrap:balance}
+.ecom{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:15.5px}
+.ecom li::marker{color:var(--wood)}
+.rpe{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px;margin-top:4px}
+.rpe button{min-height:42px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface);font-family:var(--num);font-weight:700;font-size:18px;padding:0}
+.rpe button.on{background:var(--wood);border-color:var(--wood);color:var(--on-wood)}
+.hcom{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px;font-size:14px;color:var(--muted)}
+/* Progressi */
+.pg{display:flex;flex-direction:column;gap:4px}
+.pgh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.pgh b{font-weight:600}
+.pgh span{font-size:13.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pgsvg{display:block;width:100%;height:70px;background:var(--bg);border-radius:8px}
+.pgsvg .ln{fill:none;stroke:var(--water);stroke-width:2;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.pgsvg .dt{fill:none;stroke:var(--wood);stroke-width:7;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.pgsvg .gr{stroke:var(--line);stroke-width:1;vector-effect:non-scaling-stroke}
+.pgsvg .z0{fill:var(--line)} .pgsvg .z1{fill:var(--z1)} .pgsvg .z2{fill:var(--z2)} .pgsvg .z3{fill:var(--z3)} .pgsvg .z4{fill:var(--z4)} .pgsvg .z5{fill:var(--z5)}
+.pgx{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pgx.w8{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));text-align:center}
+.zleg{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12.5px;color:var(--muted)}
+.zleg span{display:inline-flex;align-items:center;gap:4px}
+table.tests{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+table.tests th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:4px 6px 4px 0;border-bottom:1px solid var(--line)}
+table.tests td{padding:5px 6px 5px 0;border-bottom:1px solid var(--line)}
+.tscroll{overflow-x:auto}
+.pdone{display:flex;flex-direction:column;gap:10px}
+.pdone h2{margin:0;font-family:var(--num);font-size:26px;font-weight:600}
+
 @media (prefers-reduced-motion:reduce){.dot,.gauge .mark,summary::after{animation:none!important;transition:none!important}}
 
 /* Modalità video: il video resta in alto, i dati si compattano sotto (o a fianco, col telefono in orizzontale). */
@@ -383,6 +415,14 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
 
   <div class="notice" id="notice" hidden></div>
 
+  <section class="endcard" id="endCard" aria-label="Resoconto della seduta" hidden>
+    <div class="chead"><div class="lab" id="eLab">Fine seduta</div><button class="btn small" id="btnEndClose" type="button">Chiudi</button></div>
+    <h2 id="eTitle"></h2>
+    <ul class="ecom" id="eCom"></ul>
+    <div><div class="lab">Quanto è stata dura? 1 facilissima, 10 il massimo</div><div class="rpe" id="eRpe"></div></div>
+    <div class="acts" id="eActs"></div>
+  </section>
+
   <div class="videobox" id="videoBox" hidden><iframe id="ytFrame" title="Video YouTube" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
 
   <section class="coach" id="coachBox" aria-label="Coach" hidden>
@@ -400,6 +440,13 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
   </section>
 
   <section class="coachcard" id="coachCard" aria-label="Coach">
+    <div class="pdone" id="planDoneBox" hidden>
+      <div class="lab" id="pdLab">Piano 8 settimane completato</div>
+      <h2>Hai chiuso il piano</h2>
+      <p class="hint" id="pdTxt"></p>
+      <button class="btn primary" id="btnNewCycle" type="button">Inizia il ciclo successivo</button>
+      <p class="hint">Stesso schema, fondi più lunghi del 15% e watt calcolati sulla soglia del test finale.</p>
+    </div>
     <div class="pbox" id="planBox" hidden>
       <div class="lab" id="pLab">Piano 8 settimane</div>
       <div class="pweeks" id="pWeeks"></div>
@@ -516,8 +563,14 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
       <div class="wsum" id="weekSum" hidden></div>
       <p class="hint" id="histEmpty">Qui compaiono gli allenamenti conclusi, salvati su questo telefono.</p>
       <ul class="hist" id="hist"></ul>
+      <button class="btn small" id="btnHistMore" type="button" hidden>Mostra altri</button>
       <textarea class="csv" id="csvOut" readonly hidden aria-label="CSV dell'allenamento"></textarea>
     </div>
+  </details>
+
+  <details id="dProg">
+    <summary>Progressi</summary>
+    <div class="sec" id="progBox"></div>
   </details>
 
   <details id="dVideo">
@@ -565,6 +618,16 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
         <p class="hint">Le voci del menu possono avere nomi leggermente diversi a seconda della versione del Fenix.</p>
       </div>
       <div class="set">
+        <div class="row"><span>Copia di sicurezza di storico, piano e impostazioni</span><span class="acts"><button class="btn small" id="btnBkCopy" type="button">Copia</button><button class="btn small" id="btnBkSave" type="button">Salva file</button></span></div>
+        <div class="row"><span>Ripristina una copia</span><span class="acts"><label class="btn small" for="inBkFile" style="display:inline-flex;align-items:center">Da file</label><input id="inBkFile" type="file" accept=".json,application/json,text/plain" hidden><button class="btn small" id="btnBkPaste" type="button">Incolla testo</button></span></div>
+        <textarea class="csv" id="bkText" hidden placeholder="Incolla qui la copia di sicurezza" aria-label="Testo della copia di sicurezza"></textarea>
+        <div class="row" id="bkConfirmRow" hidden><span class="hint" id="bkPreview"></span><button class="btn small danger" id="btnBkConfirm" type="button">Sostituisci i dati attuali</button></div>
+        <p class="hint" id="bkInfo"></p>
+      </div>
+      <div class="set">
+        <div class="row"><label for="selTheme">Aspetto</label><select id="selTheme" style="width:auto"><option value="auto">Come il telefono</option><option value="light">Chiaro</option><option value="dark">Scuro</option></select></div>
+      </div>
+      <div class="set">
         <div class="row"><span>Il vogatore non compare in elenco?</span><button class="btn small" id="btnAll" type="button">Mostra tutti i dispositivi</button></div>
         <div class="row"><span>Prova senza vogatore</span><button class="btn small" id="btnDemo" type="button">Avvia demo</button></div>
       </div>
@@ -581,6 +644,9 @@ textarea.csv{width:100%;height:120px;font-size:12px;border:1.5px solid var(--lin
         <dt>Pacchetti ricevuti</dt><dd id="gCount">0</dd>
         <dt>Ultimo pacchetto</dt><dd id="gHex">–</dd>
         <dt>Campi inviati</dt><dd id="gFields">–</dd>
+        <dt>Schermo acceso</dt><dd id="gWake">–</dd>
+        <dt>Archiviazione</dt><dd id="gStore">–</dd>
+        <dt>Battiti scartati</dt><dd id="gHrRej">0</dd>
       </dl>
       <div class="row"><span class="hint">Se qualcosa non torna, copia e incollami questo registro.</span><button class="btn small" id="btnCopyLog" type="button">Copia registro</button></div>
       <pre class="log" id="log" tabindex="0"></pre>
@@ -662,6 +728,174 @@ function demoPacket(d){
 }
 /*PARSER-END*/
 
+/*ANALYSIS-START*/
+// Funzioni pure sui dati: nessun accesso alla pagina, così si provano con i test automatici (tests/run.mjs).
+function fmtTime(s){ s = Math.max(0, Math.floor(s)); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(x).padStart(2, '0'); }
+function median(a){ if(!a || !a.length) return null; const b = a.slice().sort((x, y) => x - y), m = b.length >> 1; return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2; }
+const dec1 = (v) => String(Math.round(v * 10) / 10).replace('.', ',');
+const dayIt = (ms) => new Date(ms).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
+// Filtro dei battiti. Scarta i valori impossibili e i salti più rapidi di quanto il cuore possa fare (12 bpm, o 6 bpm al secondo);
+// se tre letture di fila concordano sul nuovo livello, il salto è vero e viene accettato.
+function hrFilter(st, hr, t){
+  if(!(hr >= 30 && hr <= 230)){ st.rej = (st.rej || 0) + 1; return null; }
+  if(st.last == null || t - st.lastT > 10000){ st.last = hr; st.lastT = t; st.pend = []; return hr; }
+  const dt = Math.max(0.25, (t - st.lastT) / 1000), lim = Math.max(12, 6 * dt);
+  if(Math.abs(hr - st.last) <= lim){ st.last = hr; st.lastT = t; st.pend = []; return hr; }
+  st.pend = (st.pend || []).concat(hr).slice(-3); st.rej = (st.rej || 0) + 1;
+  if(st.pend.length === 3 && Math.max(...st.pend) - Math.min(...st.pend) <= 8){ st.last = hr; st.lastT = t; st.pend = []; return hr; }
+  return null;
+}
+// samples = [tempo_s, potenza_W, colpi_min, passo, distanza_m, kcal, fc]
+function zoneTimes(samples, zoneOfHr){
+  const z = [0, 0, 0, 0, 0, 0];
+  for(let i = 1; i < (samples || []).length; i++){
+    const h = samples[i][6]; if(!h) continue;
+    const dt = Math.max(0, Math.min(10, samples[i][0] - samples[i - 1][0]));
+    const k = zoneOfHr(h); z[k >= 0 && k <= 5 ? k : 0] += dt;
+  }
+  return z.map(Math.round);
+}
+// FC massima "vera": il massimo della mediana su 5 campioni, così un picco isolato non conta.
+function maxHrSustained(samples){
+  let best = null;
+  for(let i = 4; i < (samples || []).length; i++){
+    const w = []; for(let k = i - 4; k <= i; k++) if(samples[k][6]) w.push(samples[k][6]);
+    if(w.length === 5){ const m = median(w); if(best == null || m > best) best = m; }
+  }
+  return best == null ? null : Math.round(best);
+}
+// Deriva cardiaca (Pw:HR): watt per battito nella prima e nella seconda metà di un tratto a sforzo costante.
+// Serve un tratto di almeno 10 minuti, con FC, e potenza regolare (variazione delle medie a 30 s sotto il 15%).
+function decoupling(samples, t0, t1){
+  if(!(t1 - t0 >= 600)) return null;
+  const seg = (samples || []).filter(x => x[0] >= t0 && x[0] <= t1 && x[6] > 0 && x[1] > 0);
+  if(seg.length < 60) return null;
+  const buckets = {}; for(const x of seg){ const b = Math.floor(x[0] / 30); (buckets[b] = buckets[b] || []).push(x[1]); }
+  const bm = Object.values(buckets).filter(a => a.length >= 3).map(a => a.reduce((s, v) => s + v, 0) / a.length);
+  if(bm.length >= 4){ const m = bm.reduce((s, v) => s + v, 0) / bm.length, sd = Math.sqrt(bm.reduce((s, v) => s + (v - m) * (v - m), 0) / bm.length); if(sd / m > 0.15) return null; }
+  const mid = (t0 + t1) / 2, h = [[0, 0, 0], [0, 0, 0]];
+  for(const x of seg){ const k = x[0] < mid ? 0 : 1; h[k][0] += x[1]; h[k][1] += x[6]; h[k][2]++; }
+  if(h[0][2] < 20 || h[1][2] < 20) return null;
+  const ef1 = h[0][0] / h[0][1], ef2 = h[1][0] / h[1][1];
+  return { dec: Math.round((ef1 - ef2) / ef1 * 1000) / 10, ef: Math.round((h[0][0] + h[1][0]) / (h[0][1] + h[1][1]) * 100) / 100,
+    p: Math.round((h[0][0] + h[1][0]) / seg.length), hr: Math.round((h[0][1] + h[1][1]) / seg.length) };
+}
+// Riduce un allenamento a 60 punti di potenza per il mini-grafico, quando i campioni completi vengono scartati.
+function thinRec(r){
+  if(!r.samples) return;
+  const n = r.samples.length, step = Math.max(1, Math.floor(n / 60));
+  r.spark = r.samples.filter((_, i) => i % step === 0).map(x => [x[0], x[1]]);
+  delete r.samples;
+}
+// Storico senza limite stretto: tutti i riepiloghi (fino a 1000), campioni completi solo per i 60 più recenti.
+const KEEP_SAMPLES = 60, KEEP_RECS = 1000;
+function pruneHistory(hist){
+  if(hist.length > KEEP_RECS) hist.length = KEEP_RECS;
+  hist.forEach((r, i) => { if(i >= KEEP_SAMPLES) thinRec(r); });
+  return hist;
+}
+const xmlEsc = (v) => String(v).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' })[c]);
+// File TCX (Garmin Training Center) con orari reali, distanza, FC, colpi al minuto e watt: si importa in Garmin Connect e Strava.
+function buildTcx(rec){
+  const iso = (ms) => new Date(ms).toISOString().replace(/\.\d{3}Z$/, 'Z');
+  const sm = rec.samples || [];
+  let tp = '', lastT = -1, maxHr = 0;
+  for(const x of sm){
+    if(x[0] <= lastT) continue; lastT = x[0];
+    if(x[6] > maxHr) maxHr = x[6];
+    tp += '<Trackpoint><Time>' + iso(rec.id + x[0] * 1000) + '</Time><DistanceMeters>' + Math.max(0, Math.round(x[4] || 0)) + '</DistanceMeters>' +
+      (x[6] > 0 ? '<HeartRateBpm><Value>' + Math.round(x[6]) + '</Value></HeartRateBpm>' : '') +
+      '<Cadence>' + Math.max(0, Math.min(254, Math.round(x[2] || 0))) + '</Cadence>' +
+      '<Extensions><ns3:TPX><ns3:Watts>' + Math.max(0, Math.round(x[1] || 0)) + '</ns3:Watts></ns3:TPX></Extensions></Trackpoint>\n';
+  }
+  const notes = (rec.coach && rec.coach.name ? rec.coach.name + '. ' : '') + (Array.isArray(rec.comment) ? rec.comment.join(' ') : '');
+  return '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    '<TrainingCenterDatabase xmlns="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2" xmlns:ns3="http://www.garmin.com/xmlschemas/ActivityExtension/v2">\n' +
+    '<Activities><Activity Sport="Other"><Id>' + iso(rec.id) + '</Id>\n<Lap StartTime="' + iso(rec.id) + '">' +
+    '<TotalTimeSeconds>' + Math.round(rec.dur || 0) + '</TotalTimeSeconds><DistanceMeters>' + Math.round(rec.dist || 0) + '</DistanceMeters>' +
+    '<Calories>' + Math.round(rec.kcal || 0) + '</Calories>' +
+    (rec.avgHr ? '<AverageHeartRateBpm><Value>' + Math.round(rec.avgHr) + '</Value></AverageHeartRateBpm>' : '') +
+    (maxHr ? '<MaximumHeartRateBpm><Value>' + Math.round(maxHr) + '</Value></MaximumHeartRateBpm>' : '') +
+    '<Intensity>Active</Intensity>' + (rec.avgSpm ? '<Cadence>' + Math.min(254, Math.round(rec.avgSpm)) + '</Cadence>' : '') + '<TriggerMethod>Manual</TriggerMethod>\n' +
+    '<Track>\n' + tp + '</Track>' + (notes ? '<Notes>' + xmlEsc(notes) + '</Notes>' : '') +
+    (rec.avgP != null ? '<Extensions><ns3:LX><ns3:AvgWatts>' + Math.round(rec.avgP) + '</ns3:AvgWatts></ns3:LX></Extensions>' : '') +
+    '</Lap><Notes>Vogatore ad acqua</Notes></Activity></Activities>\n</TrainingCenterDatabase>\n';
+}
+// Tipo di seduta, per confrontare solo allenamenti simili.
+function recKind(r){
+  const c = r && r.coach; if(!c) return 'libero';
+  if(c.id === 'piano'){ const t = c.ptype; return t === 'test' ? 'test' : (t === 'fondo' || t === 'tecnica') ? 'fondo' : t === 'vo2' ? 'intervalli' : t === 'medio' ? 'altro' : t === 'soglia' ? 'soglia' : 'altro'; }
+  return c.id || 'libero';
+}
+function testWatts(r){ const c = r && r.coach; if(!c) return null; return c.testAvg || (c.newRef && recKind(r) === 'test' ? Math.round(c.newRef / 0.9) : null); }
+function isTestRec(r){ return recKind(r) === 'test' && testWatts(r) > 0; }
+const KIND_NAME = { libero: 'la voga libera', fondo: 'il fondo', soglia: 'la soglia', intervalli: 'gli intervalli', cadenza: 'la scala di frequenza', test: 'il test', altro: 'la seduta' };
+// Commento di fine seduta: come è andata, confronto con una seduta simile, segnali dal cuore, consiglio per la prossima.
+// prev = allenamenti precedenti (più recente per primo); ctx = { hrMax, next }.
+function sessionComment(rec, prev, ctx){
+  const out = [], kind = recKind(rec), c = rec.coach;
+  // 1. Esito
+  if(c && c.note) out.push(c.note);
+  else out.push('Voga libera: ' + fmtTime(rec.dur) + ', ' + (rec.dist || 0).toLocaleString('it-IT') + ' m' + (rec.avgP != null ? ' a ' + rec.avgP + ' W medi' : '') + (rec.avgHr ? ', FC media ' + rec.avgHr : '') + '.');
+  // 2. Confronto con l'ultima seduta dello stesso tipo e di durata simile
+  if(kind === 'test'){
+    const tw = testWatts(rec), pt = (prev || []).find(isTestRec);
+    if(tw && pt){ const d = tw - testWatts(pt), pc = Math.round(d / testWatts(pt) * 100);
+      out.push('Rispetto al test del ' + dayIt(pt.id) + ': ' + (d >= 0 ? '+' : '') + d + ' W (' + (pc >= 0 ? '+' : '') + pc + '%).' + (pc >= 3 ? ' Il lavoro sta pagando.' : pc <= -3 ? ' Peggio del precedente: conta come è arrivato il corpo oggi (sonno, carico dei giorni prima). Stesse condizioni la prossima volta.' : ' In pratica stabile.')); }
+    if(rec.hrr){
+      const ph = (prev || []).find(r => isTestRec(r) && r.hrr);
+      out.push('Recupero della FC a 1 minuto: ' + rec.hrr.d + ' battiti (da ' + rec.hrr.hr0 + ' a ' + rec.hrr.hr60 + ')' + (ph ? ', contro ' + ph.hrr.d + ' del ' + dayIt(ph.id) : '') + '.');
+    }
+  } else {
+    const p = (prev || []).find(r => recKind(r) === kind && r.avgP > 0 && r.dur > 0 && Math.abs(r.dur - rec.dur) / rec.dur < 0.4);
+    if(p && rec.avgP > 0){
+      if(rec.ef && p.ef){
+        const g = Math.round((rec.ef - p.ef) / p.ef * 100);
+        out.push('Efficienza in zona costante: ' + dec1(rec.ef) + ' W per battito contro ' + dec1(p.ef) + ' del ' + dayIt(p.id) + (g >= 3 ? ': +' + g + '%, la base aerobica migliora.' : g <= -3 ? ': ' + g + '%. Una giornata storta capita; se si ripete, più recupero.' : ': stabile.'));
+      } else {
+        const dP = rec.avgP - p.avgP, dH = rec.avgHr && p.avgHr ? rec.avgHr - p.avgHr : null;
+        let t = 'Rispetto a ' + KIND_NAME[kind] + ' del ' + dayIt(p.id) + ': ' + (dP >= 0 ? '+' : '') + dP + ' W medi' + (dH != null ? ', FC media ' + (dH >= 0 ? '+' : '') + dH : '') + '.';
+        if(dH != null && dP >= 3 && dH <= 1) t += ' Più potenza con lo stesso cuore: segno di miglioramento.';
+        else if(dH != null && dP <= 0 && dH >= 4) t += ' Più cuore per meno watt: stanchezza, caldo o poco sonno.';
+        out.push(t);
+      }
+    }
+  }
+  // 3. Deriva cardiaca
+  if(rec.dec != null && (kind === 'fondo' || kind === 'libero')){
+    if(rec.dec < -3) out.push('La FC è scesa nel corso del fondo: nella prima metà eri ancora in riscaldamento.');
+    else if(rec.dec < 5) out.push('Deriva cardiaca ' + dec1(rec.dec) + '%: sotto il 5%, a ' + rec.efP + ' W la base aerobica regge.');
+    else if(rec.dec <= 10) out.push('Deriva cardiaca ' + dec1(rec.dec) + '%: a ' + rec.efP + ' W la FC sale nel tempo. Base ancora da costruire: resta in zona 2, i watt verranno.');
+    else out.push('Deriva cardiaca ' + dec1(rec.dec) + '%, alta: ' + rec.efP + ' W sono vicini al tuo limite aerobico, oppure hanno pesato caldo, poca acqua o fatica. Il prossimo fondo parti più piano.');
+  }
+  // 4. Tempo nelle zone
+  const zt = rec.zt, zs = zt ? zt.reduce((a, v) => a + v, 0) : 0;
+  if(zs >= 300){
+    if(kind === 'fondo'){
+      const z2 = Math.round(zt[2] / zs * 100), hi = Math.round((zt[3] + zt[4] + zt[5]) / zs * 100);
+      out.push('Zona 2 per il ' + z2 + '% del tempo' + (hi >= 25 ? ', ma il ' + hi + '% sopra: per un fondo è troppo, alleggerisci la spinta.' : hi >= 10 ? ', ' + hi + '% sopra.' : '.'));
+    } else if(kind === 'soglia' || kind === 'intervalli'){
+      const m = Math.round((zt[4] + zt[5]) / 60);
+      out.push(m + ' minuti in zona 4–5' + (kind === 'intervalli' && zt[5] >= 60 ? ', di cui ' + Math.round(zt[5] / 60) + ' in zona 5.' : '.'));
+    }
+  }
+  // 5. Frequenza dei colpi nel fondo
+  if(kind === 'fondo' && rec.avgSpm > 26) out.push('Frequenza media ' + dec1(rec.avgSpm) + ' colpi al minuto, alta per un fondo: allunga la passata, 20–24 bastano.');
+  // 6. FC massima superata
+  if(ctx && ctx.hrMax > 0 && rec.maxHr > ctx.hrMax) out.push('Hai tenuto ' + rec.maxHr + ' bpm, sopra la massima impostata (' + ctx.hrMax + '): le zone sono probabilmente troppo basse. Puoi aggiornarla qui sotto.');
+  // 7. Fatica percepita
+  if(rec.rpe){
+    const hard = !!(c && c.hard);
+    if(!hard && (kind === 'fondo' || kind === 'cadenza') && rec.rpe >= 7) out.push('Fatica ' + rec.rpe + ' su 10 per una seduta leggera è troppo: il fondo deve permetterti di parlare. La prossima volta abbassa la spinta.');
+    else if(hard && rec.rpe >= 9) out.push('Fatica ' + rec.rpe + ' su 10: seduta al limite. Prima della prossima intensa lascia almeno 48 ore.');
+    else if(hard && rec.rpe <= 5) out.push('Fatica ' + rec.rpe + ' su 10 per una seduta intensa: c’è margine, la prossima puoi spingere di più.');
+  }
+  // 8. Prossimo passo
+  if(ctx && ctx.next) out.push(ctx.next);
+  return out;
+}
+/*ANALYSIS-END*/
+
 const $ = (id) => document.getElementById(id);
 const store = {
   get(k, d){ try{ const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } },
@@ -670,7 +904,7 @@ const store = {
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const hex = (dv) => { let s = ''; for(let i = 0; i < dv.byteLength; i++) s += dv.getUint8(i).toString(16).padStart(2, '0') + ' '; return s.trim(); };
 
-const APP_VERSION = 13;
+const APP_VERSION = 14;
 // UUID sempre per esteso: alcuni browser (Bluefy) non accettano gli alias numerici a 16 bit.
 const u16 = (n) => '0000' + n.toString(16).padStart(4, '0') + '-0000-1000-8000-00805f9b34fb';
 const FTMS = u16(0x1826), ROWER = u16(0x2ad1), HRS = u16(0x180d), HRM = u16(0x2a37);
@@ -681,9 +915,21 @@ let framed = true; try{ framed = window.self !== window.top; }catch(e){ framed =
 let policyOk = true; try{ if(document.featurePolicy && document.featurePolicy.allowsFeature) policyOk = document.featurePolicy.allowsFeature('bluetooth'); }catch(e){}
 const btUsable = !!navigator.bluetooth && policyOk;
 
-const cfg = Object.assign({ weight: 80, autoStart: true, voice: true, hrMax: 182, hrRest: 60, ref: 0, refAt: 0, hrK: 0, planOn: true, voiceVideo: false }, store.get('vg.cfg', {}));
+const cfg = Object.assign({ weight: 80, autoStart: true, voice: true, hrMax: 182, hrRest: 60, ref: 0, refAt: 0, hrK: 0, planOn: true, voiceVideo: false, theme: 'auto', bkAt: 0 }, store.get('vg.cfg', {}));
 let history = store.get('vg.hist', []); if(!Array.isArray(history)) history = [];
+// Storia della potenza di soglia, per il grafico dei progressi.
+let refLog = store.get('vg.refs', []); if(!Array.isArray(refLog)) refLog = [];
+function logRef(ref, why){ if(!(ref > 0)) return; const last = refLog[refLog.length - 1]; if(last && last.ref === ref) return; refLog.push({ t: Date.now(), ref, why: why || '' }); if(refLog.length > 300) refLog.splice(0, refLog.length - 300); store.set('vg.refs', refLog); }
+// Salva lo storico; se lo spazio è finito, scarta i campioni completi dei più vecchi e riprova.
+function saveHistory(){
+  pruneHistory(history);
+  if(store.set('vg.hist', history)) return true;
+  for(let i = history.length - 1; i > 0; i--){ if(history[i].samples){ thinRec(history[i]); if(store.set('vg.hist', history)){ log('Spazio quasi pieno: ridotti i campioni degli allenamenti più vecchi'); return true; } } }
+  return false;
+}
 
+// Stato del filtro dei battiti, separato per cardio esterno e FC inviata dal vogatore.
+const HF = { ext: {}, row: {} };
 const L = { power: null, spm: null, pace: null, dist: null, kcal: null, kcalH: null, hr: null, strokes: null };
 const S = { conn: 'idle', msg: '', device: null, userOff: false, rcToken: 0, opening: false, lastPacket: 0, session: null, hrExt: null, hrExtAt: 0, hrDev: null, hrDisc: null,
   autoHold: false, quietSince: 0, video: false, alt: false };
@@ -712,7 +958,6 @@ function toast(msg, ms){
 function setConn(state, msg){ S.conn = state; S.msg = msg || ''; queueRender(); }
 
 /* ---------- formati ---------- */
-function fmtTime(s){ s = Math.max(0, Math.floor(s)); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(x).padStart(2, '0'); }
 function fmtPace(s){ if(s == null || !isFinite(s) || s <= 0 || s > 900) return '–:––'; s = Math.round(s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
 const int = (v) => (v == null || !isFinite(v)) ? '–' : String(Math.round(v));
 const kcalRate = (p) => 3.4416 * Math.max(0, p || 0) + 3.779 * cfg.weight; // Concept2: 4·W·0,8604 + 300, con 300 riscalato sul peso
@@ -721,8 +966,10 @@ const kcalRate = (p) => 3.4416 * Math.max(0, p || 0) + 3.779 * cfg.weight; // Co
 function onRowerEvt(ev){ onRowerData(ev.target.value); }
 function onHrEvt(ev){
   const v = ev.target.value; if(!v || v.byteLength < 2) return;
-  const hr = (v.getUint8(0) & 1) ? (v.byteLength >= 3 ? v.getUint16(1, true) : 0) : v.getUint8(1);
-  if(!(hr > 0)) return;
+  const raw = (v.getUint8(0) & 1) ? (v.byteLength >= 3 ? v.getUint16(1, true) : 0) : v.getUint8(1);
+  if(!(raw > 0)) return;
+  const hr = hrFilter(HF.ext, raw, performance.now());
+  if(hr == null){ if(HF.ext.rej % 20 === 1) log('Cardio: scartato un battito anomalo (' + raw + ' bpm), totale ' + HF.ext.rej); return; }
   if(!S.hrExt) log('Prima frequenza ricevuta dal cardio: ' + hr + ' bpm');
   if(H.lostAt){ log('Cardio: battiti ripresi dopo ' + Math.round((performance.now() - H.lostAt) / 1000) + ' s'); H.lostAt = 0; if(S.hrDev) hrUi(S.hrDev.name || 'cardio'); }
   H.fix = 0; S.hrExt = hr; S.hrExtAt = performance.now(); queueRender();
@@ -733,7 +980,7 @@ function onRowerData(dv){
   G.count++; G.lastHex = hex(dv); o.fields.forEach(x => G.fields.add(x));
   if(G.count <= 3 || o.truncated) log('Pacchetto ' + G.count + (o.truncated ? ' TRONCATO' : '') + ': ' + G.lastHex);
   for(const k of ['power', 'spm', 'pace', 'dist', 'kcal', 'kcalH', 'strokes']) if(o[k] !== undefined) L[k] = o[k];
-  if(o.hr !== undefined) L.hr = o.hr > 0 ? o.hr : null;
+  if(o.hr !== undefined){ const h = o.hr > 0 ? hrFilter(HF.row, o.hr, performance.now()) : null; if(h != null || !(o.hr > 0)) L.hr = h; }
   S.lastPacket = performance.now();
   queueRender();
 }
@@ -807,54 +1054,128 @@ function tick(){
   }
   if(stopArmed && Date.now() > stopArmed) stopArmed = 0;
   coachTick(d);
+  syncWake();
   render(d);
 }
 
 /* ---------- sessione ---------- */
 function startSession(auto){
-  S.session = newSession(); stopArmed = 0; S.autoHold = false; S.quietSince = 0; requestWake();
+  S.session = newSession(); stopArmed = 0; S.autoHold = false; S.quietSince = 0; $('endCard').hidden = true; syncWake();
   log('Allenamento avviato' + (auto ? ' (automatico)' : ''));
   queueRender();
 }
 function togglePause(){
   const s = S.session; if(!s) return;
   if(s.state === 'running'){ s.state = 'paused'; }
-  else { s.state = 'running'; s.base = { dist: null, kcal: null, strokes: null }; s.lastGood = 0; requestWake(); }
+  else { s.state = 'running'; s.base = { dist: null, kcal: null, strokes: null }; s.lastGood = 0; }
   queueRender();
 }
 function stopSession(){
   const s = S.session; if(!s) return;
-  S.session = null; stopArmed = 0; S.autoHold = true; S.quietSince = 0; releaseWake();
+  S.session = null; stopArmed = 0; S.autoHold = true; S.quietSince = 0;
   const cres = coachFinish(s);
-  if(s.demo){ toast('Allenamento demo terminato: non viene salvato.' + (cres ? ' ' + cres.note : ''), cres ? 9000 : 3500); queueRender(); return; }
   if(s.moving < 10){ toast('Meno di 10 secondi di voga: non salvato.'); queueRender(); return; }
-  const dist = total(s, 'dist', 30), kcal = total(s, 'kcal', 5);
-  const step = Math.max(1, Math.ceil(s.samples.length / 720));
+  const rec = buildRec(s, cres);
+  if(s.demo){
+    rec.comment = makeComment(rec, [rec].concat(history));
+    showEnd(rec, false); toast('Allenamento demo terminato: non viene salvato.'); queueRender(); return;
+  }
+  history.unshift(rec);
+  if(cres && cres.sid && cres.done) planMark(cres.sid, 'coach');
+  if(cres && cres.hrK){ cfg.hrK = cres.hrK; store.set('vg.cfg', cfg); }
+  if(cres && cres.newRef) applyRef(cres.newRef, cres.kind === 'test' ? 'test' : 'coach');
+  C.refCache = undefined; C.hrkCache = undefined;
+  const est = estimateRef(history, Date.now());
+  if(est && cfg.ref > 0 && est > cfg.ref && !(cres && cres.newRef && cres.newRef < cres.ref)){ applyRef(est, 'storico'); rec.refUp = est; }
+  rec.comment = makeComment(rec, history);
+  if(rec.refUp) rec.comment.splice(1, 0, 'Dallo storico risulti più forte: soglia portata a ' + rec.refUp + ' W.');
+  if(cres && cres.sid && !cres.done) rec.comment.splice(1, 0, 'Seduta del piano non completata: resta da fare, oppure segnala fatta dal piano.');
+  const saved = saveHistory();
+  if(!saved) toast('Allenamento concluso, ma il telefono non ha permesso di salvarlo nello storico. Fai una copia di sicurezza dalle Impostazioni.', 8000);
+  showEnd(rec, saved);
+  log('Allenamento concluso: ' + fmtTime(rec.dur) + ', ' + rec.dist + ' m, ' + rec.kcal + ' kcal');
+  renderHistory(); renderPlanAll(); renderProgress(); queueRender();
+}
+// Record dell'allenamento con le misure calcolate sui campioni completi, prima di sfoltirli per il salvataggio.
+function buildRec(s, cres){
+  const dist = total(s, 'dist', 30), kcal = total(s, 'kcal', 5), full = s.samples;
+  const step = Math.max(1, Math.ceil(full.length / 720));
   const rec = { id: s.startedAt, dur: Math.round(s.moving), dist: Math.round(dist), kcal: Math.round(kcal), kcalSrc: fromMachine(s, 'kcal', 5) ? 'vogatore' : 'stima',
     avgP: s.nP ? Math.round(s.sumP / s.nP) : null, maxP: Math.round(s.maxP) || null, avgSpm: s.nSpm ? Math.round(s.sumSpm / s.nSpm * 10) / 10 : null,
     avgPace: dist > 0 ? Math.round(500 * s.moving / dist) : null, avgHr: s.nHr ? Math.round(s.sumHr / s.nHr) : null,
-    strokes: Math.round(total(s, 'strokes', 10)), coach: cres, samples: s.samples.filter((_, i) => i % step === 0) };
-  history.unshift(rec); if(history.length > 50) history.length = 50;
-  if(!store.set('vg.hist', history)) toast('Allenamento concluso, ma il telefono non ha permesso di salvarlo nello storico.', 6000);
-  else {
-    let extra = cres ? ' ' + cres.note : '';
-    if(cres && cres.sid){
-      if(cres.done){ planMark(cres.sid, 'coach'); extra += ' Seduta del piano segnata come fatta.'; }
-      else extra += ' Seduta del piano non completata: resta da fare, oppure segnala fatta dal piano.';
-    }
-    if(cres && cres.hrK){ cfg.hrK = cres.hrK; store.set('vg.cfg', cfg); C.hrkCache = undefined; }
-    if(cres && cres.newRef) applyRef(cres.newRef);
-    C.refCache = undefined; C.hrkCache = undefined;
-    const est = estimateRef(history, Date.now());
-    if(est && cfg.ref > 0 && est > cfg.ref && !(cres && cres.newRef && cres.newRef < cres.ref)){ applyRef(est); extra += ' Dallo storico risulti più forte: soglia a ' + est + ' W.'; }
-    toast('Allenamento salvato.' + extra, cres ? 10000 : 3500);
-  }
-  log('Allenamento concluso: ' + fmtTime(rec.dur) + ', ' + rec.dist + ' m, ' + rec.kcal + ' kcal');
-  renderHistory(); renderPlanCard(false); queueRender();
+    strokes: Math.round(total(s, 'strokes', 10)), coach: cres, samples: full.filter((_, i) => i % step === 0) };
+  if(s.nHr){ rec.maxHr = maxHrSustained(full); if(cfg.hrMax > 0) rec.zt = zoneTimes(full, zoneIdx); }
+  const kind = recKind(rec);
+  // Tratto a sforzo costante per la deriva: la fase di fondo del coach, o la voga libera tolti 5 minuti iniziali e 3 finali.
+  const seg = cres && cres.seg ? cres.seg : (!cres && s.moving >= 1200 ? [300, s.moving - 180] : null);
+  if(seg && (kind === 'fondo' || kind === 'libero')){ const dk = decoupling(full, seg[0], seg[1]); if(dk){ rec.dec = dk.dec; rec.ef = dk.ef; rec.efP = dk.p; rec.efHr = dk.hr; } }
+  if(cres && cres.hrr) rec.hrr = cres.hrr;
+  return rec;
 }
-async function requestWake(){ try{ if('wakeLock' in navigator && !wake){ wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => { wake = null; }); } }catch(e){ wake = null; } }
-function releaseWake(){ try{ if(wake) wake.release(); }catch(e){} wake = null; }
-document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && S.session && S.session.state === 'running') requestWake(); });
+// Testo del prossimo passo: la seduta del piano se attivo, altrimenti la proposta del coach.
+function nextText(rec, hist){
+  const nx = cfg.planOn ? planNext() : null;
+  if(nx) return 'Prossima seduta del piano: settimana ' + nx.w + ', ' + nx.title + (planIsHard(nx) && rec.coach && rec.coach.hard ? ', non prima di dopodomani' : '') + '.';
+  if(cfg.planOn && !nx) return 'Piano completato: dalla scheda del coach puoi iniziare il ciclo successivo.';
+  const r = recommend(hist, curRef(), cfg.refAt || 0, Date.now() + 864e5);
+  return 'Prossima volta: ' + planTitle(r.id, r.size) + '. ' + r.why;
+}
+function makeComment(rec, hist){ return sessionComment(rec, hist.filter(r => r !== rec && r.id < rec.id), { hrMax: cfg.hrMax, next: nextText(rec, hist) }); }
+const END = { rec: null, saved: false };
+function showEnd(rec, saved){ END.rec = rec; END.saved = saved; renderEnd(); $('endCard').hidden = false; window.scrollTo(0, 0); }
+function renderEnd(){
+  const rec = END.rec; if(!rec) return;
+  $('eLab').textContent = 'Fine seduta · ' + (END.saved ? 'salvata nello storico' : 'demo, non salvata');
+  $('eTitle').textContent = (rec.coach && rec.coach.name ? rec.coach.name : 'Voga libera') + ' · ' + fmtTime(rec.dur) + ' · ' + rec.dist.toLocaleString('it-IT') + ' m';
+  const ul = $('eCom'); ul.textContent = '';
+  (rec.comment || []).forEach(t => { const li = document.createElement('li'); li.textContent = t; ul.append(li); });
+  const rp = $('eRpe'); rp.textContent = '';
+  for(let i = 1; i <= 10; i++){ const b = document.createElement('button'); b.type = 'button'; b.textContent = String(i); b.dataset.rpe = String(i); b.className = rec.rpe === i ? 'on' : ''; b.setAttribute('aria-label', 'Fatica ' + i + ' su 10'); b.setAttribute('aria-pressed', rec.rpe === i ? 'true' : 'false'); rp.append(b); }
+  const acts = $('eActs'); acts.textContent = '';
+  const mk = (txt, fn, cls) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn small' + (cls ? ' ' + cls : ''); b.textContent = txt; b.addEventListener('click', fn); acts.append(b); };
+  if(rec.maxHr > cfg.hrMax && rec.maxHr <= 230) mk('Imposta FC massima a ' + rec.maxHr, () => setHrMax(rec.maxHr));
+  if(END.saved && rec.samples) mk('Esporta per Garmin o Strava', () => exportTcx(rec));
+  if(END.saved && history.length >= 3 && Date.now() - (cfg.bkAt || 0) > 14 * 864e5) mk('Fai una copia di sicurezza', () => backupSave());
+}
+$('eRpe').addEventListener('click', (ev) => {
+  const b = ev.target.closest('[data-rpe]'); if(!b || !END.rec) return;
+  const rec = END.rec; rec.rpe = +b.dataset.rpe; rec.load = Math.round(rec.rpe * rec.dur / 60);
+  const keep = (rec.comment || []).filter(t => /^(Seduta del piano non completata|Dallo storico risulti)/.test(t));
+  rec.comment = makeComment(rec, END.saved ? history : [rec].concat(history));
+  keep.reverse().forEach(t => rec.comment.splice(1, 0, t));
+  if(END.saved){ saveHistory(); renderHistory(); }
+  renderEnd();
+});
+$('btnEndClose').addEventListener('click', () => { $('endCard').hidden = true; });
+function setHrMax(v){
+  cfg.hrMax = v; cfg.hrK = 0; C.hrkCache = undefined; store.set('vg.cfg', cfg); $('inHrMax').value = v;
+  if(END.rec){ END.rec.comment = (END.rec.comment || []).filter(t => !/^Hai tenuto/.test(t)); renderEnd(); }
+  renderPlanAll(); toast('FC massima impostata a ' + v + ' bpm: zone ricalcolate.');
+}
+// Schermo acceso non solo ad allenamento avviato: anche col vogatore collegato o il coach pronto, altrimenti iOS spegne lo schermo,
+// la pagina si ferma e la partenza al primo colpo non scatta. Senza dati dal vogatore da 10 minuti si lascia spegnere.
+const WK = { pending: false, state: 'non richiesto', retryAt: 0 };
+function wakeWanted(){
+  if(S.session || C.plan) return true;
+  if(S.conn === 'demo' || S.conn === 'connecting' || S.conn === 'reconnecting') return true;
+  return S.conn === 'connected' && (S.lastPacket === 0 || performance.now() - S.lastPacket < 600000);
+}
+function syncWake(){
+  if(wakeWanted()){ if(!wake && !WK.pending && document.visibilityState === 'visible' && Date.now() >= WK.retryAt) requestWake(); }
+  else if(wake) releaseWake();
+}
+async function requestWake(){
+  if(!('wakeLock' in navigator)){ if(WK.state !== 'non disponibile in questo browser'){ WK.state = 'non disponibile in questo browser'; log('Schermo acceso: funzione assente in questo browser'); } WK.retryAt = Date.now() + 3600e3; return; }
+  WK.pending = true;
+  try{
+    wake = await navigator.wakeLock.request('screen'); WK.state = 'attivo';
+    wake.addEventListener('release', () => { wake = null; if(WK.state === 'attivo') WK.state = 'rilasciato'; });
+    if(!wakeWanted()) releaseWake();
+  }catch(e){ wake = null; if(WK.state !== 'rifiutato') log('Schermo acceso: richiesta rifiutata (' + btError(e) + ')'); WK.state = 'rifiutato'; WK.retryAt = Date.now() + 30000; }
+  finally{ WK.pending = false; }
+}
+function releaseWake(){ WK.state = 'non richiesto'; try{ if(wake) wake.release(); }catch(e){} wake = null; }
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible'){ WK.retryAt = 0; syncWake(); } });
 
 /* ---------- Bluetooth ---------- */
 function withTimeout(p, ms, dev){
@@ -1144,7 +1465,7 @@ function simStep(dt){
   D.power = base + k * (28 * Math.sin(ph) + 12 * Math.sin(D.t / 7.3)) + (Math.random() - 0.5) * 10;
   D.spm = 23 + 2.2 * Math.sin(ph + 0.6) + (Math.random() - 0.5) * 0.8;
   D.pace = 500 * Math.cbrt(2.8 / D.power); D.dist += 500 / D.pace * dt;
-  D.kcalH = 3.4416 * D.power + 300; D.kcal += D.kcalH / 3600 * dt; D.strokes += D.spm / 60 * dt;
+  D.kcalH = kcalRate(D.power); D.kcal += D.kcalH / 3600 * dt; D.strokes += D.spm / 60 * dt;
   D.hr = Math.min(156, 118 + D.t / 25) + 2 * Math.sin(D.t / 11);
 }
 function startDemo(){
@@ -1158,7 +1479,7 @@ function stopDemo(){
   if(!demoTimer) return;
   clearInterval(demoTimer); demoTimer = null;
   // Un allenamento demo non si salva: si chiude insieme al coach eventualmente attivo, e lo schermo può tornare a spegnersi.
-  if(S.session && S.session.demo){ S.session = null; C.plan = null; releaseWake(); }
+  if(S.session && S.session.demo){ S.session = null; C.plan = null; }
   S.autoHold = false; S.quietSince = 0;
   trace.length = 0; S.lastPacket = 0; G.count = 0; G.fields.clear();
   if(S.conn === 'demo') setConn('idle');
@@ -1226,10 +1547,16 @@ function render(d){
   $('gCount').textContent = String(G.count);
   $('gHex').textContent = G.lastHex;
   $('gFields').textContent = G.fields.size ? Array.from(G.fields).join(', ') : '–';
+  $('gWake').textContent = WK.state;
+  $('gStore').textContent = STG.persist + (STG.quota ? ' · usati ' + Math.round(STG.used / 1024) + ' kB' : '') + ' · ' + history.length + ' allenamenti';
+  $('gHrRej').textContent = String((HF.ext.rej || 0) + (HF.row.rej || 0));
   renderCoach(d);
   drawChart(s);
 }
-function tok(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+// Colori del tema letti una volta e riletti solo al cambio di tema.
+const TOK = {};
+function tok(n){ if(!(n in TOK)) TOK[n] = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return TOK[n]; }
+function clearTok(){ for(const k in TOK) delete TOK[k]; }
 function drawChart(s){
   const c = $('chart'), r = c.getBoundingClientRect(); if(!r.width || !r.height) return;
   const dpr = window.devicePixelRatio || 1, W = Math.round(r.width * dpr), H = Math.round(r.height * dpr);
@@ -1306,10 +1633,33 @@ function renderWeek(){
     statCell('Metri', recs.length ? Math.round(sum('dist')).toLocaleString('it-IT') : '–'),
     statCell('Kcal', recs.length ? String(Math.round(sum('kcal'))) : '–'));
 }
+let histShown = 20;
+// Consegna un file: foglio di condivisione di iOS se c'è (Salva su File, Garmin Connect, Strava), altrimenti download.
+async function giveFile(name, text, type){
+  try{
+    const f = new File([text], name, { type });
+    if(navigator.canShare && navigator.share && navigator.canShare({ files: [f] })){ await navigator.share({ files: [f], title: name }); return true; }
+  }catch(e){ if(e && e.name === 'AbortError') return true; log('Condivisione non riuscita: ' + btError(e)); }
+  if(framed) return false;
+  try{
+    const url = URL.createObjectURL(new Blob([text], { type }));
+    const a = document.createElement('a'); a.href = url; a.download = name;
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 5000);
+    return true;
+  }catch(e){ return false; }
+}
+const stamp = (ms) => { const d = new Date(ms), z = (n) => String(n).padStart(2, '0'); return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()) + '-' + z(d.getHours()) + z(d.getMinutes()); };
+async function exportTcx(rec){
+  if(!rec.samples){ toast('Di questo allenamento restano solo i totali: i dati secondo per secondo sono tenuti per i 60 più recenti.', 6000); return; }
+  const ok = await giveFile('vogata-' + stamp(rec.id) + '.tcx', buildTcx(rec), 'application/vnd.garmin.tcx+xml');
+  if(!ok) toast('Esportazione non riuscita in questa finestra: apri l\'app direttamente in Bluefy.', 6000);
+  else log('Esportato TCX dell\'allenamento del ' + stamp(rec.id));
+}
 function renderHistory(){
   const ul = $('hist'); ul.textContent = ''; $('histEmpty').hidden = history.length > 0;
   renderWeek();
-  for(const rec of history){
+  $('btnHistMore').hidden = history.length <= histShown;
+  for(const rec of history.slice(0, histShown)){
     const li = document.createElement('li');
     const dt = new Date(rec.id);
     const head = document.createElement('div'); head.className = 'hhead';
@@ -1319,7 +1669,7 @@ function renderHistory(){
     const dur = document.createElement('div'); dur.className = 'dur'; dur.textContent = fmtTime(rec.dur);
     head.append(h1, dur);
     li.append(head);
-    const sp = sparkSVG(rec.samples);
+    const sp = sparkSVG(rec.samples || rec.spark);
     if(sp){ const wrapSp = document.createElement('div'); wrapSp.innerHTML = sp; li.append(wrapSp.firstChild); }
     const st = document.createElement('div'); st.className = 'hstats';
     st.append(
@@ -1330,30 +1680,38 @@ function renderHistory(){
       statCell('FC media', rec.avgHr ? String(rec.avgHr) : '–', ' bpm'),
       statCell(rec.kcalSrc === 'stima' ? 'Kcal (stima)' : 'Kcal', rec.kcal != null ? String(rec.kcal) : '–'));
     li.append(st);
-    if(rec.coach && rec.coach.note){ const nt = document.createElement('div'); nt.className = 'hnote'; nt.textContent = rec.coach.note; li.append(nt); }
+    const extra = [];
+    if(rec.rpe) extra.push('Fatica ' + rec.rpe + '/10');
+    if(rec.dec != null) extra.push('deriva cardiaca ' + dec1(rec.dec) + '%');
+    if(rec.hrr) extra.push('recupero a 1 minuto ' + rec.hrr.d + ' battiti');
+    if(rec.maxHr) extra.push('FC max ' + rec.maxHr);
+    if(extra.length){ const nt = document.createElement('div'); nt.className = 'hnote'; nt.textContent = extra.join(' · '); li.append(nt); }
+    if(Array.isArray(rec.comment) && rec.comment.length){
+      const cl = document.createElement('ul'); cl.className = 'hcom';
+      rec.comment.forEach(t => { if(/^(Prossima|Piano completato)/.test(t)) return; const x = document.createElement('li'); x.textContent = t; cl.append(x); });
+      li.append(cl);
+    } else if(rec.coach && rec.coach.note){ const nt = document.createElement('div'); nt.className = 'hnote'; nt.textContent = rec.coach.note; li.append(nt); }
     const acts = document.createElement('div'); acts.className = 'acts';
-    const bCopy = document.createElement('button'); bCopy.type = 'button'; bCopy.className = 'btn small'; bCopy.textContent = 'Copia CSV';
+    const bCopy = document.createElement('button'); bCopy.type = 'button'; bCopy.className = 'btn small'; bCopy.textContent = 'Copia CSV'; bCopy.hidden = !rec.samples;
     bCopy.addEventListener('click', async () => {
       const csv = csvOf(rec);
       try{ await navigator.clipboard.writeText(csv); toast('CSV copiato negli appunti.'); }
       catch(e){ const ta = $('csvOut'); ta.hidden = false; ta.value = csv; ta.focus(); ta.select(); toast('Copia non permessa: il CSV è nel riquadro in fondo allo storico, selezionato.', 5000); }
     });
     acts.append(bCopy);
-    if(!framed){
+    if(rec.samples){
+      const bT = document.createElement('button'); bT.type = 'button'; bT.className = 'btn small'; bT.textContent = 'Esporta TCX';
+      bT.addEventListener('click', () => exportTcx(rec)); acts.append(bT);
+    }
+    if(!framed && rec.samples){
       const bDl = document.createElement('button'); bDl.type = 'button'; bDl.className = 'btn small'; bDl.textContent = 'Scarica CSV';
-      bDl.addEventListener('click', () => {
-        try{
-          const url = URL.createObjectURL(new Blob([csvOf(rec)], { type: 'text/csv;charset=utf-8' }));
-          const a = document.createElement('a'); a.href = url; a.download = 'vogata-' + dt.toISOString().slice(0, 16).replace(/[:T]/g, '-') + '.csv';
-          document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 5000);
-        }catch(e){ toast('Download non riuscito: usa Copia CSV.'); }
-      });
+      bDl.addEventListener('click', async () => { if(!(await giveFile('vogata-' + stamp(rec.id) + '.csv', csvOf(rec), 'text/csv;charset=utf-8'))) toast('Download non riuscito: usa Copia CSV.'); });
       acts.append(bDl);
     }
     const bDel = document.createElement('button'); bDel.type = 'button'; bDel.className = 'btn small danger'; bDel.textContent = 'Elimina';
     let armed = 0;
     bDel.addEventListener('click', () => {
-      if(Date.now() < armed){ history = history.filter(x => x.id !== rec.id); store.set('vg.hist', history); C.refCache = undefined; C.hrkCache = undefined; renderHistory(); return; }
+      if(Date.now() < armed){ history = history.filter(x => x.id !== rec.id); saveHistory(); C.refCache = undefined; C.hrkCache = undefined; renderHistory(); renderProgress(); return; }
       armed = Date.now() + 3000; bDel.textContent = 'Conferma'; setTimeout(() => { bDel.textContent = 'Elimina'; }, 3000);
     });
     acts.append(bDel);
@@ -1361,6 +1719,121 @@ function renderHistory(){
     ul.append(li);
   }
 }
+
+/* ---------- progressi ---------- */
+const f2 = (v) => (Math.round(v * 100) / 100).toFixed(2).replace('.', ',');
+function chartBlock(title, pts, fmt, step){
+  if(!pts.length) return '';
+  const last = pts[pts.length - 1], first = pts[0];
+  const head = '<div class="pgh"><b>' + escH(title) + '</b><span>' + (pts.length > 1 ? 'da ' + fmt(first.y) + ' a ' + fmt(last.y) + ' · ' : '') + 'ultimo ' + fmt(last.y) + '</span></div>';
+  if(pts.length < 2) return '<div class="pg">' + head + '</div>';
+  let x0 = first.x, x1 = last.x; if(x1 - x0 < 864e5){ x0 -= 432e5; x1 += 432e5; }
+  let y0 = Infinity, y1 = -Infinity; for(const p of pts){ if(p.y < y0) y0 = p.y; if(p.y > y1) y1 = p.y; }
+  const pad = Math.max((y1 - y0) * 0.15, Math.abs(y1) * 0.03, 0.01); y0 -= pad; y1 += pad;
+  const X = (x) => (6 + (x - x0) / (x1 - x0) * 288).toFixed(1), Y = (y) => (64 - (y - y0) / (y1 - y0) * 58).toFixed(1);
+  let d = '', dots = '';
+  pts.forEach((p, i) => {
+    if(!i) d = 'M' + X(p.x) + ' ' + Y(p.y);
+    else d += step ? 'H' + X(p.x) + 'V' + Y(p.y) : 'L' + X(p.x) + ' ' + Y(p.y);
+    dots += 'M' + X(p.x) + ' ' + Y(p.y) + 'h0';
+  });
+  return '<div class="pg">' + head + '<svg class="pgsvg" viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true"><path class="gr" d="M0 35H300"/><path class="ln" d="' + d + '"/><path class="dt" d="' + dots + '"/></svg>' +
+    '<div class="pgx"><span>' + dayIt(first.x) + '</span><span>' + dayIt(last.x) + '</span></div></div>';
+}
+function weekStart(ms){ const d = new Date(ms); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.getTime(); }
+function zoneWeeksHTML(){
+  if(!history.some(r => r.zt)) return '';
+  const w0 = weekStart(Date.now()), weeks = [];
+  for(let i = 7; i >= 0; i--){ const t = new Date(w0); t.setDate(t.getDate() - 7 * i); weeks.push({ t: t.getTime(), z: [0, 0, 0, 0, 0, 0] }); }
+  for(const r of history){ if(!r.zt) continue; const ws = weekStart(r.id), w = weeks.find(x => x.t === ws); if(w) r.zt.forEach((v, i) => { w.z[i] += v; }); }
+  const mx = Math.max(600, ...weeks.map(w => w.z.reduce((a, v) => a + v, 0)));
+  let rects = '';
+  weeks.forEach((w, i) => { let y = 110; w.z.forEach((v, k) => { if(!v) return; const hgt = v / mx * 104; y -= hgt; rects += '<rect class="z' + k + '" x="' + (i * 100 + 14) + '" y="' + y.toFixed(1) + '" width="72" height="' + hgt.toFixed(1) + '"/>'; }); });
+  const cur = weeks[7].z, tot = Math.round(cur.reduce((a, v) => a + v, 0) / 60);
+  return '<div class="pg"><div class="pgh"><b>Minuti per zona cardiaca, ultime 8 settimane</b><span>questa settimana ' + tot + ' min, ' + Math.round(cur[2] / 60) + ' in zona 2</span></div>' +
+    '<svg class="pgsvg" viewBox="0 0 800 110" preserveAspectRatio="none" aria-hidden="true" style="height:90px">' + rects + '</svg>' +
+    '<div class="pgx w8">' + weeks.map(w => '<span>' + dayIt(w.t) + '</span>').join('') + '</div>' +
+    '<div class="zleg"><span><i class="zs" style="background:var(--line)"></i>sotto Z1</span>' + [1, 2, 3, 4, 5].map(z => '<span><i class="zs z' + z + '"></i>Z' + z + '</span>').join('') + '</div></div>';
+}
+function renderProgress(){
+  const box = $('progBox');
+  if(!history.length && !refLog.length){ box.innerHTML = '<p class="hint">Qui compaiono l’andamento della potenza di soglia, i watt per battito nei fondi, i minuti per zona cardiaca e il confronto tra i test.</p>'; return; }
+  let h = '';
+  const rp = refLog.map(r => ({ x: r.t, y: r.ref }));
+  if(!rp.length && cfg.ref > 0) rp.push({ x: cfg.refAt || Date.now(), y: cfg.ref });
+  h += chartBlock('Potenza di soglia', rp, (v) => Math.round(v) + ' W', true);
+  const ep = history.filter(r => r.ef).map(r => ({ x: r.id, y: r.ef })).reverse();
+  h += ep.length ? chartBlock('Watt per battito nei fondi', ep, f2, false) : '<p class="hint">Watt per battito: compaiono dopo il primo fondo di almeno 10 minuti a ritmo costante con il cardio.</p>';
+  h += zoneWeeksHTML();
+  const tests = history.filter(isTestRec);
+  if(tests.length){
+    h += '<div class="pg"><div class="pgh"><b>Test di taratura</b><span>' + escH(testCompareText().split('. ').slice(-2).join('. ')) + '</span></div><div class="tscroll"><table class="tests"><thead><tr><th>Data</th><th>Watt medi</th><th>Soglia</th><th>FC max</th><th>Recupero 1′</th></tr></thead><tbody>' +
+      tests.map(r => '<tr><td>' + dayIt(r.id) + '</td><td>' + testWatts(r) + ' W</td><td>' + (r.coach.newRef ? r.coach.newRef + ' W' : '–') + '</td><td>' + (r.maxHr || '–') + '</td><td>' + (r.hrr ? r.hrr.d + ' bpm' : '–') + '</td></tr>').join('') +
+      '</tbody></table></div></div>';
+  }
+  box.innerHTML = h || '<p class="hint">Ancora pochi dati.</p>';
+}
+
+/* ---------- copia di sicurezza ---------- */
+const BK = { pending: null };
+function backupObj(){
+  const data = {};
+  try{ for(let i = 0; i < localStorage.length; i++){ const k = localStorage.key(i); if(k && k.indexOf('vg.') === 0 && k !== LOG_KEY) data[k] = localStorage.getItem(k); } }catch(e){}
+  return { app: 'vogatore', version: APP_VERSION, created: new Date().toISOString(), data };
+}
+function backupDone(){ cfg.bkAt = Date.now(); store.set('vg.cfg', cfg); renderBk(); if(END.rec) renderEnd(); }
+async function backupSave(){
+  const ok = await giveFile('vogatore-copia-' + stamp(Date.now()) + '.json', JSON.stringify(backupObj()), 'application/json');
+  if(ok){ backupDone(); toast('Copia di sicurezza pronta: conservala su File o iCloud.'); } else backupCopy();
+}
+async function backupCopy(){
+  const txt = JSON.stringify(backupObj());
+  try{ await navigator.clipboard.writeText(txt); backupDone(); toast('Copia di sicurezza negli appunti: incollala in una nota o in un messaggio a te stesso.', 6000); }
+  catch(e){ const ta = $('bkText'); ta.hidden = false; ta.value = txt; ta.focus(); ta.select(); toast('Copia non permessa: il testo è nel riquadro, selezionato. Copialo a mano.', 6000); }
+}
+// Controlla una copia prima di ripristinarla: deve venire da questa app e contenere solo dati leggibili.
+function parseBackup(text){
+  let o; try{ o = JSON.parse(String(text).trim()); }catch(e){ throw new Error('Il testo non è una copia di sicurezza leggibile.'); }
+  if(!o || o.app !== 'vogatore' || !o.data || typeof o.data !== 'object') throw new Error('Non è una copia di sicurezza di questa app.');
+  for(const [k, v] of Object.entries(o.data)){
+    if(k.indexOf('vg.') !== 0 || typeof v !== 'string') throw new Error('La copia contiene dati non riconosciuti (' + k + ').');
+    try{ JSON.parse(v); }catch(e){ throw new Error('La copia è danneggiata (' + k + ').'); }
+  }
+  let nh = 0, np = 0; try{ nh = (JSON.parse(o.data['vg.hist'] || '[]') || []).length; }catch(e){}
+  try{ const pl = JSON.parse(o.data['vg.plan'] || '{}'); np = Object.values(pl.done || {}).filter(d => d.how !== 'saltata').length; }catch(e){}
+  return { o, nh, np };
+}
+function offerRestore(text){
+  try{
+    const r = parseBackup(text); BK.pending = r.o;
+    $('bkPreview').textContent = 'Copia del ' + new Date(r.o.created).toLocaleString('it-IT', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) + '. Allenamenti: ' + r.nh + ', sedute del piano fatte: ' + r.np + '. Sostituisce i dati di questo telefono (allenamenti: ' + history.length + ').';
+    $('bkConfirmRow').hidden = false;
+  }catch(e){ BK.pending = null; $('bkConfirmRow').hidden = true; toast(e.message, 6000); }
+}
+function doRestore(){
+  const o = BK.pending; if(!o) return;
+  try{
+    const old = []; for(let i = 0; i < localStorage.length; i++){ const k = localStorage.key(i); if(k && k.indexOf('vg.') === 0 && k !== LOG_KEY) old.push(k); }
+    old.forEach(k => localStorage.removeItem(k));
+    for(const [k, v] of Object.entries(o.data)) localStorage.setItem(k, v);
+  }catch(e){ toast('Ripristino non riuscito: ' + (e.message || 'spazio insufficiente') + '.', 7000); return; }
+  log('Ripristinata la copia di sicurezza del ' + o.created); saveLog();
+  toast('Copia ripristinata: riapro l\'app.'); setTimeout(() => location.reload(), 1200);
+}
+function renderBk(){
+  $('bkInfo').textContent = (cfg.bkAt ? 'Ultima copia: ' + new Date(cfg.bkAt).toLocaleDateString('it-IT', { day: 'numeric', month: 'long' }) + '.' : 'Nessuna copia fatta finora.') +
+    ' I dati stanno solo in questo browser: se Bluefy viene cancellato o il telefono libera spazio, senza copia si perdono.';
+}
+const STG = { persist: '–', used: 0, quota: 0 };
+(async () => {
+  try{
+    if(navigator.storage && navigator.storage.persist){ const already = navigator.storage.persisted ? await navigator.storage.persisted() : false; STG.persist = (already || await navigator.storage.persist()) ? 'persistente' : 'non garantita dal browser'; }
+    else STG.persist = 'funzione assente';
+    if(navigator.storage && navigator.storage.estimate){ const e = await navigator.storage.estimate(); STG.used = e.usage || 0; STG.quota = e.quota || 0; }
+  }catch(e){ STG.persist = 'errore (' + btError(e) + ')'; }
+  log('Archiviazione: ' + STG.persist); queueRender();
+})();
+function applyTheme(){ const r = document.documentElement; if(cfg.theme === 'light' || cfg.theme === 'dark') r.dataset.theme = cfg.theme; else delete r.dataset.theme; clearTok(); queueRender(); }
 
 /* ---------- coach ---------- */
 /*COACH-START*/
@@ -1382,7 +1855,7 @@ const pTest = () => [pRisc(), PREP(3, [PST(20, 3, '24–26', 'Progressione: spin
   PST(120, 2, '20–22', 'Pronto al via'),
   PST(600, 5, '26–30', 'TEST: massima distanza in 10 minuti a ritmo regolare, ultimi 2 minuti a tutta'),
   PST(300, 1, '18', 'Defaticamento: guarda la FC a fine test e dopo 1 minuto esatto')];
-const PLAN8 = [
+const PLAN8_BASE = [
   { id: 'w1s1', w: 1, n: 1, type: 'tecnica', title: 'Tecnica a blocchi', goal: 'Costruire la sequenza gambe, busto, braccia a bassa intensità.',
     steps: [pRisc(), PREP(3, [PST(180, 2, '20–22', 'Passata completa, spinta veloce e ritorno lento, tempi 1 a 2'), PST(60, 1, '18', 'Esercizio: 3 passate solo gambe, 3 gambe e busto, 3 complete')]), pDef()],
     cue: 'Conta “uno” in spinta e “due-tre” nel ritorno. Il busto si apre solo quando le gambe sono quasi distese.' },
@@ -1395,7 +1868,7 @@ const PLAN8 = [
 
   { id: 'w2s1', w: 2, n: 1, type: 'fondo', title: 'Fondo continuo', goal: 'Prima seduta continua sopra i 15 minuti in zona 2.',
     steps: [pRisc(), PST(1020, 2, '20–22', 'Fondo costante'), pDef()],
-    cue: 'Tieni la stessa potenza per tutti i 17 minuti: è la base su cui si costruisce tutto il resto.' },
+    cue: 'Tieni la stessa potenza dall’inizio alla fine del fondo: è la base su cui si costruisce tutto il resto.' },
   { id: 'w2s2', w: 2, n: 2, type: 'medio', title: 'Fartlek leggero', goal: 'Primi cambi di ritmo, senza arrivare in soglia.',
     steps: [pRisc(), PREP(6, [PST(60, 3, '24–26', 'Più ritmo e più spinta'), PST(120, 2, '20–22', 'Torna al fondo')]), pDef()],
     cue: 'Il cambio si fa alzando insieme ritmo e forza. Tornando al fondo la passata deve restare lunga.' },
@@ -1451,7 +1924,7 @@ const PLAN8 = [
     cue: 'Nessun intervallo a tutta: l’ultimo deve essere il più duro, non il primo.' },
   { id: 'w7s2', w: 7, n: 2, type: 'fondo', title: 'Fondo lungo', goal: 'La seduta più lunga del piano.',
     steps: [pRisc(), PST(1320, 2, '20–22', 'Fondo costante'), pDef()],
-    cue: 'Tieni la FC in zona 2 per tutti i 22 minuti: è il volume che sostiene gli intervalli.' },
+    cue: 'Tieni la FC in zona 2 per tutto il fondo: è il volume che sostiene gli intervalli.' },
   { id: 'w7s3', w: 7, n: 3, type: 'vo2', title: 'Piramide', goal: 'Gestire intensità diverse nella stessa seduta.',
     steps: [PST(240, 1, '18–20', 'Riscaldamento'), PST(120, 2, '22', 'Progressione'),
       PST(60, 5, '30', 'Forte'), PST(60, 1, '18', 'Recupero'), PST(120, 5, '28–30', 'Forte'), PST(60, 1, '18', 'Recupero'),
@@ -1508,8 +1981,19 @@ function planPhases(sess){
     return { kind, label, dur: x.t, f: kind === 'test' ? null : ZPOW[x.z], spm: parseSpm(x.spm), hrz: x.z, tip: x.txt, say: /:/.test(x.txt) && kind !== 'warm' && kind !== 'cool' };
   });
 }
-const PLAN8_BY = {};
-PLAN8.forEach(s => { s.phases = planPhases(s); s.sec = s.phases.reduce((a, p) => a + p.dur, 0); s.min = Math.round(s.sec / 60); PLAN8_BY[s.id] = s; });
+// Ciclo 2 e successivi: stesso schema, fondi lunghi (zona 2, almeno 10 minuti) più lunghi del 15% a ciclo, fino a +30%.
+function planForCycle(base, c){
+  const k = c <= 1 ? 1 : Math.min(1.3, 1 + 0.15 * (c - 1));
+  return base.map(s => {
+    const n = JSON.parse(JSON.stringify(s)); n.cyc = c > 1 ? c : 1;
+    if(k !== 1) n.steps.forEach(st => { if(!st.rep && st.z === 2 && st.t >= 600) st.t = Math.round(st.t * k / 60) * 60; });
+    n.phases = planPhases(n); n.sec = n.phases.reduce((a, p) => a + p.dur, 0); n.min = Math.round(n.sec / 60);
+    return n;
+  });
+}
+let PLAN8 = [], PLAN8_BY = {};
+function setPlanCycle(c){ PLAN8 = planForCycle(PLAN8_BASE, c); PLAN8_BY = {}; PLAN8.forEach(s => { PLAN8_BY[s.id] = s; }); }
+setPlanCycle(1);
 
 function buildPlan(id, size, sid){
   if(id === 'piano') return PLAN8_BY[sid] ? PLAN8_BY[sid].phases.map(p => Object.assign({}, p)) : [];
@@ -1596,20 +2080,30 @@ function recommend(hist, ref, refAt, now){
   const durs = hist.slice(0, 5).map(r => r.dur).sort((a, b) => a - b), med = durs.length ? durs[Math.floor(durs.length / 2)] / 60 : 0;
   const size = med < 18 ? 0 : med < 32 ? 1 : 2;
   if(days > 10) return { id: 'fondo', size: 0, why: (last ? 'Sei fermo da ' + Math.round(days) + ' giorni' : 'Primo allenamento guidato') + ': ripartiamo con un fondo breve.' };
+  // Carico di seduta = fatica percepita × minuti (Foster). Se la settimana supera di una volta e mezza la media del mese, si scarica.
+  const load = (d) => hist.filter(r => r.rpe && now - r.id < d * 864e5).reduce((a, r) => a + r.rpe * r.dur / 60, 0);
+  const nRpe = hist.filter(r => r.rpe && now - r.id < 28 * 864e5).length, acute = load(7), chronic = load(28) / 4;
+  if(nRpe >= 6 && chronic > 0 && acute > 1.5 * chronic) return { id: 'fondo', size: 0, why: 'Il carico degli ultimi 7 giorni supera di molto la tua media del mese: oggi fondo breve, per assorbirlo.' };
+  if(last && last.rpe >= 9 && days < 2) return { id: 'fondo', size: 0, why: 'L\'ultima seduta l\'hai sentita al limite: oggi fondo breve.' };
   const isHard = (r) => !!(r.coach && (r.coach.hard != null ? r.coach.hard : (WORKOUTS[r.coach.id] && WORKOUTS[r.coach.id].hard)));
   const hi = hist.findIndex(isHard), lastHard = hi >= 0 ? hist[hi] : null, dh = lastHard ? (now - lastHard.id) / 864e5 : 99;
   if(dh < 1.5) return { id: 'fondo', size, why: 'Hai fatto un lavoro intenso da meno di 36 ore: oggi fondo, per recuperare.' };
   if(refAt && now - refAt > 42 * 864e5) return { id: 'test', size: 1, why: 'La taratura ha più di 6 settimane: rifacciamo il test per aggiornare la soglia.' };
   if(lastHard && hi === 0) return { id: 'fondo', size, why: 'L\'ultimo allenamento era intenso: alterniamo con un fondo.' };
   if(lastHard && lastHard.coach.id === 'soglia') return { id: 'intervalli', size, why: 'L\'ultimo lavoro intenso era di soglia: oggi ripetute brevi sopra soglia.' };
-  if(hist.filter(r => now - r.id < 21 * 864e5 && r.coach && r.coach.id === 'cadenza').length === 0 && hist.length >= 4 && hist.length % 4 === 0) return { id: 'cadenza', size, why: 'È da un po\' che non lavori sulla tecnica: oggi scala di frequenza.' };
+  const lastTech = hist.find(r => r.coach && (r.coach.id === 'cadenza' || r.coach.ptype === 'tecnica'));
+  if(hist.length >= 4 && (!lastTech || now - lastTech.id > 14 * 864e5)) return { id: 'cadenza', size, why: 'Nessun lavoro di tecnica nelle ultime due settimane: oggi scala di frequenza.' };
   return { id: 'soglia', size, why: 'Sei recuperato: oggi blocchi di soglia, il lavoro che alza di più il ritmo che riesci a tenere a lungo.' };
 }
+// Zone sulla riserva cardiaca (Karvonen); senza FC a riposo, percentuale della massima.
+function hrAt(fr){ if(!(cfg.hrMax > 0)) return null; return Math.round(cfg.hrRest > 0 ? cfg.hrRest + fr * (cfg.hrMax - cfg.hrRest) : (fr + 0.10) * cfg.hrMax); }
+function zoneIdx(hr){ if(!hr || !(cfg.hrMax > 0)) return 0; let z = 0; for(const fr of [0.5, 0.6, 0.7, 0.8, 0.9]) if(hr >= hrAt(fr)) z++; return z; }
+function zoneOf(hr){ if(!hr || !(cfg.hrMax > 0)) return ''; const z = zoneIdx(hr); return z ? 'Z' + z : 'sotto Z1'; }
 /*COACH-END*/
 
 const C = { plan: null, id: null, sid: null, hard: false, advice: '', size: 1, idx: 0, tIn: 0, lastMs: 0, started: false, done: false, adj: 1, hrk: 1, hrk0: 1, hrkAt: 0, hrSecs: 0, zSum: 0, zN: 0, ref: null, p10: null,
   cue: 'pronto', cueSince: 0, lastVoice: 0, over: 0, under: 0, hot: 0, lastHot: 0, inBand: 0, workSecs: 0, repSum: 0, repN: 0,
-  testSum: 0, testN: 0, testDone: false, half: false, lastBeep: -1, audio: null, refCache: undefined, speed: location.hash === '#veloce' ? 60 : 1 };
+  testSum: 0, testN: 0, testDone: false, half: false, lastBeep: -1, audio: null, refCache: undefined, hrTail: [], seg: null, segCur: null, hrr: null, speed: location.hash === '#veloce' ? 60 : 1 };
 function curRef(){
   if(cfg.ref > 0) return cfg.ref;
   if(C.refCache === undefined) C.refCache = estimateRef(history, Date.now());
@@ -1623,9 +2117,6 @@ function curHrK(){
 }
 // Fasi a ritmo costante in zona 2–3: qui comanda il cuore, la potenza si adatta.
 function steady(ph){ return !!ph && ph.kind === 'work' && (ph.hrz === 2 || ph.hrz === 3) && ph.dur >= 180; }
-function hrAt(fr){ if(!(cfg.hrMax > 0)) return null; return Math.round(cfg.hrRest > 0 ? cfg.hrRest + fr * (cfg.hrMax - cfg.hrRest) : (fr + 0.10) * cfg.hrMax); }
-function zoneIdx(hr){ if(!hr || !(cfg.hrMax > 0)) return 0; let z = 0; for(const fr of [0.5, 0.6, 0.7, 0.8, 0.9]) if(hr >= hrAt(fr)) z++; return z; }
-function zoneOf(hr){ if(!hr || !(cfg.hrMax > 0)) return ''; const z = zoneIdx(hr); return z ? 'Z' + z : 'sotto Z1'; }
 function band(ph){
   if(!ph || !ph.f || !C.ref) return null;
   const m = ph.kind !== 'work' || ph.hrz <= 3 ? C.hrk : C.adj;
@@ -1685,7 +2176,8 @@ function coachArm(id, size, sid){
   if(id !== 'test' && id !== 'piano' && !ref){ toast('Per questo allenamento mi serve la tua potenza di soglia: fai prima il test di taratura, o inseriscila in Impostazioni.', 7000); return; }
   try{ C.audio = C.audio || new (window.AudioContext || window.webkitAudioContext)(); if(C.audio.resume) C.audio.resume(); }catch(e){ C.audio = null; }
   Object.assign(C, { plan: buildPlan(id, size, sid), id, size, sid: sess ? sess.id : null, hard: sess ? planIsHard(sess) : !!WORKOUTS[id].hard, advice: sess ? sess.cue : '', idx: 0, tIn: 0, lastMs: 0, started: false, done: false, adj: 1, ref, p10: null, cue: 'pronto', cueSince: Date.now(), hrk: curHrK(), hrkAt: 0, hrSecs: 0, zSum: 0, zN: 0, hrEnd: 0, hrBlocks: 0,
-    lastVoice: 0, over: 0, under: 0, hot: 0, inBand: 0, workSecs: 0, repSum: 0, repN: 0, testSum: 0, testN: 0, testDone: false, half: false, lastBeep: -1 });
+    lastVoice: 0, over: 0, under: 0, hot: 0, inBand: 0, workSecs: 0, repSum: 0, repN: 0, testSum: 0, testN: 0, testDone: false, half: false, lastBeep: -1,
+    hrTail: [], seg: null, segCur: null, hrr: null });
   C.hrk0 = C.hrk;
   // Riscaldamento iniziale: lo chiude il coach tra 4 e 5 minuti, appena la FC arriva alle porte della zona 2.
   const w0 = C.plan[0]; if(w0 && w0.kind === 'warm' && w0.dur >= 180 && w0.dur <= 360){ w0.dur = 300; w0.flex = true; }
@@ -1702,7 +2194,7 @@ const CUE = {
   sopra: ['Sopra obiettivo: rallenta', 'warn', 'Sei sopra. Rallenta un po\'.'],
   spmalta: ['Frequenza alta: colpo più lungo, meno colpi', 'warn', 'Frequenza alta. Allunga il colpo.'],
   spmbassa: ['Frequenza bassa: aumenta i colpi', 'warn', 'Aumenta la frequenza.'],
-  fermo: ['Riprendi a vogare', 'bad', 'Riprendi a vogare.'],
+  fermo: ['Riprendi a vogare: il tempo della fase scorre', 'bad', 'Riprendi a vogare.'],
   cala: ['Stai calando: tieni il ritmo', 'warn', 'Stai calando. Tieni il ritmo.'],
   forte: ['Più forte della tua media: attento a non scoppiare', 'warn', 'Stai andando più forte della tua media. Controllati.'],
   regolare: ['Ritmo regolare, continua così', 'ok', ''],
@@ -1714,6 +2206,8 @@ function endPhase(ph){
   if(ph.kind === 'work' && C.repN > 20 && (C.id === 'soglia' || C.id === 'intervalli' || (C.id === 'piano' && C.hard && ph.dur >= 120)) && C.idx < C.plan.length - 2){
     const b = band(ph), avg = C.repSum / C.repN;
     // Con il cardio decide la FC di fine blocco: se non arriva nella zona prevista i prossimi blocchi salgono, se la supera scendono.
+    // FC di fine blocco: mediana degli ultimi 20 secondi (almeno 8 letture), non il massimo, così un artefatto non decide.
+    C.hrEnd = tailMedian(20000, 8) || 0;
     const zl = ph.hrz >= 4 && cfg.hrMax > 0 && C.hrEnd ? hrAt(ZF[ph.hrz][0]) : 0, zh = zl ? hrAt(ZF[ph.hrz][1]) : 0;
     if(zl) C.hrBlocks++;
     if(zl && C.hrEnd < zl - 2 && b && avg >= b[0] * 0.97 && C.hot === 0 && C.adj < 1.12){
@@ -1723,11 +2217,22 @@ function endPhase(ph){
     } else if(b && avg < b[0] * 0.97 && C.adj > 0.84){ C.adj -= 0.04; say('Blocco sotto obiettivo. Alleggerisco i prossimi.'); log('Coach: media ' + Math.round(avg) + ' W sotto obiettivo, riduco del 4%'); }
     else if(!zl && b && avg > b[1] * 1.03 && C.hot === 0 && C.adj < 1.12){ C.adj += 0.03; say('Sei andato sopra obiettivo. Alzo i prossimi.'); log('Coach: media ' + Math.round(avg) + ' W sopra obiettivo, aumento del 3%'); }
   }
-  if(ph.kind === 'test') C.testDone = true;
-  C.repSum = 0; C.repN = 0; C.half = false; C.lastBeep = -1; C.over = 0; C.under = 0; C.zSum = 0; C.zN = 0; C.hrEnd = 0;
+  if(ph.kind === 'test'){
+    C.testDone = true;
+    // Recupero della FC a 1 minuto: FC di fine test (mediana degli ultimi 5 s) e FC 60 secondi dopo.
+    const h0 = tailMedian(5000, 2); if(h0) C.hrr = { t0: Date.now(), hr0: Math.round(h0), hr60: 0 };
+  }
+  if(C.segCur){ if(!C.seg || C.segCur[1] - C.segCur[0] > C.seg[1] - C.seg[0]) C.seg = C.segCur.slice(); C.segCur = null; }
+  C.repSum = 0; C.repN = 0; C.half = false; C.lastBeep = -1; C.over = 0; C.under = 0; C.zSum = 0; C.zN = 0; C.hrEnd = 0; C.hrTail = [];
 }
+function tailMedian(ms, minN){ const t = Date.now() - ms, v = C.hrTail.filter(x => x[0] >= t).map(x => x[1]); return v.length >= minN ? median(v) : null; }
 function coachTick(d){
-  if(!C.plan || C.done) return;
+  if(!C.plan) return;
+  if(C.hrr && !C.hrr.hr60 && Date.now() - C.hrr.t0 >= 60000 / C.speed && d.hr){
+    C.hrr.hr60 = Math.round(d.hr); C.hrr.d = C.hrr.hr0 - C.hrr.hr60;
+    say('Un minuto dalla fine del test: frequenza ' + C.hrr.hr60 + ', recupero di ' + C.hrr.d + ' battiti.'); log('Coach: recupero FC a 1 minuto ' + C.hrr.d + ' bpm (' + C.hrr.hr0 + ' → ' + C.hrr.hr60 + ')');
+  }
+  if(C.done) return;
   const s = S.session;
   if(!s || s.state !== 'running'){ C.lastMs = 0; C.cue = s ? 'pausa' : 'pronto'; return; }
   const now = Date.now(); let dt = C.lastMs ? (now - C.lastMs) / 1000 : 0; C.lastMs = now;
@@ -1736,6 +2241,9 @@ function coachTick(d){
   const pNow = d.stale ? null : (d.active ? (d.power || 0) : 0);
   if(pNow != null){ const a = 1 - Math.exp(-Math.max(dt, 0.2) / 6); C.p10 = C.p10 == null ? pNow : C.p10 + a * (pNow - C.p10); }
   let ph = C.plan[C.idx]; const b = band(ph), p = C.p10 || 0;
+  if(d.hr){ C.hrTail.push([now, d.hr]); while(C.hrTail.length && C.hrTail[0][0] < now - 30000) C.hrTail.shift(); }
+  // Tratto a sforzo costante per la deriva cardiaca: la fase di fondo, tolti i primi 2 minuti.
+  if(steady(ph) && ph.hrz === 2 && d.active && C.tIn >= 120){ if(!C.segCur) C.segCur = [s.moving, s.moving]; else C.segCur[1] = s.moving; }
   // Nelle fasi costanti in zona 2–3 comanda il cuore: dopo 2 minuti (col riscaldamento di 4–5 minuti la FC è già avviata e si assesta in fretta)
   // l'obiettivo di potenza si sposta verso i watt che tengono davvero la FC in zona, nei due sensi.
   const hz = steady(ph) && cfg.hrMax > 0 && hrAt(0.5) ? ph.hrz : 0, zl = hz ? hrAt(ZF[hz][0]) : 0, zh = hz ? hrAt(ZF[hz][1]) : 0;
@@ -1786,7 +2294,6 @@ function coachTick(d){
   if(key !== C.cue){ C.cue = key; C.cueSince = now; }
   const left = ph.dur - C.tIn;
   if(CUE[key][2] && now - C.cueSince > 12000 && now - C.lastVoice > 30000 && C.tIn > 15 && left > 12){ say(CUE[key][2]); C.lastVoice = now; }
-  if(ph.kind === 'work' && d.hr && ph.dur - C.tIn <= 30) C.hrEnd = Math.max(C.hrEnd, d.hr);
   if(ph.flex && d.hr && cfg.hrMax > 0 && C.tIn >= 240 && d.hr >= hrAt(0.6) - 5 && ph.dur > C.tIn + dt){ ph.dur = C.tIn + dt; log('Coach: riscaldamento chiuso a ' + fmtTime(ph.dur) + ', FC ' + Math.round(d.hr)); }
   C.tIn += dt;
   if(!C.half && ph.dur >= 240 && (ph.kind === 'work' || ph.kind === 'test') && C.tIn >= ph.dur / 2){ C.half = true; say('Metà. ' + (ph.kind === 'test' ? 'Tieni il ritmo.' : 'Continua così.')); }
@@ -1824,8 +2331,12 @@ function coachFinish(s){
     const lo = Math.round(ZPOW[2][0] * C.ref * hrK / 5) * 5, hi = Math.round(ZPOW[2][1] * C.ref * hrK / 5) * 5;
     note += ' Zona 2 tarata sul tuo cuore: ' + lo + '–' + hi + ' W.';
   }
-  const res = { id: C.id, size: C.size, sid: sess ? sess.id : null, hard: sess ? planIsHard(sess) : !!WORKOUTS[C.id].hard,
-    name: sess ? 'Piano S' + sess.w + '.' + sess.n + ', ' + sess.title : WORKOUTS[C.id].name, ref: C.ref, adj: Math.round(C.adj * 100) / 100, comp: comp == null ? null : Math.round(comp * 100), done: completed, note, newRef, hrK };
+  if(C.segCur){ if(!C.seg || C.segCur[1] - C.segCur[0] > C.seg[1] - C.seg[0]) C.seg = C.segCur.slice(); C.segCur = null; }
+  const cyc = sess && sess.cyc > 1 ? sess.cyc : 1;
+  const res = { id: C.id, size: C.size, sid: sess ? sess.id : null, ptype: sess ? sess.type : null, cycle: sess ? cyc : null, kind: logic, hard: sess ? planIsHard(sess) : !!WORKOUTS[C.id].hard,
+    name: sess ? 'Piano ' + (cyc > 1 ? 'C' + cyc + ' ' : '') + 'S' + sess.w + '.' + sess.n + ', ' + sess.title : WORKOUTS[C.id].name, ref: C.ref, adj: Math.round(C.adj * 100) / 100, comp: comp == null ? null : Math.round(comp * 100), done: completed, note, newRef, hrK,
+    testAvg: logic === 'test' && C.testN > 0 && (C.testDone || C.testN >= 540) ? Math.round(C.testSum / C.testN) : null,
+    seg: C.seg, hrr: C.hrr && C.hrr.hr60 ? { hr0: C.hrr.hr0, hr60: C.hrr.hr60, d: C.hrr.d } : null };
   C.plan = null;
   return res;
 }
@@ -1834,10 +2345,11 @@ function rescaleHrK(oldRef, newRef){
   if(cfg.hrK > 0 && oldRef > 0 && newRef > 0) cfg.hrK = Math.round(Math.max(0.6, Math.min(1.6, cfg.hrK * oldRef / newRef)) * 100) / 100;
   C.hrkCache = undefined;
 }
-function applyRef(newRef){
+function applyRef(newRef, why){
   if(!(newRef > 0)) return;
   rescaleHrK(curRef(), newRef);
   cfg.ref = newRef; cfg.refAt = Date.now(); store.set('vg.cfg', cfg); $('inRef').value = newRef;
+  logRef(newRef, why);
 }
 function coachChoice(){
   const rec = recommend(history, curRef(), cfg.refAt || 0, Date.now());
@@ -1848,8 +2360,10 @@ function coachChoice(){
 function renderCoach(d){
   const box = $('coachBox'), card = $('coachCard');
   box.hidden = !C.plan; card.hidden = !!C.plan;
-  const planHere = cfg.planOn && !!planNext();
+  const planHere = cfg.planOn && !!planNext(), planEnd = cfg.planOn && !planNext();
   $('planBox').hidden = !planHere || S.alt; $('altBox').hidden = planHere && !S.alt; $('btnBackPlan').hidden = !(planHere && S.alt);
+  $('planDoneBox').hidden = !planEnd;
+  if(planEnd){ $('pdLab').textContent = 'Piano 8 settimane' + (planSt.cycle > 1 ? ', ciclo ' + planSt.cycle : '') + ' · completato'; $('pdTxt').textContent = testCompareText(); $('btnNewCycle').textContent = 'Inizia il ciclo ' + (planSt.cycle + 1); }
   if(!C.plan){
     const ch = coachChoice(), ref = curRef();
     $('cRecTitle').textContent = (ch.auto ? 'Oggi ti propongo: ' : 'Hai scelto: ') + planTitle(ch.id, ch.size);
@@ -1887,6 +2401,22 @@ function renderCoach(d){
 /* ---------- piano 8 settimane: stato e viste ---------- */
 // planSt.done[id] = { t: quando, how: 'coach' (fatta col coach) | 'mano' (segnata a mano) | 'saltata' }
 let planSt = store.get('vg.plan', {}); if(!planSt || typeof planSt !== 'object') planSt = {}; if(!planSt.done || typeof planSt.done !== 'object') planSt.done = {};
+if(!(planSt.cycle >= 1)) planSt.cycle = 1; if(!Array.isArray(planSt.past)) planSt.past = [];
+setPlanCycle(planSt.cycle);
+function planNewCycle(){
+  planSt.past.push({ cycle: planSt.cycle, done: planSt.done, end: Date.now() });
+  planSt = { cycle: planSt.cycle + 1, done: {}, past: planSt.past };
+  setPlanCycle(planSt.cycle); planSave(); S.alt = false; renderPlanAll();
+  toast('Ciclo ' + planSt.cycle + ' del piano: si riparte dalla settimana 1, con fondi più lunghi.', 6000);
+}
+// Confronto tra il primo e l'ultimo test registrati.
+function testCompareText(){
+  const t = history.filter(isTestRec).slice().reverse();
+  if(t.length < 2) return t.length ? 'Un solo test registrato: ' + testWatts(t[0]) + ' W medi il ' + dayIt(t[0].id) + '.' : 'Nessun test registrato nello storico.';
+  const a = t[0], b = t[t.length - 1], d = testWatts(b) - testWatts(a), pc = Math.round(d / testWatts(a) * 100);
+  return 'Test del ' + dayIt(a.id) + ': ' + testWatts(a) + ' W. Ultimo test, ' + dayIt(b.id) + ': ' + testWatts(b) + ' W (' + (d >= 0 ? '+' : '') + d + ' W, ' + (pc >= 0 ? '+' : '') + pc + '%).' +
+    (a.hrr && b.hrr ? ' Recupero a 1 minuto da ' + a.hrr.d + ' a ' + b.hrr.d + ' battiti.' : '');
+}
 function planSave(){ if(!store.set('vg.plan', planSt)) toast('Il telefono non ha permesso di salvare l\'avanzamento del piano.', 5000); }
 function planNext(){ return PLAN8.find(s => !planSt.done[s.id]) || null; }
 function planMark(id, how){ if(!PLAN8_BY[id]) return; planSt.done[id] = { t: Date.now(), how }; planSave(); renderPlanAll(); }
@@ -1955,7 +2485,7 @@ function renderPlanCard(keepSel){
   sel.value = cur;
   const s = PLAN8_BY[cur], d = planSt.done[cur];
   $('pWeeks').innerHTML = planWeeksHTML(s.w);
-  $('pLab').textContent = 'Piano 8 settimane · ' + planCount() + ' di ' + PLAN8.length + ' fatte';
+  $('pLab').textContent = 'Piano 8 settimane' + (planSt.cycle > 1 ? ', ciclo ' + planSt.cycle : '') + ' · ' + planCount() + ' di ' + PLAN8.length + ' fatte';
   $('pTitle').textContent = 'Settimana ' + s.w + ', seduta ' + s.n + ': ' + s.title;
   $('pMeta').textContent = s.min + ' minuti · ' + PTYPE[s.type] + (d ? ' · ' + planStatus(cur) : (nx && nx.id === cur ? ' · è la prossima' : ''));
   $('pGoal').textContent = s.goal;
@@ -2103,14 +2633,17 @@ function bindNum(id, key, min, max){
     const before = key === 'ref' ? curRef() : 0;
     if(raw === '') cfg[key] = 0;
     else { const v = parseFloat(raw); if(!(v >= min && v <= max)){ el.value = cfg[key] > 0 ? cfg[key] : ''; toast('Valore non valido: inserisci un numero tra ' + min + ' e ' + max + ', o lascia vuoto.'); return; } cfg[key] = Math.round(v); }
-    if(key === 'ref'){ cfg.refAt = cfg.ref > 0 ? Date.now() : 0; C.refCache = undefined; rescaleHrK(before, curRef()); }
+    if(key === 'ref'){ cfg.refAt = cfg.ref > 0 ? Date.now() : 0; C.refCache = undefined; rescaleHrK(before, curRef()); logRef(cfg.ref, 'a mano'); }
     // zone cardiache diverse: il fattore imparato sulle vecchie non vale più, si ristima dallo storico
     if(key === 'hrMax' || key === 'hrRest'){ cfg.hrK = 0; C.hrkCache = undefined; }
     store.set('vg.cfg', cfg); queueRender();
   });
 }
 bindNum('inHrMax', 'hrMax', 120, 230); bindNum('inHrRest', 'hrRest', 30, 110); bindNum('inRef', 'ref', 40, 600);
-$('btnCoachGo').addEventListener('click', () => { const ch = coachChoice(); coachArm(ch.id, ch.size); });
+$('btnCoachGo').addEventListener('click', () => {
+  if(S.session && C.plan){ toast('C\'è già un allenamento guidato in corso: chiudi il coach prima di sceglierne un altro.', 5000); return; }
+  const ch = coachChoice(); coachArm(ch.id, ch.size);
+});
 $('btnPlanGo').addEventListener('click', () => planGo($('selPlanSess').value));
 $('selPlanSess').addEventListener('change', () => renderPlanCard(true));
 $('btnPlanDone').addEventListener('click', () => { const id = $('selPlanSess').value, d = planSt.done[id]; if(d && d.how !== 'saltata') planClear(id); else { planMark(id, 'mano'); renderPlanCard(false); toast('Seduta segnata come fatta.'); } });
@@ -2132,16 +2665,37 @@ $('inPlan').addEventListener('change', () => { cfg.planOn = $('inPlan').checked;
 let planResetArmed = 0;
 $('btnPlanReset').addEventListener('click', () => {
   const b = $('btnPlanReset');
-  if(Date.now() < planResetArmed){ planSt = { done: {} }; planSave(); renderPlanAll(); planResetArmed = 0; b.textContent = 'Ricomincia il piano'; toast('Piano azzerato: si riparte dalla settimana 1.'); return; }
+  if(Date.now() < planResetArmed){ planSt = { cycle: planSt.cycle, done: {}, past: planSt.past }; planSave(); renderPlanAll(); planResetArmed = 0; b.textContent = 'Ricomincia il piano'; toast('Piano azzerato: si riparte dalla settimana 1.'); return; }
   planResetArmed = Date.now() + 3000; b.textContent = 'Conferma'; setTimeout(() => { b.textContent = 'Ricomincia il piano'; }, 3000);
 });
 ['inHrMax', 'inHrRest', 'inRef'].forEach(id => $(id).addEventListener('change', () => renderPlanAll()));
 $('btnCoachOff').addEventListener('click', coachOff);
+$('btnNewCycle').addEventListener('click', planNewCycle);
 $('btnSkip').addEventListener('click', () => { if(C.plan && !C.done && S.session && S.session.state === 'running') C.tIn = C.plan[C.idx].dur; else toast('Si può saltare una fase solo ad allenamento in corso.'); });
 $('selWorkout').addEventListener('change', queueRender); $('selSize').addEventListener('change', queueRender);
 window.addEventListener('resize', queueRender);
 
-renderHistory();
+$('btnHistMore').addEventListener('click', () => { histShown += 20; renderHistory(); });
+$('btnBkSave').addEventListener('click', backupSave);
+$('btnBkCopy').addEventListener('click', backupCopy);
+$('btnBkPaste').addEventListener('click', () => {
+  const ta = $('bkText');
+  if(ta.hidden || ta.readOnly){ ta.readOnly = false; ta.hidden = false; ta.value = ''; ta.focus(); $('btnBkPaste').textContent = 'Controlla il testo'; return; }
+  offerRestore(ta.value);
+});
+$('inBkFile').addEventListener('change', () => {
+  const f = $('inBkFile').files && $('inBkFile').files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = () => offerRestore(rd.result); rd.onerror = () => toast('File non leggibile.');
+  rd.readAsText(f); $('inBkFile').value = '';
+});
+$('btnBkConfirm').addEventListener('click', doRestore);
+$('selTheme').value = cfg.theme || 'auto';
+$('selTheme').addEventListener('change', () => { cfg.theme = $('selTheme').value; store.set('vg.cfg', cfg); applyTheme(); });
+try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { clearTok(); queueRender(); }); }catch(e){}
+applyTheme(); renderBk();
+pruneHistory(history);
+renderHistory(); renderProgress();
 renderPlanCard(false); renderPlanList();
 $('gVer').textContent = String(APP_VERSION);
 log('Versione app ' + APP_VERSION);
