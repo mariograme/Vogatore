@@ -670,7 +670,7 @@ const store = {
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const hex = (dv) => { let s = ''; for(let i = 0; i < dv.byteLength; i++) s += dv.getUint8(i).toString(16).padStart(2, '0') + ' '; return s.trim(); };
 
-const APP_VERSION = 12;
+const APP_VERSION = 13;
 // UUID sempre per esteso: alcuni browser (Bluefy) non accettano gli alias numerici a 16 bit.
 const u16 = (n) => '0000' + n.toString(16).padStart(4, '0') + '-0000-1000-8000-00805f9b34fb';
 const FTMS = u16(0x1826), ROWER = u16(0x2ad1), HRS = u16(0x180d), HRM = u16(0x2a37);
@@ -692,11 +692,19 @@ const trace = [];
 const logLines = [];
 let lastTick = performance.now(), renderQueued = false, wake = null, demoTimer = null, stopArmed = 0, toastTimer = 0;
 
+// Il registro sopravvive alla chiusura della pagina (ultime 400 righe, con la data): così un problema di qualche giorno prima si può ancora leggere.
+const LOG_KEY = 'vg.log';
+let logSaveTimer = 0;
+(() => { const old = store.get(LOG_KEY, []); if(Array.isArray(old) && old.length) logLines.push(...old.slice(-400), '———— nuova apertura ————'); })();
 function log(msg){
-  const t = new Date().toTimeString().slice(0, 8);
-  logLines.push(t + '  ' + msg); if(logLines.length > 250) logLines.shift();
+  const d = new Date(), t = String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + ' ' + d.toTimeString().slice(0, 8);
+  logLines.push(t + '  ' + msg); while(logLines.length > 400) logLines.shift();
   $('log').textContent = logLines.join('\n');
+  if(!logSaveTimer) logSaveTimer = setTimeout(saveLog, 1000);
 }
+function saveLog(){ clearTimeout(logSaveTimer); logSaveTimer = 0; store.set(LOG_KEY, logLines.filter(x => x[0] !== '—')); }
+addEventListener('pagehide', saveLog);
+document.addEventListener('visibilitychange', () => { if(document.hidden) saveLog(); });
 function toast(msg, ms){
   const el = $('toast'); el.textContent = msg; el.hidden = false;
   clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, ms || 3500);
@@ -872,10 +880,18 @@ async function openGatt(dev, quiet){
   S.opening = true;
   try{
     if(!quiet) setConn('connecting', 'Collegamento a ' + (dev.name || 'vogatore') + '…');
+    const token = S.rcToken;
     const server = await withTimeout(dev.gatt.connect(), 15000, dev);
+    // Annullato (o sostituito) mentre si collegava: si chiude invece di dichiararlo collegato.
+    if(S.userOff || token !== S.rcToken || S.device !== dev){ try{ dev.gatt.disconnect(); }catch(e){} throw new Error('Collegamento annullato'); }
     G.name = dev.name || '(senza nome)'; log('Collegato a ' + G.name + ', cerco il servizio FTMS');
     let svc = null;
     try{ svc = await server.getPrimaryService(FTMS); }catch(e){ svc = null; log('Servizio FTMS non ottenuto: ' + btError(e) + ' [' + errKind(e) + ']'); }
+    if(!svc && (quiet === 'auto' || dev === S.hrDev)){
+      // Non è il vogatore (per esempio l'orologio usato come cardio): lo si lascia stare invece di occuparne il collegamento.
+      if(dev !== S.hrDev){ try{ dev.gatt.disconnect(); }catch(e){} }
+      throw new Error((dev.name || 'Il dispositivo') + ' non è un vogatore (manca il servizio FTMS)');
+    }
     if(!svc){ await rawMode(server); return; }
     G.services = ['FTMS (standard)'];
     let ch = null;
@@ -914,6 +930,7 @@ async function rawMode(server){
   setConn('raw', 'Collegato, ma con protocollo non standard: vedi Diagnostica');
   $('dDiag').open = true;
 }
+function isRowerName(n){ return /domyos|row/i.test(n || ''); }
 function onDisc(){
   if(S.userOff || S.opening) return;
   log('Connessione persa');
@@ -972,11 +989,16 @@ async function autoConnect(){
   if(!btUsable || !navigator.bluetooth.getDevices) return;
   try{
     const devs = await navigator.bluetooth.getDevices(); if(!devs.length) return;
-    const saved = store.get('vg.dev', null);
-    const dev = devs.find(x => saved && x.id === saved.id) || devs[0];
+    const saved = store.get('vg.dev', null), hrSaved = store.get('vg.hrdev', null);
+    log('Dispositivi già autorizzati: ' + devs.map(x => x.name || '(senza nome)').join(', '));
+    // Prima quello salvato, poi uno che si chiama come un vogatore. Mai "il primo della lista": può essere l'orologio del cardio.
+    const dev = devs.find(x => saved && x.id === saved.id)
+      || devs.find(x => isRowerName(x.name) && !(hrSaved && x.id === hrSaved.id))
+      || devs.find(x => saved && saved.name && x.name === saved.name && !(hrSaved && x.id === hrSaved.id));
+    if(!dev){ log('Nessun vogatore tra i dispositivi autorizzati: tocca Collega vogatore'); return; }
     adopt(dev); const token = S.rcToken;
     setConn('connecting', 'Cerco ' + (dev.name || 'il vogatore') + '…');
-    try{ await openGatt(dev, true); }
+    try{ await openGatt(dev, 'auto'); }
     catch(e){ log('Collegamento automatico non riuscito: ' + btError(e)); if(token === S.rcToken) setConn('idle', 'Tocca Collega vogatore'); }
   }catch(e){ log('Collegamento automatico non disponibile: ' + btError(e)); }
 }
@@ -1091,6 +1113,7 @@ async function connectHr(all){
       }
     }
     log('Cardio scelto: ' + (dev.name || '(senza nome)'));
+    store.set('vg.hrdev', { id: dev.id, name: dev.name || '' });
     if(S.hrDev && S.hrDev !== dev) hrCleanup(S.hrDev);
     else if(S.hrDev) hrDetach(S.hrDev);
     // Un nuovo token ferma qualunque riconnessione o sorveglianza ancora legata alla scelta precedente.
