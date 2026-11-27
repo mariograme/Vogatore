@@ -79,6 +79,33 @@ button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visi
 .btn.small{min-height:36px;padding:6px 10px;font-size:14px;font-weight:500}
 .btn.danger{color:var(--bad)}
 
+/* Accesso rapido: cardio e video a portata di dito, con il loro riquadro subito sotto. */
+.quick{display:flex;gap:8px}
+.qbtn{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:10px;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:7px 12px;min-height:54px;box-shadow:var(--shadow)}
+.qbtn:hover{border-color:var(--line-2)}
+.qbtn svg{flex:none;width:24px;height:24px}
+.qbtn .qhr{color:var(--z4)}
+.qbtn .qvid{color:var(--water)}
+.qbtn .qt{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2}
+.qbtn .qt b{font-weight:600;font-size:16px}
+.qbtn .qt small{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.qbtn[aria-expanded="true"]{border-color:var(--water);background:var(--water-soft)}
+.qpanel{background:var(--surface);border:2px solid var(--water);border-radius:16px;padding:10px 14px 14px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
+.qpanel .chead{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.qpanel .lab{color:var(--water)}
+.qpanel .btn.primary{min-height:50px;font-size:17px}
+.qx{flex:none;width:40px;height:40px;display:grid;place-items:center;border:0;background:transparent;border-radius:10px;color:var(--muted);margin-right:-8px}
+.qx svg{width:20px;height:20px}
+.qstat{margin:0;font-weight:600;font-size:16px}
+.vrecbox{display:flex;flex-direction:column;gap:6px}
+.vrec{display:flex;flex-direction:column;gap:6px}
+.vitem{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:6px;min-height:58px}
+.vth{flex:none;width:80px;aspect-ratio:16/9;border-radius:6px;overflow:hidden;background:var(--surface-2)}
+.vth img{display:block;width:100%;height:100%;object-fit:cover}
+.vtt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.vtt b{font-weight:600;font-size:14.5px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.vtt small{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+
 .notice{border:1.5px solid var(--warn);border-radius:12px;padding:10px 12px;font-size:15px;background:var(--surface)}
 .notice strong{color:var(--warn)}
 
@@ -239,12 +266,30 @@ input[type=checkbox]{width:24px;height:24px;accent-color:var(--water)}
 .wsum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;background:var(--surface-2);border-radius:12px;padding:10px 12px}
 .wsum .lab{grid-column:1 / -1;margin-bottom:2px}
 .wsum div span{display:block;font-size:12px;color:var(--muted)}
-.wsum div b{font-family:var(--num);font-weight:600;font-size:22px;font-variant-numeric:tabular-nums;line-height:1.1}
-.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
-.hist li{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);display:flex;flex-direction:column;gap:8px}
-.hhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-.hhead .h1{font-weight:600}
-.hhead .dur{font-family:var(--num);font-weight:700;font-size:22px;font-variant-numeric:tabular-nums}
+.wsum div{min-width:0}
+.wsum div b{display:block;font-family:var(--num);font-weight:600;font-size:clamp(17px,4.8vw,22px);font-variant-numeric:tabular-nums;line-height:1.1;white-space:nowrap}
+/* Storico compatto: ultime tre sedute in vista, le altre per mese dietro un tocco, dettagli di ogni seduta al tocco. */
+details.hall{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;padding:0;margin-top:2px}
+details.hall > summary{min-height:48px;font-size:15.5px;color:var(--water)}
+details.hall > summary::after{border-color:var(--water)}
+.hgroups{display:flex;flex-direction:column}
+details.hmon{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;padding:0}
+details.hmon > summary{min-height:52px}
+.hmt{display:flex;flex-direction:column;min-width:0;line-height:1.2}
+.hmt b{font-weight:600;font-size:16.5px}
+.hmt small{font-size:13.5px;color:var(--muted);font-weight:500;font-variant-numeric:tabular-nums}
+.hlist{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-direction:column;gap:6px}
+details.hrec{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:0 10px}
+details.hrec > summary{min-height:54px;gap:10px;font-size:15px;font-weight:500;padding:5px 0}
+.hday{flex:none;width:2.4rem;text-align:center;line-height:1}
+.hday b{display:block;font-family:var(--num);font-weight:700;font-size:24px;font-variant-numeric:tabular-nums}
+.hday small{display:block;margin-top:2px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.hmain{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.hmain .ht{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hmain .hm{font-size:13.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.hdur{flex:none;font-family:var(--num);font-weight:700;font-size:21px;font-variant-numeric:tabular-nums}
+.hbody{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding:8px 0 10px}
+.hbody:empty{display:none}
 .badge{display:inline-block;margin-left:6px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--water);border:1px solid var(--water);border-radius:5px;padding:0 5px;vertical-align:2px}
 .spark{display:block;width:100%;height:42px}
 .spark .sa{fill:var(--water-soft)}
@@ -413,6 +458,41 @@ table.tests td{padding:5px 6px 5px 0;border-bottom:1px solid var(--line)}
     <div class="status"><span class="dot" id="dot" data-s="idle"></span><span id="statusText">Non collegato</span></div>
   </header>
 
+  <nav class="quick" aria-label="Accesso rapido">
+    <button class="qbtn" id="qHr" type="button" aria-expanded="false" aria-controls="hrPanel">
+      <svg class="qhr" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.2s-7.6-4.6-7.6-10.4A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 7.6 2.8c0 5.8-7.6 10.4-7.6 10.4z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>
+      <span class="qt"><b>Cardio</b><small id="qHrTxt">tocca per collegare</small></span>
+      <span class="dot" id="qHrDot" data-s="idle"></span>
+    </button>
+    <button class="qbtn" id="qVid" type="button" aria-expanded="false" aria-controls="vidPanel">
+      <svg class="qvid" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="4" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor"/></svg>
+      <span class="qt"><b>Video</b><small id="qVidTxt">link da YouTube</small></span>
+    </button>
+  </nav>
+
+  <section class="qpanel" id="hrPanel" aria-label="Cardiofrequenzimetro" hidden>
+    <div class="chead"><div class="lab">Cardio Garmin</div><button class="qx" id="btnHrClose" type="button" aria-label="Chiudi il riquadro del cardio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>
+    <p class="qstat" id="hrName">Nessun cardio collegato.</p>
+    <div class="acts"><button class="btn primary" id="btnHr" type="button">Collega cardio</button><button class="btn" id="btnHrAll" type="button">Non compare? Mostra tutti</button></div>
+    <ol class="hrsteps">
+      <li>Sul Fenix tieni premuto MENU e vai in Sensori e accessori, poi Frequenza cardiaca al polso, poi Trasmetti frequenza cardiaca, e premi START. Lascia l'orologio su quella schermata.</li>
+      <li>Qui tocca Collega cardio e scegli l'orologio (di solito si chiama fēnix 7S). Se non c'è, usa Mostra tutti.</li>
+      <li>Non usare "Trasmetti durante l'attività": può trasmettere solo in ANT+, che l'iPhone non riceve.</li>
+    </ol>
+    <p class="hint">Le voci del menu possono avere nomi leggermente diversi a seconda della versione del Fenix.</p>
+    <div class="row"><label for="inHrAuto">All'apertura cerca da solo l'ultimo cardio usato, per 10 minuti</label><input id="inHrAuto" type="checkbox"></div>
+  </section>
+
+  <section class="qpanel" id="vidPanel" aria-label="Video YouTube" hidden>
+    <div class="chead"><div class="lab">Video durante l'allenamento</div><button class="qx" id="btnVidClose" type="button" aria-label="Chiudi il riquadro del video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></div>
+    <button class="btn primary" id="btnVidPaste" type="button">Incolla il link e apri</button>
+    <p class="hint">In YouTube tocca Condividi, poi Copia link, e torna qui. Se il telefono chiede il permesso, tocca Incolla.</p>
+    <div class="row"><input id="inVideo" type="url" inputmode="url" autocomplete="off" placeholder="oppure incolla qui: youtu.be/…" aria-label="Link del video YouTube"><button class="btn small" id="btnVideo" type="button">Apri</button></div>
+    <div class="vrecbox" id="vRecentBox" hidden><div class="lab">Visti di recente</div><div class="vrec" id="vRecent"></div></div>
+    <button class="btn small danger" id="btnVidStop" type="button" hidden>Chiudi il video</button>
+    <p class="hint">Su iPhone l'app registra solo finché resta in primo piano: per questo il video si guarda qui dentro e non nell'app di YouTube. Riaprendo un video dai recenti riparte da dove eri rimasto.</p>
+  </section>
+
   <div class="notice" id="notice" hidden></div>
 
   <section class="endcard" id="endCard" aria-label="Resoconto della seduta" hidden>
@@ -562,8 +642,7 @@ table.tests td{padding:5px 6px 5px 0;border-bottom:1px solid var(--line)}
     <div class="sec">
       <div class="wsum" id="weekSum" hidden></div>
       <p class="hint" id="histEmpty">Qui compaiono gli allenamenti conclusi, salvati su questo telefono.</p>
-      <ul class="hist" id="hist"></ul>
-      <button class="btn small" id="btnHistMore" type="button" hidden>Mostra altri</button>
+      <div class="hgroups" id="hist"></div>
       <textarea class="csv" id="csvOut" readonly hidden aria-label="CSV dell'allenamento"></textarea>
     </div>
   </details>
@@ -571,14 +650,6 @@ table.tests td{padding:5px 6px 5px 0;border-bottom:1px solid var(--line)}
   <details id="dProg">
     <summary>Progressi</summary>
     <div class="sec" id="progBox"></div>
-  </details>
-
-  <details id="dVideo">
-    <summary>Video durante l'allenamento</summary>
-    <div class="sec">
-      <p class="hint">Su iPhone l'app registra solo finché resta in primo piano. Per guardare YouTube mentre remi, apri il video qui dentro: in YouTube tocca Condividi, poi Copia link, e incollalo qui sotto.</p>
-      <div class="row"><input id="inVideo" type="url" inputmode="url" autocomplete="off" placeholder="https://youtu.be/…" aria-label="Link del video YouTube"><button class="btn small" id="btnVideo" type="button">Apri video</button></div>
-    </div>
   </details>
 
   <details id="dSet">
@@ -607,15 +678,8 @@ table.tests td{padding:5px 6px 5px 0;border-bottom:1px solid var(--line)}
         <div class="row"><label for="inRef">Potenza di soglia (W)</label><input id="inRef" type="number" inputmode="numeric" min="0" max="600" step="1" placeholder="auto"></div>
         <p class="hint">La imposta il coach dopo il test di taratura e poi la aggiorna da solo. Lasciala vuota per farla stimare dallo storico.</p>
       </div>
-      <div class="set" id="setHr">
-        <div class="row"><span>Cardiofrequenzimetro <span class="hint" id="hrName"></span></span><button class="btn small" id="btnHr" type="button">Collega cardio</button></div>
-        <div class="row"><span class="hint">Non compare nell'elenco?</span><button class="btn small" id="btnHrAll" type="button">Mostra tutti</button></div>
-        <ol class="hrsteps">
-          <li>Sul Fenix tieni premuto MENU e vai in Sensori e accessori, poi Frequenza cardiaca al polso, poi Trasmetti frequenza cardiaca, e premi START. Lascia l'orologio su quella schermata.</li>
-          <li>Qui tocca Collega cardio e scegli l'orologio (di solito si chiama fēnix 7S). Se non c'è, usa Mostra tutti.</li>
-          <li>Non usare "Trasmetti durante l'attività": può trasmettere solo in ANT+, che l'iPhone non riceve.</li>
-        </ol>
-        <p class="hint">Le voci del menu possono avere nomi leggermente diversi a seconda della versione del Fenix.</p>
+      <div class="set">
+        <p class="hint">Cardio Garmin e video YouTube si aprono dai due pulsanti in cima alla pagina.</p>
       </div>
       <div class="set">
         <div class="row"><span>Copia di sicurezza di storico, piano e impostazioni</span><span class="acts"><button class="btn small" id="btnBkCopy" type="button">Copia</button><button class="btn small" id="btnBkSave" type="button">Salva file</button></span></div>
@@ -794,6 +858,17 @@ function pruneHistory(hist){
   hist.forEach((r, i) => { if(i >= KEEP_SAMPLES) thinRec(r); });
   return hist;
 }
+// Storico diviso per mese di calendario, il più recente per primo, con i totali di ciascun mese.
+const MONTHS = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+function histGroups(hist){
+  const out = []; let g = null;
+  for(const r of hist.slice().sort((a, b) => b.id - a.id)){
+    const d = new Date(r.id), key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    if(!g || g.key !== key){ g = { key, label: MONTHS[d.getMonth()] + ' ' + d.getFullYear(), recs: [], dur: 0, dist: 0 }; out.push(g); }
+    g.recs.push(r); g.dur += r.dur || 0; g.dist += r.dist || 0;
+  }
+  return out;
+}
 const xmlEsc = (v) => String(v).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' })[c]);
 // File TCX (Garmin Training Center) con orari reali, distanza, FC, colpi al minuto e watt: si importa in Garmin Connect e Strava.
 function buildTcx(rec){
@@ -904,7 +979,7 @@ const store = {
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const hex = (dv) => { let s = ''; for(let i = 0; i < dv.byteLength; i++) s += dv.getUint8(i).toString(16).padStart(2, '0') + ' '; return s.trim(); };
 
-const APP_VERSION = 14;
+const APP_VERSION = 15;
 // UUID sempre per esteso: alcuni browser (Bluefy) non accettano gli alias numerici a 16 bit.
 const u16 = (n) => '0000' + n.toString(16).padStart(4, '0') + '-0000-1000-8000-00805f9b34fb';
 const FTMS = u16(0x1826), ROWER = u16(0x2ad1), HRS = u16(0x180d), HRM = u16(0x2a37);
@@ -915,7 +990,7 @@ let framed = true; try{ framed = window.self !== window.top; }catch(e){ framed =
 let policyOk = true; try{ if(document.featurePolicy && document.featurePolicy.allowsFeature) policyOk = document.featurePolicy.allowsFeature('bluetooth'); }catch(e){}
 const btUsable = !!navigator.bluetooth && policyOk;
 
-const cfg = Object.assign({ weight: 80, autoStart: true, voice: true, hrMax: 182, hrRest: 60, ref: 0, refAt: 0, hrK: 0, planOn: true, voiceVideo: false, theme: 'auto', bkAt: 0 }, store.get('vg.cfg', {}));
+const cfg = Object.assign({ weight: 80, autoStart: true, voice: true, hrMax: 182, hrRest: 60, ref: 0, refAt: 0, hrK: 0, planOn: true, voiceVideo: false, theme: 'auto', bkAt: 0, hrAuto: true }, store.get('vg.cfg', {}));
 let history = store.get('vg.hist', []); if(!Array.isArray(history)) history = [];
 // Storia della potenza di soglia, per il grafico dei progressi.
 let refLog = store.get('vg.refs', []); if(!Array.isArray(refLog)) refLog = [];
@@ -1327,7 +1402,12 @@ async function autoConnect(){
 // Il cardio è sorvegliato: se il collegamento resta "aperto" ma i battiti smettono di arrivare (succede con i Garmin), prima si
 // riattivano le notifiche, poi si chiude e si riapre il collegamento, e si continua a riprovare finché il cardio resta quello scelto.
 const HR_SILENCE = 8000;
-const H = { token: 0, dev: null, ch: null, ok: false, busy: false, armedAt: 0, fix: 0, looping: false, lastWarn: 0, lostAt: 0 };
+// H.loopTok: token del ciclo di riconnessione in corso (0 = nessuno). Legato al token e non a un sì/no, così un ciclo vecchio
+// che sta ancora aspettando non impedisce di avviarne uno per il cardio appena scelto.
+// H.auto: ricerca automatica all'apertura, finché il cardio non risponde la prima volta o fino a H.autoUntil.
+const H = { token: 0, dev: null, ch: null, ok: false, busy: false, armedAt: 0, fix: 0, loopTok: 0, lastWarn: 0, lostAt: 0, auto: false, autoUntil: 0, note: '' };
+const HR_AUTO_MS = 600000;
+const hrLooping = () => H.loopTok !== 0 && H.loopTok === H.token;
 function hrDetach(dev){
   try{ if(S.hrDisc) dev.removeEventListener('gattserverdisconnected', S.hrDisc); }catch(e){}
   S.hrDisc = null;
@@ -1336,13 +1416,22 @@ function hrCleanup(dev){
   hrDetach(dev);
   try{ if(H.ch) H.ch.removeEventListener('characteristicvaluechanged', onHrEvt); }catch(e){}
   try{ if(dev.gatt.connected) dev.gatt.disconnect(); }catch(e){}
-  if(S.hrDev === dev){ S.hrDev = null; H.dev = null; H.ch = null; H.ok = false; H.token++; }
+  if(S.hrDev === dev){ S.hrDev = null; H.dev = null; H.ch = null; H.ok = false; H.auto = false; H.token++; }
   hrUi(null);
 }
-function hrUi(name, note){
-  $('btnHr').textContent = (name || S.hrDev) ? 'Cambia cardio' : 'Collega cardio';
-  $('hrName').textContent = note ? '· ' + note : name ? '· collegato: ' + name : '';
-  queueRender();
+// Il testo di stato si calcola in render() da hrStatus(); qui resta solo la nota per quando nessun cardio è scelto.
+function hrUi(name, note){ H.note = note || ''; queueRender(); }
+// Stato del cardio in una forma sola, per il pulsante in alto (breve), il riquadro (esteso) e la scheda della FC.
+function hrStatus(){
+  const dev = S.hrDev, nm = dev ? (dev.name || 'il cardio') : '', now = performance.now();
+  if(!btUsable) return { k: 'idle', short: 'Bluetooth assente', long: 'Qui il Bluetooth non è disponibile: apri l\'app in Bluefy.' };
+  if(!dev) return { k: 'idle', short: H.note || 'tocca per collegare', long: H.note ? H.note.charAt(0).toUpperCase() + H.note.slice(1) + '.' : 'Nessun cardio collegato.' };
+  if(S.hrExt && now - S.hrExtAt < 6000) return { k: 'connected', short: S.hrExt + ' bpm · ' + nm, long: 'Collegato a ' + nm + ', arrivano i battiti.' };
+  if(H.auto) return { k: 'connecting', short: 'cerco ' + nm + '…', long: 'Cerco ' + nm + ' per qualche minuto: avvia Trasmetti frequenza cardiaca sull\'orologio e lo aggancio da solo.' };
+  if(hrLooping()) return { k: 'connecting', short: 'riconnessione…', long: 'Collegamento con ' + nm + ' perso: sto riprovando.' };
+  if(!H.ok) return { k: 'connecting', short: 'collegamento…', long: 'Collegamento a ' + nm + '…' };
+  if(H.lostAt && now - H.armedAt > HR_SILENCE) return { k: 'reconnecting', short: 'nessun battito, riprovo', long: 'Collegato a ' + nm + ', ma non arrivano battiti: controlla che sull\'orologio la trasmissione sia attiva. Sto riprovando.' };
+  return { k: 'connecting', short: 'in attesa dei battiti', long: 'Collegato a ' + nm + ', in attesa dei battiti.' };
 }
 function hrWarn(msg){ const now = performance.now(); if(now - H.lastWarn < 60000) return; H.lastWarn = now; toast(msg, 7000); }
 // Apre (o riapre) il collegamento GATT e le notifiche. Il riferimento alla caratteristica resta in H.ch: se il browser
@@ -1357,7 +1446,9 @@ async function hrOpen(dev, token, onStage){
   try{ svc = await srv.getPrimaryService(HRS); }
   catch(e){
     let list = ''; try{ list = (await srv.getPrimaryServices()).map(x => x.uuid.slice(4, 8)).join(', '); }catch(x){}
-    log('Il dispositivo non espone il servizio cardio. Servizi visti: ' + (list || 'nessuno leggibile'));
+    // Nella ricerca dell'apertura i tentativi sono tanti: basta scriverlo una volta nel registro.
+    if(!(H.auto && H.svcLogged)) log('Il dispositivo non espone il servizio cardio. Servizi visti: ' + (list || 'nessuno leggibile'));
+    if(H.auto) H.svcLogged = true;
     const err = new Error('Collegato a ' + (dev.name || 'dispositivo') + ', ma non sta trasmettendo la frequenza cardiaca. Sull\'orologio avvia "Trasmetti frequenza cardiaca" e riprova.');
     err.hrNoService = true; throw err;
   }
@@ -1375,27 +1466,34 @@ async function hrOpen(dev, token, onStage){
 }
 // Riconnessione senza limite di tentativi finché il cardio resta quello scelto: un orologio che torna a trasmettere viene ripreso da solo.
 async function hrReconnect(dev, token, why){
-  if(H.looping || token !== H.token) return; H.looping = true; H.ok = false;
+  if(H.loopTok === token || token !== H.token) return; H.loopTok = token; H.ok = false;
   if(!H.lostAt) H.lostAt = performance.now();
   log('Cardio: ' + why + ', ricollego');
   try{
     for(let n = 1; token === H.token; n++){
-      hrUi(null, 'riconnessione…');
+      queueRender();
       try{ if(dev.gatt.connected) dev.gatt.disconnect(); }catch(e){}
       await sleep(Math.min(10000, 1000 * n));
       if(token !== H.token) return;
-      try{ await hrOpen(dev, token); log('Cardio ricollegato al tentativo ' + n); return; }
+      try{
+        await hrOpen(dev, token);
+        if(H.auto){ H.auto = false; log('Cardio agganciato da solo al tentativo ' + n); toast('Cardio collegato: ' + (dev.name || 'cardio') + '.'); }
+        else log('Cardio ricollegato al tentativo ' + n);
+        return;
+      }
       catch(e){
         if(token !== H.token) return;
         if(n === 1 || n % 10 === 0) log('Cardio, tentativo ' + n + ' fallito: ' + (e && e.hrNoService ? 'servizio cardio assente' : btError(e)));
-        if(n === 6) hrWarn('Cardio non raggiungibile: controlla che l\'orologio stia ancora trasmettendo. Continuo a riprovare.');
+        // Ricerca dell'apertura scaduta: si smette in silenzio, l'orologio oggi forse non serve.
+        if(H.auto && performance.now() > H.autoUntil){ log('Cardio: non trovato in ' + Math.round(HR_AUTO_MS / 60000) + ' minuti, smetto di cercarlo'); hrCleanup(dev); hrUi(null, 'non trovato, tocca per collegare'); return; }
+        if(n === 6 && !H.auto) hrWarn('Cardio non raggiungibile: controlla che l\'orologio stia ancora trasmettendo. Continuo a riprovare.');
       }
     }
-  } finally { H.looping = false; }
+  } finally { if(H.loopTok === token) H.loopTok = 0; }
 }
 // Sorveglianza ogni 2 s: silenzio oltre 8 s → si riattivano le notifiche; se il silenzio continua → si riapre il collegamento.
 function hrWatch(){
-  const dev = S.hrDev; if(!dev || dev !== H.dev || H.busy || H.looping || !H.ok) return;
+  const dev = S.hrDev; if(!dev || dev !== H.dev || H.busy || hrLooping() || !H.ok) return;
   const now = performance.now();
   if(now - Math.max(S.hrExtAt, H.armedAt) < HR_SILENCE) return;
   const token = H.token;
@@ -1404,7 +1502,7 @@ function hrWatch(){
   if(H.fix === 0){
     H.fix = 1; H.busy = true;
     log('Cardio: nessun battito da ' + Math.round((now - Math.max(S.hrExtAt, H.armedAt)) / 1000) + ' s, riattivo le notifiche');
-    hrUi(null, 'collegato, nessun battito: riprovo…');
+    queueRender();
     (async () => {
       try{ try{ await H.ch.stopNotifications(); }catch(e){} await H.ch.startNotifications(); if(token === H.token) H.armedAt = performance.now(); }
       catch(e){ log('Cardio: notifiche non riattivabili (' + btError(e) + ')'); if(token === H.token){ H.fix = 0; H.busy = false; hrReconnect(dev, token, 'notifiche bloccate'); return; } }
@@ -1417,6 +1515,34 @@ function hrWatch(){
   }
 }
 setInterval(hrWatch, 2000);
+// Prende in carico un cardio (scelto ora o ritrovato all'apertura). Un nuovo token ferma qualunque riconnessione
+// o sorveglianza ancora legata alla scelta precedente.
+function hrAdopt(dev){
+  if(S.hrDev && S.hrDev !== dev) hrCleanup(S.hrDev);
+  else if(S.hrDev) hrDetach(S.hrDev);
+  const token = ++H.token;
+  S.hrDev = dev; H.dev = dev; H.ok = false; H.fix = 0; H.busy = false; H.lostAt = 0; H.auto = false; H.svcLogged = false; H.note = '';
+  // Durante un ciclo di riconnessione gli scollegamenti sono quelli fatti dal ciclo stesso: niente registro, niente secondo ciclo.
+  S.hrDisc = () => { if(token !== H.token || H.loopTok === token) return; log('Cardio scollegato'); hrReconnect(dev, token, 'collegamento perso'); };
+  dev.addEventListener('gattserverdisconnected', S.hrDisc);
+  queueRender();
+  return token;
+}
+// All'apertura: se l'ultimo cardio usato è tra i dispositivi già autorizzati, lo si cerca per 10 minuti e lo si aggancia
+// appena l'orologio trasmette, senza toccare niente. Mai il vogatore: si esclude il dispositivo salvato come vogatore.
+async function hrAuto(){
+  if(!btUsable || !cfg.hrAuto || S.hrDev || !navigator.bluetooth.getDevices) return;
+  const saved = store.get('vg.hrdev', null), row = store.get('vg.dev', null);
+  if(!saved || !saved.id) return;
+  let devs = [];
+  try{ devs = await navigator.bluetooth.getDevices(); }catch(e){ log('Cardio: elenco dei dispositivi autorizzati non disponibile (' + btError(e) + ')'); return; }
+  const dev = devs.find(x => x.id === saved.id);
+  if(!dev){ log('Cardio: ' + (saved.name || 'l\'ultimo usato') + ' non è tra i dispositivi autorizzati, va scelto a mano'); return; }
+  if(S.hrDev || dev === S.device || (row && row.id === dev.id)) return;
+  log('Cardio: cerco ' + (dev.name || 'il cardio') + ' da solo');
+  const token = hrAdopt(dev); H.auto = true; H.autoUntil = performance.now() + HR_AUTO_MS;
+  hrReconnect(dev, token, 'ricerca all\'apertura');
+}
 async function connectHr(all){
   if(!btUsable){ toast('Qui il Bluetooth non è disponibile.'); return; }
   let dev = null, stage = 'scelta del dispositivo';
@@ -1435,13 +1561,7 @@ async function connectHr(all){
     }
     log('Cardio scelto: ' + (dev.name || '(senza nome)'));
     store.set('vg.hrdev', { id: dev.id, name: dev.name || '' });
-    if(S.hrDev && S.hrDev !== dev) hrCleanup(S.hrDev);
-    else if(S.hrDev) hrDetach(S.hrDev);
-    // Un nuovo token ferma qualunque riconnessione o sorveglianza ancora legata alla scelta precedente.
-    const token = ++H.token;
-    S.hrDev = dev; H.dev = dev; H.ok = false; H.fix = 0; H.busy = false; H.lostAt = 0;
-    S.hrDisc = () => { log('Cardio scollegato'); if(token === H.token) hrReconnect(dev, token, 'collegamento perso'); };
-    dev.addEventListener('gattserverdisconnected', S.hrDisc);
+    const token = hrAdopt(dev);
     await hrOpen(dev, token, (s) => { stage = s; });
     toast('Cardiofrequenzimetro collegato.');
     // Se entro 10 secondi non arriva nessun battito, lo si dice: di solito la trasmissione sull'orologio si è fermata.
@@ -1526,8 +1646,11 @@ function render(d){
   $('vKcalH').textContent = d.active ? int(machH ? L.kcalH : (d.power != null ? kcalRate(d.power) : null)) : '–';
   $('sKcalH').textContent = d.active ? (machH ? 'dal vogatore' : 'stima dalla potenza') : '';
   $('vHr').textContent = d.hr ? int(d.hr) : '–';
-  $('sHr').textContent = d.hr ? ((zoneOf(d.hr) ? zoneOf(d.hr) + ' · ' : '') + d.hrSrc + (s && s.nHr ? ' · media ' + int(s.sumHr / s.nHr) : '')) : (S.hrDev ? (H.looping ? 'cardio: riconnessione…' : H.lostAt ? 'cardio collegato, nessun battito: riprovo' : 'cardio collegato, in attesa') : (btUsable ? 'tocca per collegare il cardio' : 'nessun sensore'));
-  $('vHr').closest('.tile').classList.toggle('tap', !S.hrDev && btUsable);
+  const hs = hrStatus();
+  $('sHr').textContent = d.hr ? ((zoneOf(d.hr) ? zoneOf(d.hr) + ' · ' : '') + d.hrSrc + (s && s.nHr ? ' · media ' + int(s.sumHr / s.nHr) : '')) : (S.hrDev ? 'cardio: ' + hs.short : (btUsable ? 'tocca per collegare il cardio' : 'nessun sensore'));
+  $('vHr').closest('.tile').classList.toggle('tap', btUsable && hs.k !== 'connected');
+  $('qHrTxt').textContent = hs.short; $('qHrDot').dataset.s = hs.k; $('hrName').textContent = hs.long;
+  $('btnHr').textContent = S.hrDev ? 'Cambia cardio' : 'Collega cardio';
   const zi = d.hr ? zoneIdx(d.hr) : 0, zs = $('hrZones').children;
   const cph = C.plan && S.session ? C.plan[C.idx] : null;
   const tz = cph && cph.hrz && cph.dur >= 120 && cph.kind === 'work' ? cph.hrz : 0;
@@ -1633,7 +1756,6 @@ function renderWeek(){
     statCell('Metri', recs.length ? Math.round(sum('dist')).toLocaleString('it-IT') : '–'),
     statCell('Kcal', recs.length ? String(Math.round(sum('kcal'))) : '–'));
 }
-let histShown = 20;
 // Consegna un file: foglio di condivisione di iOS se c'è (Salva su File, Garmin Connect, Strava), altrimenti download.
 async function giveFile(name, text, type){
   try{
@@ -1655,69 +1777,125 @@ async function exportTcx(rec){
   if(!ok) toast('Esportazione non riuscita in questa finestra: apri l\'app direttamente in Bluefy.', 6000);
   else log('Esportato TCX dell\'allenamento del ' + stamp(rec.id));
 }
+// Storico compatto: in vista le ultime tre sedute; le altre, divise per mese, si aprono con un tocco.
+// I dettagli di ogni seduta e le righe di ogni mese si costruiscono solo quando li apri.
+const HIST_TOP = 3;
+const HV = { all: false, mon: {}, rec: new Set() };
+const km = (m) => (Math.round(m / 100) / 10).toFixed(1).replace('.', ',') + ' km';
+const WDAYS = ['dom', 'lun', 'mar', 'mer', 'gio', 'ven', 'sab'];
+const groupTxt = (g) => g.recs.length + (g.recs.length === 1 ? ' seduta' : ' sedute') + ' · ' + fmtTime(g.dur) + (g.dist > 0 ? ' · ' + km(g.dist) : '');
 function renderHistory(){
-  const ul = $('hist'); ul.textContent = ''; $('histEmpty').hidden = history.length > 0;
+  const box = $('hist'); box.textContent = ''; $('histEmpty').hidden = history.length > 0;
   renderWeek();
-  $('btnHistMore').hidden = history.length <= histShown;
-  for(const rec of history.slice(0, histShown)){
-    const li = document.createElement('li');
-    const dt = new Date(rec.id);
-    const head = document.createElement('div'); head.className = 'hhead';
-    const h1 = document.createElement('div'); h1.className = 'h1';
-    h1.textContent = dt.toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' }) + ', ' + dt.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
-    if(rec.coach && rec.coach.name){ const bd = document.createElement('span'); bd.className = 'badge'; bd.textContent = rec.coach.name; h1.append(bd); }
-    const dur = document.createElement('div'); dur.className = 'dur'; dur.textContent = fmtTime(rec.dur);
-    head.append(h1, dur);
-    li.append(head);
-    const sp = sparkSVG(rec.samples || rec.spark);
-    if(sp){ const wrapSp = document.createElement('div'); wrapSp.innerHTML = sp; li.append(wrapSp.firstChild); }
-    const st = document.createElement('div'); st.className = 'hstats';
-    st.append(
-      statCell('Distanza', rec.dist ? rec.dist.toLocaleString('it-IT') : '–', ' m'),
-      statCell('Potenza media', rec.avgP != null ? String(rec.avgP) : '–', ' W'),
-      statCell('Passo /500 m', rec.avgPace ? fmtPace(rec.avgPace) : '–'),
-      statCell('Colpi/min', rec.avgSpm ? String(rec.avgSpm).replace('.', ',') : '–'),
-      statCell('FC media', rec.avgHr ? String(rec.avgHr) : '–', ' bpm'),
-      statCell(rec.kcalSrc === 'stima' ? 'Kcal (stima)' : 'Kcal', rec.kcal != null ? String(rec.kcal) : '–'));
-    li.append(st);
-    const extra = [];
-    if(rec.rpe) extra.push('Fatica ' + rec.rpe + '/10');
-    if(rec.dec != null) extra.push('deriva cardiaca ' + dec1(rec.dec) + '%');
-    if(rec.hrr) extra.push('recupero a 1 minuto ' + rec.hrr.d + ' battiti');
-    if(rec.maxHr) extra.push('FC max ' + rec.maxHr);
-    if(extra.length){ const nt = document.createElement('div'); nt.className = 'hnote'; nt.textContent = extra.join(' · '); li.append(nt); }
-    if(Array.isArray(rec.comment) && rec.comment.length){
-      const cl = document.createElement('ul'); cl.className = 'hcom';
-      rec.comment.forEach(t => { if(/^(Prossima|Piano completato)/.test(t)) return; const x = document.createElement('li'); x.textContent = t; cl.append(x); });
-      li.append(cl);
-    } else if(rec.coach && rec.coach.note){ const nt = document.createElement('div'); nt.className = 'hnote'; nt.textContent = rec.coach.note; li.append(nt); }
-    const acts = document.createElement('div'); acts.className = 'acts';
-    const bCopy = document.createElement('button'); bCopy.type = 'button'; bCopy.className = 'btn small'; bCopy.textContent = 'Copia CSV'; bCopy.hidden = !rec.samples;
-    bCopy.addEventListener('click', async () => {
-      const csv = csvOf(rec);
-      try{ await navigator.clipboard.writeText(csv); toast('CSV copiato negli appunti.'); }
-      catch(e){ const ta = $('csvOut'); ta.hidden = false; ta.value = csv; ta.focus(); ta.select(); toast('Copia non permessa: il CSV è nel riquadro in fondo allo storico, selezionato.', 5000); }
-    });
-    acts.append(bCopy);
-    if(rec.samples){
-      const bT = document.createElement('button'); bT.type = 'button'; bT.className = 'btn small'; bT.textContent = 'Esporta TCX';
-      bT.addEventListener('click', () => exportTcx(rec)); acts.append(bT);
-    }
-    if(!framed && rec.samples){
-      const bDl = document.createElement('button'); bDl.type = 'button'; bDl.className = 'btn small'; bDl.textContent = 'Scarica CSV';
-      bDl.addEventListener('click', async () => { if(!(await giveFile('vogata-' + stamp(rec.id) + '.csv', csvOf(rec), 'text/csv;charset=utf-8'))) toast('Download non riuscito: usa Copia CSV.'); });
-      acts.append(bDl);
-    }
-    const bDel = document.createElement('button'); bDel.type = 'button'; bDel.className = 'btn small danger'; bDel.textContent = 'Elimina';
-    let armed = 0;
-    bDel.addEventListener('click', () => {
-      if(Date.now() < armed){ history = history.filter(x => x.id !== rec.id); saveHistory(); C.refCache = undefined; C.hrkCache = undefined; renderHistory(); renderProgress(); return; }
-      armed = Date.now() + 3000; bDel.textContent = 'Conferma'; setTimeout(() => { bDel.textContent = 'Elimina'; }, 3000);
-    });
-    acts.append(bDel);
-    li.append(acts);
-    ul.append(li);
+  const months = histGroups(history), tot = {};
+  months.forEach(g => { tot[g.key] = g; });
+  const all = [].concat(...months.map(g => g.recs)), rest = all.slice(HIST_TOP);
+  const top = document.createElement('ul'); top.className = 'hlist';
+  all.slice(0, HIST_TOP).forEach(r => top.append(histRow(r)));
+  box.append(top);
+  if(!rest.length) return;
+  const det = document.createElement('details'); det.className = 'hall';
+  const sm = document.createElement('summary');
+  sm.textContent = 'Altre ' + rest.length + (rest.length === 1 ? ' seduta' : ' sedute');
+  const inner = document.createElement('div'); inner.className = 'hgroups';
+  // Intestazione del mese con i totali del mese intero, anche se le sedute più recenti stanno già in alto.
+  const fill = () => { if(!inner.childElementCount) histGroups(rest).forEach((g, gi) => inner.append(monthGroup(g, tot[g.key], gi === 0))); };
+  if(HV.all){ det.open = true; fill(); }
+  det.addEventListener('toggle', () => { HV.all = det.open; if(det.open) fill(); });
+  det.append(sm, inner); box.append(det);
+}
+function monthGroup(g, t, openDefault){
+  const det = document.createElement('details'); det.className = 'hmon';
+  const sm = document.createElement('summary'), hd = document.createElement('span'); hd.className = 'hmt';
+  const b = document.createElement('b'); b.textContent = g.label;
+  const sub = document.createElement('small'); sub.textContent = groupTxt(t || g);
+  hd.append(b, sub); sm.append(hd);
+  const ul = document.createElement('ul'); ul.className = 'hlist';
+  const fill = () => { if(!ul.childElementCount) g.recs.forEach(r => ul.append(histRow(r))); };
+  if(g.key in HV.mon ? HV.mon[g.key] : openDefault){ det.open = true; fill(); }
+  det.addEventListener('toggle', () => { HV.mon[g.key] = det.open; if(det.open) fill(); });
+  det.append(sm, ul);
+  return det;
+}
+function histRow(rec){
+  const li = document.createElement('li'), det = document.createElement('details'); det.className = 'hrec';
+  const dt = new Date(rec.id), z = (n) => String(n).padStart(2, '0');
+  const sm = document.createElement('summary');
+  const day = document.createElement('span'); day.className = 'hday';
+  const dn = document.createElement('b'); dn.textContent = String(dt.getDate());
+  const wd = document.createElement('small'); wd.textContent = WDAYS[dt.getDay()];
+  day.append(dn, wd);
+  const main = document.createElement('span'); main.className = 'hmain';
+  // "Piano C2 S3.1, Fondo" diventa "C2 S3.1 · Fondo": sulla riga conta il tipo di seduta.
+  const ht = document.createElement('span'); ht.className = 'ht';
+  ht.textContent = rec.coach && rec.coach.name ? rec.coach.name.replace(/^Piano /, '').replace(/^((?:C\d+ )?S\d+\.\d+), /, '$1 · ') : 'Voga libera';
+  const meta = [];
+  if(rec.dist) meta.push(rec.dist.toLocaleString('it-IT') + ' m');
+  if(rec.avgP != null) meta.push(rec.avgP + ' W');
+  if(rec.avgHr) meta.push('FC ' + rec.avgHr);
+  if(!meta.length) meta.push(z(dt.getHours()) + ':' + z(dt.getMinutes()));
+  const hm = document.createElement('span'); hm.className = 'hm'; hm.textContent = meta.join(' · ');
+  main.append(ht, hm);
+  const dur = document.createElement('span'); dur.className = 'hdur'; dur.textContent = fmtTime(rec.dur);
+  sm.append(day, main, dur);
+  const body = document.createElement('div'); body.className = 'hbody';
+  const fill = () => { if(!body.childElementCount) histBody(rec, body); };
+  if(HV.rec.has(rec.id)){ det.open = true; fill(); }
+  det.addEventListener('toggle', () => { if(det.open){ HV.rec.add(rec.id); fill(); } else HV.rec.delete(rec.id); });
+  det.append(sm, body); li.append(det);
+  return li;
+}
+function histBody(rec, li){
+  const dt = new Date(rec.id), when = document.createElement('div'); when.className = 'hnote';
+  when.textContent = dt.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + ', ore ' + dt.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }) + (rec.coach && rec.coach.name ? ' · ' + rec.coach.name : '');
+  li.append(when);
+  const sp = sparkSVG(rec.samples || rec.spark);
+  if(sp){ const wrapSp = document.createElement('div'); wrapSp.innerHTML = sp; li.append(wrapSp.firstChild); }
+  const st = document.createElement('div'); st.className = 'hstats';
+  st.append(
+    statCell('Distanza', rec.dist ? rec.dist.toLocaleString('it-IT') : '–', ' m'),
+    statCell('Potenza media', rec.avgP != null ? String(rec.avgP) : '–', ' W'),
+    statCell('Passo /500 m', rec.avgPace ? fmtPace(rec.avgPace) : '–'),
+    statCell('Colpi/min', rec.avgSpm ? String(rec.avgSpm).replace('.', ',') : '–'),
+    statCell('FC media', rec.avgHr ? String(rec.avgHr) : '–', ' bpm'),
+    statCell(rec.kcalSrc === 'stima' ? 'Kcal (stima)' : 'Kcal', rec.kcal != null ? String(rec.kcal) : '–'));
+  li.append(st);
+  const extra = [];
+  if(rec.rpe) extra.push('Fatica ' + rec.rpe + '/10');
+  if(rec.dec != null) extra.push('deriva cardiaca ' + dec1(rec.dec) + '%');
+  if(rec.hrr) extra.push('recupero a 1 minuto ' + rec.hrr.d + ' battiti');
+  if(rec.maxHr) extra.push('FC max ' + rec.maxHr);
+  if(extra.length){ const nt = document.createElement('div'); nt.className = 'hnote'; nt.textContent = extra.join(' · '); li.append(nt); }
+  if(Array.isArray(rec.comment) && rec.comment.length){
+    const cl = document.createElement('ul'); cl.className = 'hcom';
+    rec.comment.forEach(t => { if(/^(Prossima|Piano completato)/.test(t)) return; const x = document.createElement('li'); x.textContent = t; cl.append(x); });
+    li.append(cl);
+  } else if(rec.coach && rec.coach.note){ const nt = document.createElement('div'); nt.className = 'hnote'; nt.textContent = rec.coach.note; li.append(nt); }
+  const acts = document.createElement('div'); acts.className = 'acts';
+  const bCopy = document.createElement('button'); bCopy.type = 'button'; bCopy.className = 'btn small'; bCopy.textContent = 'Copia CSV'; bCopy.hidden = !rec.samples;
+  bCopy.addEventListener('click', async () => {
+    const csv = csvOf(rec);
+    try{ await navigator.clipboard.writeText(csv); toast('CSV copiato negli appunti.'); }
+    catch(e){ const ta = $('csvOut'); ta.hidden = false; ta.value = csv; ta.focus(); ta.select(); toast('Copia non permessa: il CSV è nel riquadro in fondo allo storico, selezionato.', 5000); }
+  });
+  acts.append(bCopy);
+  if(rec.samples){
+    const bT = document.createElement('button'); bT.type = 'button'; bT.className = 'btn small'; bT.textContent = 'Esporta TCX';
+    bT.addEventListener('click', () => exportTcx(rec)); acts.append(bT);
   }
+  if(!framed && rec.samples){
+    const bDl = document.createElement('button'); bDl.type = 'button'; bDl.className = 'btn small'; bDl.textContent = 'Scarica CSV';
+    bDl.addEventListener('click', async () => { if(!(await giveFile('vogata-' + stamp(rec.id) + '.csv', csvOf(rec), 'text/csv;charset=utf-8'))) toast('Download non riuscito: usa Copia CSV.'); });
+    acts.append(bDl);
+  }
+  const bDel = document.createElement('button'); bDel.type = 'button'; bDel.className = 'btn small danger'; bDel.textContent = 'Elimina';
+  let armed = 0;
+  bDel.addEventListener('click', () => {
+    if(Date.now() < armed){ history = history.filter(x => x.id !== rec.id); HV.rec.delete(rec.id); saveHistory(); C.refCache = undefined; C.hrkCache = undefined; renderHistory(); renderProgress(); return; }
+    armed = Date.now() + 3000; bDel.textContent = 'Conferma'; setTimeout(() => { bDel.textContent = 'Elimina'; }, 3000);
+  });
+  acts.append(bDel);
+  li.append(acts);
 }
 
 /* ---------- progressi ---------- */
@@ -2146,7 +2324,10 @@ window.addEventListener('message', (ev) => {
   let m = ev.data; if(typeof m === 'string'){ try{ m = JSON.parse(m); }catch(e){ return; } }
   if(!m || typeof m !== 'object') return;
   if(m.event === 'onStateChange' && typeof m.info === 'number') YT.state = m.info;
-  else if(m.event === 'infoDelivery' && m.info && typeof m.info.playerState === 'number') YT.state = m.info.playerState;
+  else if((m.event === 'infoDelivery' || m.event === 'initialDelivery') && m.info && typeof m.info === 'object'){
+    if(typeof m.info.playerState === 'number') YT.state = m.info.playerState;
+    videoInfo(m.info);
+  }
 });
 function flashCoach(){ const b = $('coachBox'); b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash'); }
 function beep(freq, dur){
@@ -2546,7 +2727,8 @@ function planGo(sid){
 
 /* ---------- video ---------- */
 /*YT-START*/
-function ytEmbed(url){
+// Legge un link di YouTube: id del video, playlist, secondo di partenza (t=90, t=90s, t=1m30s, start=90). null se non è YouTube.
+function ytParse(url){
   let u; try{ u = new URL(String(url).trim()); }catch(e){ return null; }
   const host = u.hostname.replace(/^(www|m|music)\./, ''); let id = null;
   if(host === 'youtu.be') id = u.pathname.slice(1).split('/')[0];
@@ -2557,19 +2739,106 @@ function ytEmbed(url){
   if(id && !/^[\w-]{6,20}$/.test(id)) id = null;
   let list = u.searchParams.get('list'); if(list && !/^[\w-]+$/.test(list)) list = null;
   if(!id && !list) return null;
-  const t = u.searchParams.get('t') || u.searchParams.get('start');
-  return 'https://www.youtube-nocookie.com/embed/' + (id || 'videoseries') + '?playsinline=1&rel=0&enablejsapi=1' + (location.origin && location.origin.startsWith('http') ? '&origin=' + encodeURIComponent(location.origin) : '') + (list ? '&list=' + list : '') + (t && /^\d+s?$/.test(t) ? '&start=' + parseInt(t, 10) : '');
+  const t = u.searchParams.get('t') || u.searchParams.get('start') || '';
+  const tm = t.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)?$/);
+  const start = tm ? (+tm[1] || 0) * 3600 + (+tm[2] || 0) * 60 + (+tm[3] || 0) : 0;
+  return { id, list, start };
+}
+function ytSrc(p){
+  return 'https://www.youtube-nocookie.com/embed/' + (p.id || 'videoseries') + '?playsinline=1&rel=0&enablejsapi=1' + (location.origin && location.origin.startsWith('http') ? '&origin=' + encodeURIComponent(location.origin) : '') + (p.list ? '&list=' + p.list : '') + (p.start > 0 ? '&start=' + p.start : '');
+}
+function ytEmbed(url){ const p = ytParse(url); return p ? ytSrc(p) : null; }
+// Primo link di YouTube dentro un testo qualsiasi (gli appunti possono contenere anche altre parole), anche senza https://.
+function ytFind(text){
+  const m = String(text || '').match(/(?:https?:\/\/)?(?:[\w-]+\.)*(?:youtube(?:-nocookie)?\.com|youtu\.be)\/[^\s<>"']*/gi) || [];
+  for(let x of m){ x = x.replace(/[).,;:!?»”]+$/, ''); const u = /^https?:\/\//i.test(x) ? x : 'https://' + x; if(ytParse(u)) return u; }
+  return null;
 }
 /*YT-END*/
+// Video visti di recente (vg.videos, al massimo 8): titolo e punto raggiunto arrivano dal lettore stesso, senza altre richieste.
+const V = { cur: null, vid: '', savedAt: 0 };
+let vRecent = store.get('vg.videos', []);
+vRecent = (Array.isArray(vRecent) ? vRecent : []).filter(e => e && typeof e.url === 'string' && typeof e.key === 'string' && ytParse(e.url));
+if(!vRecent.length){ const old = store.get('vg.video', ''); const p = typeof old === 'string' ? ytParse(old) : null; if(p) vRecent.push({ url: old.trim(), key: p.id ? 'v:' + p.id : 'l:' + p.list, title: '', t: 0, pos: 0, len: 0 }); }
+function vSave(){ V.savedAt = performance.now(); if(!store.set('vg.videos', vRecent)) log('Video recenti non salvati: spazio pieno'); if(Q.open === 'vid') renderRecent(); qVidUi(); }
+// Punto da cui riprendere: solo per un video singolo, oltre il primo mezzo minuto e non già alla fine.
+const vResume = (e) => e && e.key[0] === 'v' && e.pos > 30 && !(e.len > 0 && e.pos > e.len - 30) ? e.pos : 0;
+function videoOpen(url){
+  const raw = String(url || '').trim();
+  if(!raw){ toast('Incolla prima un link di YouTube.'); return false; }
+  const p = ytParse(raw);
+  if(!p){ toast('Link non riconosciuto. Incolla un link di YouTube, tipo youtu.be/… oppure youtube.com/watch?v=…', 6000); return false; }
+  const key = p.id ? 'v:' + p.id : 'l:' + p.list, old = vRecent.find(e => e.key === key);
+  const from = p.start || vResume(old);
+  const e = { url: raw, key, title: old ? old.title : '', thumb: old ? old.thumb : '', t: Date.now(), pos: old ? old.pos : 0, len: old ? old.len : 0 };
+  vRecent = [e].concat(vRecent.filter(x => x.key !== key)).slice(0, 8);
+  V.cur = e; V.vid = '';
+  setVideo(true, ytSrc(Object.assign({}, p, { start: from })));
+  vSave();
+  $('inVideo').value = '';
+  if(from && !p.start) toast('Riprendo da ' + fmtTime(from) + ', dove eri rimasto.');
+  return true;
+}
+function videoInfo(inf){
+  const e = V.cur; if(!e || !S.video) return;
+  const vd = inf.videoData && typeof inf.videoData === 'object' ? inf.videoData : null;
+  if(vd && typeof vd.video_id === 'string' && /^[\w-]{6,20}$/.test(vd.video_id)) V.vid = vd.video_id;
+  // Nel lettore si può passare a un altro video: i dati valgono solo se è ancora quello aperto.
+  const same = e.key[0] === 'l' || !V.vid || V.vid === e.key.slice(2);
+  if(!same) return;
+  let ch = false;
+  if(vd && typeof vd.title === 'string'){ const t = vd.title.trim().slice(0, 140); if(t && t !== e.title){ e.title = t; ch = true; } }
+  if(e.key[0] === 'l' && V.vid && e.thumb !== V.vid){ e.thumb = V.vid; ch = true; }
+  if(typeof inf.duration === 'number' && inf.duration > 0) e.len = Math.round(inf.duration);
+  if(typeof inf.currentTime === 'number' && inf.currentTime >= 0){ e.pos = Math.floor(inf.currentTime); if(performance.now() - V.savedAt > 15000) ch = true; }
+  if(ch) vSave();
+}
+function renderRecent(){
+  const box = $('vRecent'); box.textContent = '';
+  const list = vRecent.slice(0, 5); $('vRecentBox').hidden = !list.length;
+  for(const e of list){
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'vitem';
+    const th = document.createElement('span'); th.className = 'vth';
+    const vid = e.key[0] === 'v' ? e.key.slice(2) : e.thumb;
+    if(vid && /^[\w-]{6,20}$/.test(vid)){ const img = new Image(); img.alt = ''; img.loading = 'lazy'; img.decoding = 'async'; img.referrerPolicy = 'no-referrer'; img.onerror = () => img.remove(); img.src = 'https://i.ytimg.com/vi/' + vid + '/mqdefault.jpg'; th.append(img); }
+    const tt = document.createElement('span'); tt.className = 'vtt';
+    const tb = document.createElement('b'); tb.textContent = e.title || (e.key[0] === 'l' ? 'Playlist YouTube' : 'Video YouTube');
+    const ts = document.createElement('small'), r = vResume(e);
+    ts.textContent = (e.t ? new Date(e.t).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }) : 'aperto in precedenza') + (r ? ' · riprende da ' + fmtTime(r) : '') + (V.cur === e && S.video ? ' · aperto ora' : '');
+    tt.append(tb, ts); b.append(th, tt);
+    b.addEventListener('click', () => videoOpen(e.url));
+    box.append(b);
+  }
+}
+function qVidUi(){ $('qVidTxt').textContent = S.video ? 'aperto · tocca per cambiare' : vRecent.length ? 'incolla o riprendi' : 'link da YouTube'; }
+// Riquadri dell'accesso rapido: uno alla volta, sotto i due pulsanti.
+const Q = { open: null };
+function qOpen(w){
+  Q.open = w;
+  $('hrPanel').hidden = w !== 'hr'; $('vidPanel').hidden = w !== 'vid';
+  $('qHr').setAttribute('aria-expanded', String(w === 'hr')); $('qVid').setAttribute('aria-expanded', String(w === 'vid'));
+  if(w === 'vid') renderRecent();
+}
+// Legge gli appunti (su iPhone compare il pulsante Incolla da confermare). Se il browser non lo permette, si passa al campo del link.
+async function videoPaste(){
+  let txt = null;
+  try{ if(navigator.clipboard && navigator.clipboard.readText) txt = await navigator.clipboard.readText(); }
+  catch(e){ log('Appunti non leggibili: ' + ((e && (e.name || e.message)) || 'errore')); }
+  if(txt == null){ $('inVideo').focus(); toast('Il telefono non lascia leggere gli appunti da qui: tieni premuto nel campo del link e scegli Incolla.', 7000); return; }
+  const url = ytFind(txt);
+  if(!url){ toast('Negli appunti non c\'è un link di YouTube. In YouTube tocca Condividi, poi Copia link.', 6000); return; }
+  videoOpen(url);
+}
 function setVideo(on, src){
   const box = $('videoBox'), fr = $('ytFrame');
+  if(!on && V.cur){ V.cur = null; vSave(); }
   if(on){ fr.src = src; box.hidden = false; } else { box.hidden = true; fr.src = 'about:blank'; }
   document.querySelector('.wrap').classList.toggle('video', on);
   document.body.classList.toggle('video', on);
   if(!on) exitFull();
   document.querySelectorAll('.tile .lab').forEach(l => { if(!l.dataset.full) l.dataset.full = l.textContent; l.textContent = on ? (l.dataset.short || l.dataset.full) : l.dataset.full; });
-  $('btnVideo').textContent = on ? 'Chiudi video' : 'Apri video'; S.video = on;
-  if(on){ $('dVideo').open = false; window.scrollTo(0, 0); }
+  S.video = on; $('btnVidStop').hidden = !on; qVidUi();
+  if(on){ qOpen(null); window.scrollTo(0, 0); }
   queueRender();
 }
 
@@ -2585,22 +2854,43 @@ function toggleFull(){
 }
 
 /* ---------- eventi ---------- */
-$('btnVideo').addEventListener('click', () => {
-  if(S.video){ setVideo(false); return; }
-  const src = ytEmbed($('inVideo').value);
-  if(!src){ toast('Link non riconosciuto. Incolla un link di YouTube, tipo youtu.be/… oppure youtube.com/watch?v=…', 6000); return; }
-  store.set('vg.video', $('inVideo').value.trim()); setVideo(true, src);
+const videoFromInput = () => { const v = $('inVideo').value; videoOpen(ytFind(v) || v); };
+$('btnVideo').addEventListener('click', videoFromInput);
+$('inVideo').addEventListener('keydown', (ev) => { if(ev.key === 'Enter'){ ev.preventDefault(); videoFromInput(); } });
+// Incollato un link valido nel campo: si apre subito, senza toccare Apri.
+$('inVideo').addEventListener('paste', (ev) => {
+  let t = ''; try{ t = ev.clipboardData ? ev.clipboardData.getData('text') : ''; }catch(e){}
+  setTimeout(() => { const u = ytFind(t) || ytFind($('inVideo').value); if(u) videoOpen(u); }, 0);
 });
-$('inVideo').value = store.get('vg.video', '') || '';
-$('dVideo').hidden = framed;
+$('btnVidPaste').addEventListener('click', videoPaste);
+$('btnVidStop').addEventListener('click', () => setVideo(false));
+$('btnVidClose').addEventListener('click', () => qOpen(null));
+$('btnHrClose').addEventListener('click', () => qOpen(null));
+$('qVid').addEventListener('click', () => qOpen(Q.open === 'vid' ? null : 'vid'));
+// Cardio non ancora scelto: il tocco apre subito l'elenco del Bluetooth, e sotto restano istruzioni e "Mostra tutti".
+$('qHr').addEventListener('click', () => {
+  if(!S.hrDev && btUsable){ qOpen('hr'); connectHr(false); }
+  else qOpen(Q.open === 'hr' ? null : 'hr');
+});
+$('qVid').hidden = framed; qVidUi();
+$('inHrAuto').checked = !!cfg.hrAuto;
+$('inHrAuto').addEventListener('change', () => { cfg.hrAuto = $('inHrAuto').checked; store.set('vg.cfg', cfg); });
+// Punto raggiunto nel video salvato anche se si passa a un'altra app o si chiude la pagina.
+addEventListener('pagehide', () => { if(V.cur) vSave(); });
+document.addEventListener('visibilitychange', () => { if(document.hidden && V.cur) vSave(); });
 $('btnConnect').addEventListener('click', () => {
   if(S.conn === 'connected' || S.conn === 'raw' || S.conn === 'connecting' || S.conn === 'reconnecting') disconnect(); else connectFlow(false);
 });
 $('btnAll').addEventListener('click', () => connectFlow(true));
 $('btnHr').addEventListener('click', () => connectHr(false));
 $('btnHrAll').addEventListener('click', () => connectHr(true));
-// Toccare la scheda della frequenza cardiaca quando non c'è sensore avvia il collegamento del cardio.
-$('vHr').closest('.tile').addEventListener('click', () => { if(!S.hrDev && btUsable) connectHr(false); });
+// Toccare la scheda della frequenza cardiaca quando non arrivano battiti: elenco del Bluetooth se il cardio non è scelto,
+// altrimenti il riquadro del cardio con lo stato e le istruzioni.
+$('vHr').closest('.tile').addEventListener('click', () => {
+  if(!btUsable || hrStatus().k === 'connected') return;
+  if(!S.video){ qOpen('hr'); $('hrPanel').scrollIntoView({ block: 'nearest' }); }
+  if(!S.hrDev) connectHr(false);
+});
 $('btnDemo').addEventListener('click', () => { if(S.conn === 'demo') stopDemo(); else startDemo(); });
 function mainAction(){ if(!S.session) startSession(false); else togglePause(); }
 function stopAction(){ if(stopArmed && Date.now() < stopArmed) stopSession(); else { stopArmed = Date.now() + 3000; queueRender(); } }
@@ -2675,7 +2965,6 @@ $('btnSkip').addEventListener('click', () => { if(C.plan && !C.done && S.session
 $('selWorkout').addEventListener('change', queueRender); $('selSize').addEventListener('change', queueRender);
 window.addEventListener('resize', queueRender);
 
-$('btnHistMore').addEventListener('click', () => { histShown += 20; renderHistory(); });
 $('btnBkSave').addEventListener('click', backupSave);
 $('btnBkCopy').addEventListener('click', backupCopy);
 $('btnBkPaste').addEventListener('click', () => {
@@ -2700,7 +2989,8 @@ renderPlanCard(false); renderPlanList();
 $('gVer').textContent = String(APP_VERSION);
 log('Versione app ' + APP_VERSION);
 log('Bluetooth web: ' + (navigator.bluetooth ? (policyOk ? 'disponibile' : 'presente ma bloccato in questa finestra') : 'assente in questo browser'));
-if(btUsable) autoConnect(); else { showNotice(); startDemo(); }
+// Prima il vogatore, poi il cardio: due collegamenti avviati insieme all'apertura sono il caso meno provato.
+if(btUsable) autoConnect().finally(() => hrAuto()); else { showNotice(); startDemo(); }
 setInterval(tick, 1000); tick();
 })();
 </script>
