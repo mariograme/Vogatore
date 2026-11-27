@@ -13,7 +13,7 @@ function block(name){
 }
 const exportsList = ['parseRower', 'demoPacket', 'fmtTime', 'median', 'hrFilter', 'zoneTimes', 'maxHrSustained', 'decoupling', 'thinRec', 'pruneHistory',
   'buildTcx', 'recKind', 'testWatts', 'isTestRec', 'sessionComment', 'bestAvg', 'estimateRef', 'estimateHrK', 'recommend', 'planForCycle', 'PLAN8_BASE',
-  'planPhases', 'buildPlan', 'planTitle', 'hrAt', 'zoneIdx', 'ytEmbed', 'KEEP_SAMPLES'];
+  'planPhases', 'buildPlan', 'planTitle', 'hrAt', 'zoneIdx', 'ytEmbed', 'ytParse', 'ytFind', 'histGroups', 'KEEP_SAMPLES'];
 const ctx = vm.createContext({ console, URL, location: { origin: 'https://example.github.io', hash: '' } });
 vm.runInContext('var cfg = { hrMax: 182, hrRest: 60, weight: 80 };\n' + block('PARSER') + block('ANALYSIS') + block('COACH') + block('YT') +
   '\nglobalThis.T = {' + exportsList.join(',') + '};', ctx);
@@ -157,6 +157,37 @@ test('link YouTube riconosciuti', () => {
   assert.match(T.ytEmbed('https://youtu.be/dQw4w9WgXcQ?t=42'), /embed\/dQw4w9WgXcQ\?.*start=42/);
   assert.match(T.ytEmbed('https://www.youtube.com/watch?v=dQw4w9WgXcQ'), /embed\/dQw4w9WgXcQ/);
   assert.equal(T.ytEmbed('https://vimeo.com/123'), null);
+});
+test('tempo di partenza nei formati di YouTube', () => {
+  assert.equal(T.ytParse('https://youtu.be/dQw4w9WgXcQ?t=1m30s').start, 90);
+  assert.equal(T.ytParse('https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=1h2m3s').start, 3723);
+  assert.equal(T.ytParse('https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=95s').start, 95);
+  assert.equal(T.ytParse('https://www.youtube.com/watch?v=dQw4w9WgXcQ').start, 0);
+  assert.equal(T.ytParse('https://www.youtube.com/playlist?list=PL1234abcd').list, 'PL1234abcd');
+  assert.doesNotMatch(T.ytEmbed('https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=abc'), /start=/);
+});
+test('link di YouTube trovato dentro un testo qualsiasi', () => {
+  assert.equal(T.ytFind('Guarda qui https://youtu.be/dQw4w9WgXcQ?si=Ab12 bello'), 'https://youtu.be/dQw4w9WgXcQ?si=Ab12');
+  assert.equal(T.ytFind('youtube.com/watch?v=dQw4w9WgXcQ.'), 'https://youtube.com/watch?v=dQw4w9WgXcQ');
+  assert.equal(T.ytFind('m.youtube.com/shorts/dQw4w9WgXcQ'), 'https://m.youtube.com/shorts/dQw4w9WgXcQ');
+  assert.equal(T.ytFind('https://vimeo.com/123 e niente altro'), null);
+  assert.equal(T.ytFind(''), null); assert.equal(T.ytFind(null), null);
+});
+
+console.log('Storico compatto');
+test('storico diviso per mese, più recente per primo, con i totali', () => {
+  const h = [
+    { id: Date.UTC(2026, 9, 30, 18), dur: 1200, dist: 4000 },
+    { id: Date.UTC(2026, 10, 8, 18), dur: 1800, dist: 6000 },
+    { id: Date.UTC(2026, 10, 2, 18), dur: 600 },
+    { id: Date.UTC(2025, 10, 20, 18), dur: 900, dist: 3000 }];
+  const g = T.histGroups(h);
+  assert.equal(g.map(x => x.key).join(' '), '2026-11 2026-10 2025-11');
+  assert.equal(g[0].label, 'Novembre 2026'); assert.equal(g[0].recs.length, 2);
+  assert.equal(g[0].recs[0].id, Date.UTC(2026, 10, 8, 18), 'dentro il mese, la più recente per prima');
+  assert.equal(g[0].dur, 2400); assert.equal(g[0].dist, 6000);
+  assert.equal(h[0].id, Date.UTC(2026, 9, 30, 18), 'lo storico originale non va riordinato');
+  assert.equal(T.histGroups([]).length, 0);
 });
 
 console.log('\n' + pass + ' superati, ' + fail + ' falliti');
